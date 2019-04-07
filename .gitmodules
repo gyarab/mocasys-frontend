@@ -1,0 +1,3 @@
+[submodule "liwec"]
+	path = liwec
+	url = git@gitlab.com:mocasys/liwec.git
