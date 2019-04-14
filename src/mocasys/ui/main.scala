@@ -23,17 +23,15 @@ package object main {
                     val onLogin: () => Unit)
             extends Component {
         var loginError = ""
-        def render() =
-            div(
+        def render() = scoped(
+            div(cls:="formBody",
                 h2("Login"),
                 div(cls:="error", loginError),
-                div(cls:="2col-form",
-                    label("Username: ",
-                        textInput(username, { username = _ })),
-                    label("Password: ",
-                        textInput(password, { password = _ }, "password")),
-                ),
-                button("Login", onClick:={ e =>
+                label("Username: ",
+                    textInput(username, { username = _ })),
+                label("Password: ",
+                    textInput(password, { password = _ }, "password")),
+                button("Login", cls:="submitButton", onClick:={ e =>
                     AppState.loginWithPassword(username, password)
                     .onComplete {
                         case Success(_) => loginError = "Success!"
@@ -41,6 +39,18 @@ package object main {
                     }
                 }),
             )
+        )
+
+        cssScoped { import liwec.cssDsl._
+            c.formBody (
+                display := "flex",
+                flexDirection := "column",
+
+                c.submitButton (
+                    width := "10em",
+                ),
+            )
+        }
     }
 
     class PageRoot extends Component {
