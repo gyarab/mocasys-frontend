@@ -24,12 +24,12 @@ package object main {
             extends Component {
         var loginError = ""
         def render() = scoped(
-            div(cls:="formBody",
+            div(cls:="loginForm",
                 h2("Login"),
                 div(cls:="error", loginError),
-                label("Username: ",
+                label(span("Username: "),
                     textInput(username, { username = _ })),
-                label("Password: ",
+                label(span("Password: "),
                     textInput(password, { password = _ }, "password")),
                 button("Login", cls:="submitButton", onClick:={ e =>
                     AppState.loginWithPassword(username, password)
@@ -42,11 +42,26 @@ package object main {
         )
 
         cssScoped { import liwec.cssDsl._
-            c.formBody (
-                display := "flex",
-                flexDirection := "column",
+            c.loginForm (
+                display := "grid",
+                gridTemplateColumns := "auto auto",
+                maxWidth := "20em",
+
+                (c.error | e.h2) -> (
+                    gridColumn := "1 / 3",
+                ),
+
+                e.label (
+                    display := "contents",
+
+                    e.span (
+                        alignSelf := "center",
+                    ),
+                ),
 
                 c.submitButton (
+                    gridColumn := "1 / 3",
+                    justifySelf := "right",
                     width := "10em",
                 ),
             )
