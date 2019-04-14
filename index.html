@@ -6,12 +6,19 @@
     <script src="target/scala-2.12/mocasys-frontend-jsdeps.js"></script>
     <script src="target/scala-2.12/mocasys-frontend-fastopt.js"></script>
     <script>
+        mocasysConfig = {
+            middleendApiUrl:
+                  document.location.protocol
+                + "//"
+                + document.location.hostname
+                + ":8000"
+        };
+
         document.addEventListener("DOMContentLoaded", function() {
             MocasysWeb.initApp()
         });
     </script>
 </head>
 <body>
-
 </body>
 </html>
