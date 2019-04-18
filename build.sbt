@@ -17,4 +17,4 @@ lazy val root = (project in file("."))
     .dependsOn(liwec)
 
 // TODO: Git submodules or localPublish
-lazy val liwec = ProjectRef(file("../liwec"), "root")
+lazy val liwec = ProjectRef(file("liwec"), "root")
