@@ -20,7 +20,7 @@ package object main {
         })
 
     class LoginForm(var username: String = "", var password: String = "",
-                    val onLogin: () => Unit)
+                    val onLogin: Option[() => Unit] = None)
             extends Component {
         var loginError = ""
         def render() = scoped(
@@ -68,12 +68,16 @@ package object main {
         }
     }
 
+    class LoginPage extends Component {
+        def render() = div(new LoginForm())
+    }
+
     class PageRoot extends Component {
         def render() =
             div("Hello, world",
                 div("Currently logged in: " +
                     AppState.loggedInUser.getOrElse("")),
-                new LoginForm(onLogin = { () => () }),
+                AppState.router.currentComponent,
             )
     }
 

@@ -1,9 +1,11 @@
 import scala.concurrent.ExecutionContext.Implicits.global
 import liwec.Watched
+import mocasys.routing.AppRouter
 
 package object mocasys {
     class AppStateCls extends Watched {
         val apiClient = new ApiClient(Config.middleendApiUrl)
+        val router = new AppRouter()
         var loggedInUser: Option[String] = None
 
         def loginWithPassword(username: String, password: String) = {
