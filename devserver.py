@@ -5,9 +5,15 @@
 import http.server as hs
 import socketserver as ss
 
+def allow_dirs(path, dir_list):
+    for d in dir_list:
+        if path.startswith(d):
+            return True
+    return False
+
 class RewritingHTTPRequestHandler(hs.SimpleHTTPRequestHandler):
     def translate_path(self, path):
-        if path.startswith("/cssout") or path.startswith("/target"):
+        if allow_dirs(path, ['/cssout', '/target', '/img']):
             return hs.SimpleHTTPRequestHandler.translate_path(self, path)
         return "index.html"
 
