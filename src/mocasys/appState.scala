@@ -1,4 +1,5 @@
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalajs.dom.window.localStorage
 import liwec.Watched
 import mocasys.routing.AppRouter
 
@@ -8,10 +9,15 @@ package object mocasys {
         val router = new AppRouter()
         var loggedInUser: Option[String] = None
 
+        apiClient.authToken = Option(localStorage.getItem("apiAuthToken"))
+
         def loginWithPassword(username: String, password: String) = {
             // Fetch user info into an object eventually
             apiClient.loginWithPassword(username, password)
-            .map { _ => this.loggedInUser = Some(username) }
+            .map { resp =>
+                this.loggedInUser = Some(username)
+                localStorage.setItem("apiAuthToken", resp.sessionToken)
+            }
         }
     }
 
