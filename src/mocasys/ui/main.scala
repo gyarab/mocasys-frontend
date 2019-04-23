@@ -22,20 +22,27 @@ package object main {
     class LoginForm(var username: String = "", var password: String = "",
                     val onLogin: Option[() => Unit] = None)
             extends Component {
-        var loginError = ""
+        var loginError: String = ""
         def render() = scoped(
             div(cls:="loginForm",
                 h2("Login"),
-                div(cls:="error", loginError),
+                div(cls := "error", loginError match {
+                    case "" => loginError
+                    case _ => p(loginError)
+                }),
                 label(span("Username: "),
                     textInput(username, { username = _ })),
                 label(span("Password: "),
                     textInput(password, { password = _ }, "password")),
-                button("Login", cls:="submitButton", onClick:={ e =>
-                    AppState.loginWithPassword(username, password)
-                    .onComplete {
-                        case Success(_) => loginError = "Success!"
-                        case Failure(e) => loginError = s"Failed logging in: $e"
+                button("Login", cls := "submitButton", onClick := { e =>
+                    if (password.length > 0 && username.length > 0) {
+                        AppState.loginWithPassword(username, password)
+                        .onComplete {
+                            case Success(_) => loginError = "Success!"
+                            case Failure(e) => loginError = s"Failed logging in: $e"
+                        }
+                    } else {
+                        loginError = "Please enter both username and password."
                     }
                 }),
             )
@@ -49,6 +56,11 @@ package object main {
 
                 (c.error | e.h2) -> (
                     gridColumn := "1 / 3",
+                ),
+
+                c.error / e.p -> (
+                    padding := "4px",
+                    backgroundColor := "#ff9966",
                 ),
 
                 e.label (
