@@ -61,7 +61,7 @@ class LoginForm(var username: String = "", var password: String = "",
             marginTop := "3em",
             marginLeft := "auto",
             marginRight := "auto",
-            backgroundColor := "#eeeeee",
+            backgroundColor := "#" + "\reeeeee".trim,
             padding := "15px",
             borderRadius := "10px",
 
