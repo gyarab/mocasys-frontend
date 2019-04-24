@@ -29,7 +29,7 @@ class LoginForm(var username: String = "", var password: String = "",
                 textInput(username, { username = _ })),
             label(span("Password: "),
                 textInput(password, { password = _ }, "password")),
-            button("Login", cls := "submitButton",  onClick := { e =>
+            button("Login", cls := "submitButton", onClick := { e =>
                 if (password.length > 0 && username.length > 0) {
                     AppState.loginWithPassword(username, password)
                     .onComplete {
