@@ -7,7 +7,7 @@ import scalajs.js.annotation._
 import org.scalajs.dom.ext._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ApiClient(val apiUrl: String) {
+object ApiClient {
     class PasswordLoginRequest(
             val username: String,
             val password: String,
@@ -19,10 +19,9 @@ class ApiClient(val apiUrl: String) {
             val data: js.Array[js.Any],
         ) extends js.Object
     class DbField(
-            val name: String,
-            val tableID: Int,
-            val columnID: Int,
-            val dataTypeID: Int,
+            val columnName: String,
+            val tableName: String,
+            val dataTypeName: String,
             val dataTypeSize: Int,
             val dataTypeModifier: Int,
             val format: String,
@@ -32,7 +31,10 @@ class ApiClient(val apiUrl: String) {
             val rowCount: Int,
             val fields: js.Array[DbField],
         ) extends js.Object
+}
 
+class ApiClient(val apiUrl: String) {
+    import ApiClient._
     var authToken: Option[String] = None
 
     def loginWithPassword(username: String, password: String) =

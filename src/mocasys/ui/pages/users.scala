@@ -11,10 +11,13 @@ import liwec.cssDslTypes.RawSelector
 import mocasys._
 import mocasys.ui.components._
 import mocasys.ui.main.textInput
+import mocasys.ui.tables._
+import mocasys.ApiClient._
 
 class UsersPage extends Component {
     var query = ""
-    var result = ""
+    var error = ""
+    var result: Option[QueryDbResp] = None
 
     def render = scoped(
         div(cls := "queryTest",
@@ -24,11 +27,23 @@ class UsersPage extends Component {
             input(typeAttr:="submit", value:="Submit", onClick:={ _ =>
                 AppState.apiClient.queryDb(query)
                 .onComplete {
-                    case Success(res) => result = js.JSON.stringify(res)
-                    case Failure(e) => result = s"Error: $e"
+                    case Success(res) => result = Some(res)
+                    case Failure(e) => { result = None; error = e.toString() }
                 }
             }),
-            label(span("Result:"), pre(result)),
+            if(error != "") Seq(div(s"Error: $error")) else Seq(),
+            div("Result:"),
+            // This is an example table, showing most of their functionality
+            result.map { res =>
+                // TODO: Maybe some prettier way of formatting all this? By
+                // convention or by creating a DSL
+                val cols = colsFromQuery(res, col => v =>
+                        a(href := "/some/url", rendererForColumn(col)(v))) :+
+                    Column(
+                        "Row as JSON",
+                        (r: js.Array[js.Any]) => js.JSON.stringify(r))
+                dataTable(cols, res.rows)
+            },
         )
     )
 
