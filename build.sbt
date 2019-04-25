@@ -1,3 +1,5 @@
+import scala.sys.process._
+
 scalaVersion := "2.12.8"
 
 lazy val root = (project in file("."))
@@ -15,6 +17,13 @@ lazy val root = (project in file("."))
     .enablePlugins(ScalaJSPlugin)
     .enablePlugins(JSDependenciesPlugin)
     .dependsOn(liwec)
+
+lazy val devel = taskKey[Unit]("Mocasys Development")
+devel := {
+    val result = (Compile / fastOptJS).value
+    println(result)
+    "./compile_css.sh"!
+}
 
 // TODO: Git submodules or localPublish
 lazy val liwec = ProjectRef(file("liwec"), "root")
