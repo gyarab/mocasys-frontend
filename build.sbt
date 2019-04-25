@@ -16,5 +16,12 @@ lazy val root = (project in file("."))
     .enablePlugins(JSDependenciesPlugin)
     .dependsOn(liwec)
 
+lazy val devel = taskKey[Unit]("Mocasys Development")
+devel := {
+    val result = (Compile / fastOptJS).value
+    println(result)
+    "./compile_css.sh"!
+}
+
 // TODO: Git submodules or localPublish
 lazy val liwec = ProjectRef(file("liwec"), "root")
