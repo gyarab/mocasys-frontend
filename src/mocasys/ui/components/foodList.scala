@@ -18,10 +18,11 @@ import mocasys.ApiClient._
 class FoodList extends Component {
     def render = scoped(
         div(cls := "foodList",
+            h2("25.4.2019 - 27.4.2019"),
             div(cls := "list",
-                new Food(true),
-                new Food(),
-                new Food()
+                new Food(new js.Date(), true),
+                new Food(new js.Date(2019, 3, 26)),
+                new Food(new js.Date(2019, 3, 27)),
             )
         )
     )

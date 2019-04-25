@@ -11,17 +11,16 @@ import liwec.cssMacros._
 import liwec.cssDslTypes.RawSelector
 import mocasys._
 import mocasys.ui.components._
-import mocasys.ui.main.textInput
+import mocasys.ui.main._
 import mocasys.ui.tables._
 import mocasys.ApiClient._
 
 class FoodSelection extends Component {
-
     def render = scoped(
         div(cls := "foodSelection",
-            button("Save", cls := "saveButton", onClick := { e =>
-                println("save!");
-            }),
+            // button("Save", cls := "saveButton", onClick := { e =>
+            //     println("save!");
+            // }),
 
             new FoodList()
         )
@@ -30,7 +29,7 @@ class FoodSelection extends Component {
     cssScoped { import liwec.cssDsl._
         c.foodSelection -> (
             marginLeft := "14em", // Placeholder
-            backgroundColor := "#f3f3f3",
+            backgroundColor := "white",
             height := "100%",
             padding := "1.5em",
 
