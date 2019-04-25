@@ -24,11 +24,18 @@ package object main {
 
     class PageRoot extends Component {
         def render() =
-            div("Hello, world",
-                div("Currently logged in: " +
-                    AppState.loggedInUser.getOrElse("")),
-                AppState.router.currentComponent,
+            div(
+                div(cls := "tempStatus",
+                    "User: " + AppState.loggedInUser.getOrElse("")
+                ),
+                AppState.router.currentComponent
             )
+
+        css { import liwec.cssDsl._
+            c.tempStatus -> (
+                width := "10%",
+            )
+        }
     }
 
     @JSExportTopLevel("MocasysWeb")
