@@ -3,6 +3,7 @@ package mocasys.ui.pages
 import scala.util.{Success, Failure}
 import scalajs.js
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalajs.dom.ext._
 import liwec._
 import liwec.htmlDsl._
 import liwec.htmlMacros._
@@ -27,11 +28,19 @@ class UsersPage extends Component {
             input(typeAttr:="submit", value:="Submit", onClick:={ _ =>
                 AppState.apiClient.queryDb(query)
                 .onComplete {
-                    case Success(res) => result = Some(res)
-                    case Failure(e) => { result = None; error = e.toString() }
+                    case Success(res) => {
+                        result = Some(res)
+                        error = ""
+                    }
+                    case Failure(e) => {
+                        result = None
+                        val response = e.asInstanceOf[AjaxException]
+                        val json = js.JSON.parse(response.xhr.responseText)
+                        error = json.message.toString()
+                    }
                 }
             }),
-            if(error != "") Seq(div(s"Error: $error")) else Seq(),
+            if(error != "") Seq(div(s"error: $error")) else Seq(),
             div("Result:"),
             // This is an example table, showing most of their functionality
             result.map { res =>
