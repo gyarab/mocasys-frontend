@@ -1,3 +1,4 @@
 .metals
 target
 cssout/out.css
+.sass-cache

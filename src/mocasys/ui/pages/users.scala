@@ -37,11 +37,12 @@ class UsersPage extends Component {
             result.map { res =>
                 // TODO: Maybe some prettier way of formatting all this? By
                 // convention or by creating a DSL
+                val asJsonCol = Column(
+                    "Row as JSON",
+                    (r: js.Array[js.Any]) => js.JSON.stringify(r))
                 val cols = colsFromQuery(res, col => v =>
                         a(href := "/some/url", rendererForColumn(col)(v))) :+
-                    Column(
-                        "Row as JSON",
-                        (r: js.Array[js.Any]) => js.JSON.stringify(r))
+                    asJsonCol
                 dataTable(cols, res.rows)
             },
         )
