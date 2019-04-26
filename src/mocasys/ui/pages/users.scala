@@ -16,44 +16,10 @@ import mocasys.ui.tables._
 import mocasys.ApiClient._
 
 class UsersPage extends Component {
-    var query = ""
-    var error = ""
-    var result: Option[QueryDbResp] = None
 
     def render = scoped(
         div(cls := "queryTest",
-            h1("Query test"),
-            label(span("SQL query:"),
-                    textInput(query, { query = _ })),
-            input(typeAttr:="submit", value:="Submit", onClick:={ _ =>
-                AppState.apiClient.queryDb(query)
-                .onComplete {
-                    case Success(res) => {
-                        result = Some(res)
-                        error = ""
-                    }
-                    case Failure(e) => {
-                        result = None
-                        val response = e.asInstanceOf[AjaxException]
-                        val json = js.JSON.parse(response.xhr.responseText)
-                        error = json.message.toString()
-                    }
-                }
-            }),
-            if(error != "") Seq(div(s"error: $error")) else Seq(),
-            div("Result:"),
-            // This is an example table, showing most of their functionality
-            result.map { res =>
-                // TODO: Maybe some prettier way of formatting all this? By
-                // convention or by creating a DSL
-                val asJsonCol = Column(
-                    "Row as JSON",
-                    (r: js.Array[js.Any]) => js.JSON.stringify(r))
-                val cols = colsFromQuery(res, col => v =>
-                        a(href := "/some/url", rendererForColumn(col)(v))) :+
-                    asJsonCol
-                dataTable(cols, res.rows)
-            },
+            new InteractiveTable("SELECT * FROM users"),
         )
     )
 

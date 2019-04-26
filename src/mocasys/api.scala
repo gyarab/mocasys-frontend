@@ -26,11 +26,42 @@ object ApiClient {
             val dataTypeModifier: Int,
             val format: String,
         ) extends js.Object
+    case class DbRow(
+            val data: js.Array[js.Any],
+            val fields: js.Array[DbField]) {
+        def apply(fieldName: String) = {
+            // TODO: Map for more efficiency? It'd need to be cached at the
+            // QueryDbResp level
+            val fieldIndex =
+                fields.zipWithIndex
+                .filter { case (c, i) => c.columnName == fieldName }
+                .map { case (c, i) => i }
+                .head
+            data(fieldIndex)
+        }
+
+        def apply(i: Int) = data(i)
+    }
     class QueryDbResp(
             val rows: js.Array[js.Array[js.Any]],
             val rowCount: Int,
             val fields: js.Array[DbField],
         ) extends js.Object
+    // An implicit wrapper which makes it possible to treat QueryDbResp
+    // as a Seq without almost any performance penalty
+    implicit class QueryDbRespAsSeq(val resp: QueryDbResp) extends Seq[DbRow] {
+        def apply(i: Int) = DbRow(resp.rows(i), resp.fields)
+        def length = resp.rowCount
+        def iterator = new Iterator[DbRow] {
+            var i = 0
+            def hasNext = i < resp.rowCount
+            def next() = {
+                val row = resp(i)
+                i += 1
+                row
+            }
+        }
+    }
 }
 
 class ApiClient(val apiUrl: String) {
