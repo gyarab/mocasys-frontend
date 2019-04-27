@@ -11,29 +11,32 @@ import liwec.cssMacros._
 import liwec.cssDslTypes.RawSelector
 import mocasys._
 import mocasys.ui.components._
-import mocasys.ui.main.textInput
+import mocasys.ui.main._
 import mocasys.ui.tables._
 import mocasys.ApiClient._
+import scala.scalajs.js.timers._
 
-class FoodList extends Component {
-    def render = scoped(
-        div(cls := "foodList",
-            h2("25.4.2019 - 27.4.2019"),
-            div(cls := "list",
-                new Food(new js.Date(), true),
-                new Food(new js.Date(2019, 3, 26)),
-                new Food(new js.Date(2019, 3, 27)),
+class FoodList(val start: js.Date, val nDays: Integer, val foodList: Array[Array[Any]]) extends Component {
+    var error = ""
+    var shouldFetch: Boolean = true
+
+    def render: liwec.VNode = {
+        return scoped(
+            div(cls := "foodList",
+                div(cls := "list",
+                    if (foodList.isEmpty) {
+                        for (i <- 0 to 3) yield new Food(null, Array()),
+                    } else {
+                        for (i <- 0 until nDays) yield new Food(incrDate(start, i), foodList(i)),
+                    }
+                )
             )
         )
-    )
+    }
 
     cssScoped { import liwec.cssDsl._
         c.foodList -> (
             height := "100%",
-
-            c.list -> (
-                padding := "1.5em",
-            ),
         )
     }
 }

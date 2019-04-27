@@ -56,4 +56,10 @@ package object main {
             })
         }
     }
+
+    def incrDate(date: js.Date, offsetDays: Integer = 1): js.Date = {
+        val newDate = new js.Date(date.getTime())
+        newDate.setDate(newDate.getDate() + offsetDays)
+        return newDate
+    }
 }

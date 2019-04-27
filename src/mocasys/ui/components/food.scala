@@ -17,44 +17,56 @@ import mocasys.ApiClient._
 
 class Food(
         val date: js.Date,
-        val selected: Boolean = false,
-
+        val choices: Array[Any]
     ) extends Component {
 
     def render = scoped(
-        div(cls := "food" + (if (date.toDateString() == new js.Date().toDateString) " today" else ""),
-            div(cls := "info",
-                span(date.toDateString()),
-                div(cls := "controls",
-                    button("Z"),
-                    button("O"),
-                    button("X"),
-                )
-            ),
-            table(tbody(
-                tr(
-                    td("Soup"),
-                    td("Gulasch"),
+        if (date != null)
+            div(cls := "food" + (if (date.toDateString() == new js.Date().toDateString) " today" else ""),
+                div(cls := "info",
+                    span(date.toDateString()),
+                    div(cls := "controls",
+                        button("Z"),
+                        button("O"),
+                        button("X"),
+                    )
                 ),
-                tr(
-                    td("Main"),
-                    td("Option 1"),
+                table(tbody(
+                    tr(
+                        td("Soup"),
+                        td("Gulasch"),
+                    ),
+                    tr(
+                        td("Main"),
+                        td("Option 1"),
+                    ),
+                    tr(
+                        td(""),
+                        td("Krůtí nudličky po provensálsku, bramborové špecle"),
+                    ),
+                    tr(
+                        td("Dessert"),
+                        td("Ice Cream"),
+                    )
+                )),
+            )
+        else
+            div(cls := "food foodEmpty",
+                div(cls := "info",
+                    //span("Sat Apr 27 2019"),
+                    div(cls := "controls",
+                        //button("Z"),
+                        //button("O"),
+                        //button("X"),
+                    )
                 ),
-                tr(
-                    td(""),
-                    td("Krůtí nudličky po provensálsku, bramborové špecle"),
-                ),
-                tr(
-                    td("Dessert"),
-                    td("Ice Cream"),
-                )
-            )),
-        ),
+                table(tbody(
+                    //for (_ <- 0 until 4) yield tr(td("."), td("."))
+                )),
+            )
     )
 
-    cssScoped {
-        import liwec.cssDsl._
-
+    cssScoped { import liwec.cssDsl._
         c.food -> (
             fontFamily := "Helvetica",
             height := "10em",
@@ -66,6 +78,7 @@ class Food(
             c.info -> (
                 display := "grid",
                 borderBottom := "1px solid #dadce0",
+                height := "31px",
 
                 e.span -> (
                     gridColumn := "1 / 3",
@@ -118,6 +131,12 @@ class Food(
 
         e.button -> (
             height := "100%",
+        )
+
+        c.foodEmpty -> (
+            borderLeft := "6px solid grey",
+            color := "#eeeeee",
+            backgroundColor := "#eeeeee",
         )
     }
 }
