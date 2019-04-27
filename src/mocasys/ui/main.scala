@@ -24,10 +24,14 @@ package object main {
 
     class PageRoot extends Component {
         def render() =
-            div("Hello, world",
-                div("Currently logged in: " +
-                    AppState.loggedInUser.getOrElse("")),
-                AppState.router.currentComponent,
+            div(
+                div(cls := "tempStatus",
+                    AppState.loggedInUser match {
+                        case None => "Not Logged In"
+                        case Some(s) => s"User: $s"
+                    }
+                ),
+                AppState.router.currentComponent
             )
     }
 

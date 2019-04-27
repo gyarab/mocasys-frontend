@@ -7,16 +7,24 @@ package object mocasys {
     class AppStateCls extends Watched {
         val apiClient = new ApiClient(Config.middleendApiUrl)
         val router = new AppRouter()
-        var loggedInUser: Option[String] = None
+        var _loggedInUser: Option[String] = None
 
         apiClient.authToken = Option(localStorage.getItem("apiAuthToken"))
+
+        def loggedInUser: Option[String] = {
+            if (this._loggedInUser == None) {
+                this._loggedInUser = Some(localStorage.getItem("username"))
+            }
+            return this._loggedInUser
+        }
 
         def loginWithPassword(username: String, password: String) = {
             // Fetch user info into an object eventually
             apiClient.loginWithPassword(username, password)
             .map { resp =>
-                this.loggedInUser = Some(username)
                 localStorage.setItem("apiAuthToken", resp.sessionToken)
+                localStorage.setItem("username", username)
+                this._loggedInUser = Some(username)
             }
         }
     }
