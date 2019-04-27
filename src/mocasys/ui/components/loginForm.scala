@@ -19,6 +19,29 @@ class LoginForm(var username: String = "", var password: String = "",
             extends Component {
     var loginError: String = ""
 
+    def login(e: dom.Event) =
+        // TODO: Set the button active
+        if (password.length > 0 && username.length > 0)
+            AppState.loginWithPassword(username, password)
+            .onComplete {
+                case Success(_) => loginError = "Success!"
+                case Failure(e) => {
+                    // Compiler cries without the cast
+                    val response = e.asInstanceOf[AjaxException]
+                    // TODO: Change this once json parsing for errors is done
+                    val json = js.JSON.parse(response.xhr.responseText)
+                    var message = s"Unknown error: ${json.message}"
+                    if (response.xhr.status == 400) {
+                        message = "Invalid username or password"
+                    }
+                    loginError = message
+                }
+            }
+        else
+            loginError = "Please enter both username and password"
+    
+    def onEnter(e: dom.KeyboardEvent) = if (e.keyCode == 13) login(e)
+
     def render() = scoped(
         div(cls := "loginForm borderRadius",
             div(cls := "error", loginError match {
@@ -32,33 +55,13 @@ class LoginForm(var username: String = "", var password: String = "",
                     src := "/assets/google_logo.svg"),
                 label(cls := "username",
                     span(cls := "borderShadowBlue bgBlue borderRadius", "username"),
-                    textInput(username, { username = _ })
+                    textInput(username, { username = _ }, onKeyupE = onEnter)
                 ),
                 label(cls := "password",
                     span(cls := "borderShadowBlue bgBlue borderRadius", "password"),
-                    textInput(password, { password = _ }, "password")
+                    textInput(password, { password = _ }, "password", onKeyupE = onEnter),
                 ),
-                button("Log in", cls := "submitButton shadowClick", onClick := { e =>
-                    if (password.length > 0 && username.length > 0) {
-                        AppState.loginWithPassword(username, password)
-                        .onComplete {
-                            case Success(_) => loginError = "Success!"
-                            case Failure(e) => {
-                                // Compiler cries without the cast
-                                val response = e.asInstanceOf[AjaxException]
-                                // TODO: Change this once json parsing for errors is done
-                                val json = js.JSON.parse(response.xhr.responseText)
-                                var message = s"Unknown error: ${json.message}"
-                                if (response.xhr.status == 400) {
-                                    message = "Invalid username or password"
-                                }
-                                loginError = message
-                            }
-                        }
-                    } else {
-                        loginError = "Please enter both username and password"
-                    }
-                }),
+                button("Log in", cls := "submitButton shadowClick", onClick := { e => login(e) }),
             )
         )
     )
