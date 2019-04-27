@@ -2,9 +2,10 @@ package mocasys
 
 import scala.util.{Success, Failure}
 import scala.scalajs.js
+import org.scalajs.dom
+import org.scalajs.dom.ext._
 import js.JSConverters._
 import scalajs.js.annotation._
-import org.scalajs.dom.ext._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object ApiClient {
@@ -16,7 +17,7 @@ object ApiClient {
 
     class QueryDbRequest(
             val query_str: String,
-            val data: js.Array[js.Any],
+            val data: js.Array[String],
         ) extends js.Object
     class DbField(
             val columnName: String,
@@ -26,22 +27,42 @@ object ApiClient {
             val dataTypeModifier: Int,
             val format: String,
         ) extends js.Object
+    case class DbRow(
+            val data: js.Array[js.Any],
+            val fields: js.Array[DbField]) {
+        def apply(fieldName: String) = {
+            // TODO: Map for more efficiency? It'd need to be cached at the
+            // QueryDbResp level
+            val fieldIndex =
+                fields.zipWithIndex
+                .filter { case (c, i) => c.columnName == fieldName }
+                .map { case (c, i) => i }
+                .head
+            data(fieldIndex)
+        }
+
+        def apply(i: Int) = data(i)
+    }
     class QueryDbResp(
             val rows: js.Array[js.Array[js.Any]],
             val rowCount: Int,
             val fields: js.Array[DbField],
         ) extends js.Object
-    //class QueryDbRespSc(
-    //        val rows: Seq[Seq[Any]],
-    //        val rowCount: Int,
-    //        val fields: Seq[DbField],
-    //    )
-    //
-    //def parseQdbRows(rows: js.Array[js.Array[js.Any]]): Seq[Seq[Any]] =
-    //    for (row <- rows) yield Seq(for (dp <- row) yield dp)
-    
-    //def toQdbResp(respJs: QueryDbRespJs): QueryDbResp =
-    //    QueryDbResp(parseQdbRows(respJs.rows), respJs.rowCount, respJs.asInstanceOf[Seq[DbField]])
+    // An implicit wrapper which makes it possible to treat QueryDbResp
+    // as a Seq without almost any performance penalty
+    implicit class QueryDbRespAsSeq(val resp: QueryDbResp) extends Seq[DbRow] {
+        def apply(i: Int) = DbRow(resp.rows(i), resp.fields)
+        def length = resp.rowCount
+        def iterator = new Iterator[DbRow] {
+            var i = 0
+            def hasNext = i < resp.rowCount
+            def next() = {
+                val row = resp(i)
+                i += 1
+                row
+            }
+        }
+    }
 }
 
 class ApiClient(val apiUrl: String) {
@@ -62,7 +83,7 @@ class ApiClient(val apiUrl: String) {
             resp
         }
 
-    def queryQdbRaw(query: String, params: Seq[js.Any] = Seq()) =
+    def queryDbRaw(query: String, params: Seq[String] = Seq()) =
         Ajax.post(
             s"$apiUrl/qdb",
             data = js.JSON.stringify(
@@ -72,18 +93,19 @@ class ApiClient(val apiUrl: String) {
                 "Authorization" -> s"Token ${this.authToken.getOrElse("")}",
             ))
 
-    def queryDb(query: String, params: Seq[js.Any] = Seq()) =
-        queryQdbRaw(query, params)
+    def queryDb(query: String, params: Seq[String] = Seq()) =
+        queryDbRaw(query, params)
         .transform {
-            case Success(xhr) =>
+            case Success(xhr: dom.XMLHttpRequest) =>
                 Success(js.JSON.parse(xhr.responseText).asInstanceOf[QueryDbResp])
             case Failure(e) => { Failure(e) }
         }
     
-    def multiQueryDb(queries: Seq[String], params: Seq[js.Any] = Seq()) =
-        queryQdbRaw(queries.mkString(" "), params)
+    def multiQueryDb(queries: Seq[String], params: Seq[String] = Seq()) =
+        queryDbRaw(queries.mkString(" "), params)
         .transform {
-            case Success(xhr) => Success(js.JSON.parse(xhr.responseText).asInstanceOf[js.Array[QueryDbResp]])
+            case Success(xhr: dom.XMLHttpRequest) =>
+                Success(js.JSON.parse(xhr.responseText).asInstanceOf[js.Array[QueryDbResp]])
             case Failure(e) => { Failure(e) }
         }
 
