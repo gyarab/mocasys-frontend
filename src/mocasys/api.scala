@@ -16,7 +16,7 @@ object ApiClient {
 
     class QueryDbRequest(
             val query_str: String,
-            val data: js.Array[js.Any],
+            val data: js.Array[String],
         ) extends js.Object
     class DbField(
             val columnName: String,
@@ -82,7 +82,7 @@ class ApiClient(val apiUrl: String) {
             resp
         }
 
-    def queryDb(query: String, params: Seq[js.Any] = Seq()) =
+    def queryDb(query: String, params: Seq[String] = Seq()) =
         Ajax.post(
             s"$apiUrl/qdb",
             data = js.JSON.stringify(
