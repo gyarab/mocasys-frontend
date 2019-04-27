@@ -26,7 +26,10 @@ package object main {
         def render() =
             div(
                 div(cls := "tempStatus",
-                    "User: " + AppState.loggedInUser.getOrElse("")
+                    AppState.loggedInUser match {
+                        case None => "Not Logged In"
+                        case Some(s) => s"User: $s"
+                    }
                 ),
                 AppState.router.currentComponent
             )
