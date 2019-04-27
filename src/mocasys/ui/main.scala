@@ -24,11 +24,11 @@ package object main {
 
     class PageRoot extends Component {
         def render() =
-            div("Hello, world",
-                div("Currently logged in: " +
-                    AppState.loggedInUser.getOrElse("")),
-                AppState.router.currentComponent,
-            )
+          div (
+              div("Currently logged in: " +
+                  AppState.loggedInUser.getOrElse("")),
+              AppState.router.currentComponent,
+          )
     }
 
     @JSExportTopLevel("MocasysWeb")

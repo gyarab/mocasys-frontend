@@ -21,13 +21,12 @@ class LoginForm(var username: String = "", var password: String = "",
 
     def render() = scoped(
         div(cls := "loginForm",
-            img(cls := "mocasysLogo", src := "/assets/mocasys_logo.svg"),
             div(cls := "error", loginError match {
                 case "" => loginError
                 case _ => span(loginError)
             }),
             div(cls := "form", 
-                img(src := "/assets/google_logo.svg"),
+                img(cls := "mocasysLogo", src := "/assets/mocasys_logo.svg"),
                 label(cls := "username",
                     span("username"),
                     textInput(username, { username = _ })
@@ -36,7 +35,7 @@ class LoginForm(var username: String = "", var password: String = "",
                     span("password"),
                     textInput(password, { password = _ }, "password")
                 ),
-                button("> login", cls := "submitButton", onClick := { e =>
+                button("Log in", cls := "submitButton", onClick := { e =>
                     if (password.length > 0 && username.length > 0) {
                         AppState.loginWithPassword(username, password)
                         .onComplete {
@@ -63,7 +62,7 @@ class LoginForm(var username: String = "", var password: String = "",
 
     cssScoped { import liwec.cssDsl._
         c.loginForm (
-            marginTop := "4em",
+            marginTop := "1em",
             marginLeft := "auto",
             marginRight := "auto",
             width := "50%",
@@ -71,54 +70,37 @@ class LoginForm(var username: String = "", var password: String = "",
             fontFamily := "Helvetica",
             color := "#f1ffff",
 
-            e.img -> (
-                borderRadius := "3px",
-            ),
-
-            c.mocasysLogo -> (
-                width := "100%",
-            ),
-
             c.form -> (
                 display := "grid",
                 alignItems := "center",
                 justifyItems := "center",
                 gridTemplateColumns := "1fr 20px 1fr",
-                gridTemplateRows := "1fr 1fr 20px 1fr 1fr",
+                gridTemplateRows := "auto 1fr 1fr 20px 1fr 1fr",
                 backgroundColor := "#265976",
                 padding := "20px",
                 borderRadius := "3px",
 
-                e.img -> (
-                    gridColumn := "3",
-                    gridRowStart := "1",
-                    gridRowEnd := "3",
-                    width := "3.5em",
-                    padding := "0.5em",
-                    backgroundColor := "#f1ffff",
-                    justifySelf := "right",
-                    marginRight := "17.5%",
-                ),
-
-                RawSelector("img:hover") -> (
-                    backgroundColor := "#ff9b20",
+                c.mocasysLogo -> (
+                    gridColumn := "1/4",
+                    gridRow := "1",
+                    width := "100%",
                 ),
 
                 c.username -> (
                     e.span -> (
-                        gridRow := "1",
+                        gridRow := "2",
                     ),
                     e.input -> (
-                        gridRow := "2"
+                        gridRow := "3"
                     ),
                 ),
 
                 c.password -> (
                     e.span -> (
-                        gridRow := "4",
+                        gridRow := "5",
                     ),
                     e.input -> (
-                        gridRow := "5"
+                        gridRow := "6"
                     ),
                 ),
 
@@ -140,25 +122,35 @@ class LoginForm(var username: String = "", var password: String = "",
                 ),
 
                 c.submitButton (
-                    gridRowStart := "4",
-                    gridRowEnd := "6",
+                    gridRow := "2/6",
                     gridColumn := "3",
                     width := "75%",
-                    height := "70%",
+                    height :=  "50%",
                     padding := "0",
                     border := "0",
                     borderRadius := "3px",
                     alignSelf := "end",
+                    background := "#f1ffff",
+                    color := "#265976",
+                    fontSize := "2em",
+                    fontWeight := "400",
                 ),
 
                 RawSelector(".submitButton:hover") -> (
                     backgroundColor := "#ff9b20",
+                    boxShadow := "7px 7px 50px 0px rgba(0,0,0,0.75)",
+                    transform := "translateY(-8px)",
+                ),
+
+                RawSelector(".submitButton:clicked") -> (
+                    backgroundColor := "#d23a3f",
+                    transform := "translateY(2px)",
                 ),
             ),
 
             c.error -> (
-                marginTop := "4em",
-                marginBottom := "4em",
+                marginTop := "2em",
+                marginBottom := "1em",
                 height := "2.4em",
             ),
 
