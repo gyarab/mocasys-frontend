@@ -1,5 +1,6 @@
 package mocasys.ui.pages
 
+import scala.collection._
 import scala.util.{Success, Failure}
 import scalajs.js
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -16,19 +17,19 @@ import mocasys.ui.tables._
 import mocasys.ApiClient._
 
 class FoodSelection extends Component {
+    var foodList: js.Array[js.Array[js.Any]] = js.Array[js.Array[js.Any]]()
     var balance: String = ""
-    var foodList: Array[Array[Any]] = Array[Array[Any]]()
     var error: String = ""
     var shouldFetch: Boolean = true
 
     // TODO: Replace with query builder
     val balanceQuery = "SELECT account_balance FROM diners;"
     def foodListQuery(start: String, end: String) =
-        "SELECT * FROM food_assignments AS fa " +
-        "LEFT JOIN food_choice AS fc " +
-        "ON fa.day = fc.day AND fa.kind = fc.kind " +
-        s"WHERE (fa.day BETWEEN '$start' AND '$end') " +
-        "AND fc.id_diner = session_person_get()";
+        "SELECT fa.day, fa.id_food, f.name, fa.kind, fc.kind as kind2 FROM food_assignments " +
+        "AS fa LEFT JOIN food_choice AS fc ON fa.day = fc.day AND fa.kind = fc.kind " +
+        "JOIN food AS f ON f.id = fa.id_food " +
+        s"WHERE fa.day BETWEEN '$start' AND '$end' " +
+        "ORDER BY day, fa.kind;"
 
     def fetchBalance = 
         AppState.apiClient.queryDb(balanceQuery)
@@ -47,11 +48,11 @@ class FoodSelection extends Component {
         }
 
     def fetchFoodList =
-        AppState.apiClient.queryDb(foodListQuery("2019-04-20", "2019-04-27"))
+        AppState.apiClient.queryDb(foodListQuery("2019-04-20", "2019-04-28"))
         .onComplete {
             case Success(res) => {
                 shouldFetch = false
-                println(res)
+                foodList = res.rows
                 error = ""
             }
             case Failure(e) => {
@@ -66,7 +67,6 @@ class FoodSelection extends Component {
         val start: js.Date = new js.Date()
         val nDays: Integer = 7
         val end: js.Date = incrDate(start, nDays - 1)
-        val balanceStr: String = if (balance == "") "N/A" else s"Balance: $balance"
         if (shouldFetch) {
             fetchBalance
             fetchFoodList
@@ -77,7 +77,7 @@ class FoodSelection extends Component {
                     p("Login before continuing")
                 else
                     h2(s"${start.toDateString()} - ${end.toDateString()}"),
-                    h3(balanceStr),
+                    h3("Balance: " + (if (balance == "") "N/A" else balance)),
                     div(cls := "foodList", new FoodList(start, nDays, foodList)),
             )
         )

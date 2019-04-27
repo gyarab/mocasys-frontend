@@ -31,6 +31,17 @@ object ApiClient {
             val rowCount: Int,
             val fields: js.Array[DbField],
         ) extends js.Object
+    //class QueryDbRespSc(
+    //        val rows: Seq[Seq[Any]],
+    //        val rowCount: Int,
+    //        val fields: Seq[DbField],
+    //    )
+    //
+    //def parseQdbRows(rows: js.Array[js.Array[js.Any]]): Seq[Seq[Any]] =
+    //    for (row <- rows) yield Seq(for (dp <- row) yield dp)
+    
+    //def toQdbResp(respJs: QueryDbRespJs): QueryDbResp =
+    //    QueryDbResp(parseQdbRows(respJs.rows), respJs.rowCount, respJs.asInstanceOf[Seq[DbField]])
 }
 
 class ApiClient(val apiUrl: String) {
@@ -64,7 +75,7 @@ class ApiClient(val apiUrl: String) {
     def queryDb(query: String, params: Seq[js.Any] = Seq()) =
         queryQdbRaw(query, params)
         .transform {
-            case Success(xhr) => 
+            case Success(xhr) =>
                 Success(js.JSON.parse(xhr.responseText).asInstanceOf[QueryDbResp])
             case Failure(e) => { Failure(e) }
         }
