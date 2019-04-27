@@ -1,5 +1,5 @@
 import scala.concurrent.ExecutionContext.Implicits.global
-import org.scalajs.dom.window.localStorage
+import org.scalajs.dom.window._
 import liwec.Watched
 import mocasys.routing.AppRouter
 
@@ -25,6 +25,7 @@ package object mocasys {
                 localStorage.setItem("apiAuthToken", resp.sessionToken)
                 localStorage.setItem("username", username)
                 this._loggedInUser = Some(username)
+                location.href = "/users"
             }
         }
     }
