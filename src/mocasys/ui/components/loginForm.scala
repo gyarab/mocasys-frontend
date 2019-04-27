@@ -59,7 +59,7 @@ class LoginForm(var username: String = "", var password: String = "",
                     span(cls := "borderShadowBlue bgBlue borderRadius", "password"),
                     textInput(password, { password = _ }, "password", onKeyupE = onEnter),
                 ),
-                button("Google Log In", cls := "googleButton shadowClick"),
+                button("Google", cls := "googleButton shadowClick"),
                 button("Log In", cls := "submitButton shadowClick", onClick := { e => login(e) }),
             )
         )
@@ -74,6 +74,8 @@ class LoginForm(var username: String = "", var password: String = "",
             padding := "15px",
             fontFamily := "Helvetica",
             color := "#f1ffff",
+            maxWidth := "760px",
+            minWidth := "480px",
 
             c.form -> (
                 display := "grid",
@@ -144,11 +146,12 @@ class LoginForm(var username: String = "", var password: String = "",
                     backgroundSize := "1.15em",
                     backgroundPosition := "1.1em center",
                     gridRow := "2 / 4",
-                    padding := "0 1.5em",
+                    padding := "0 16%",
                     borderRadius := "3px",
                     fontWeight := "450",
                     fontSize := "1.4em",
                     textAlign := "right",
+                    fontWeight := "450",
                 ),
 
                 c.submitButton (
