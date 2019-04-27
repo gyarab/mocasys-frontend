@@ -25,7 +25,7 @@ package object mocasys {
                 localStorage.setItem("apiAuthToken", resp.sessionToken)
                 localStorage.setItem("username", username)
                 this._loggedInUser = Some(username)
-                location.href = "/users"
+                location.href = "/foods"
             }
         }
     }
