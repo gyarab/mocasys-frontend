@@ -1,3 +1,62 @@
-body {
-	background-color: white;
+$blue-darker: #265976;
+$blue-lighter: #3ea7b9;
+$blue: #3685a2;
+$white: #f1ffff;
+$orange: #ff9b20;
+$red: #d23a3f;
+
+body, button {
+	background-color: $white;
+}
+
+input {
+	padding-left: 7px;
+}
+
+input:focus {
+	border-color: $orange;
+}
+.shadowClick:hover {
+	background-color: $orange;
+	box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.60);
+	transform: translateY(-2px);
+}
+
+.shadowClick:active {
+	background-color: $red;
+	transform: translateY(0);
+}
+
+.borderRadius, input, button {
+	border-radius: 3px;
+}
+
+.borderShadowBlue, input, button {
+	border: 3px solid $blue-lighter;
+	border-right-color: $blue;
+	border-bottom-color: $blue;
+}
+
+.bgBlueDarker {
+	background-color: $blue-darker;
+}
+
+.bgBlueLighter {
+	background-color: $blue-lighter;
+}
+
+.bgBlue {
+	background-color: $blue;
+}
+
+.bgOrange {
+	background-color: $orange;
+}
+
+.bgRed {
+	background-color: $red;
+}
+
+.bgWhite {
+	background-color: $white;
 }
