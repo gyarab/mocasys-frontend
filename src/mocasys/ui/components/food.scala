@@ -16,55 +16,61 @@ import mocasys.ui.tables._
 import mocasys.ApiClient._
 
 class Food(
-        val date: js.Date,
-        val choices: Array[Any]
+        val choices: Seq[Seq[Any]]
     ) extends Component {
 
-    def render = scoped(
-        if (date != null)
-            div(cls := "food" + (if (date.toDateString() == new js.Date().toDateString) " today" else ""),
-                div(cls := "info",
-                    span(date.toDateString()),
-                    div(cls := "controls",
-                        button("Z"),
-                        button("O"),
-                        button("X"),
-                    )
-                ),
-                table(tbody(
-                    tr(
-                        td("Soup"),
-                        td("Gulasch"),
+    def render: liwec.VNode = {
+        val today: Boolean = false
+        println("null: " + (choices == null).toString())
+        if (choices != null) {
+            println("length: " + choices.length)
+        }
+        return scoped(
+            if (choices != null && choices.length > 0)
+                div(cls := "food" + (if (today) " today" else ""),
+                    div(cls := "info",
+                        span("Date String"),
+                        div(cls := "controls",
+                            button("Z"),
+                            button("O"),
+                            button("X"),
+                        )
                     ),
-                    tr(
-                        td("Main"),
-                        td("Option 1"),
+                    table(tbody(
+                        tr(
+                            td("Soup"),
+                            td("Gulasch"),
+                        ),
+                        tr(
+                            td("Main"),
+                            td("Option 1"),
+                        ),
+                        tr(
+                            td(""),
+                            td("Krůtí nudličky po provensálsku, bramborové špecle"),
+                        ),
+                        tr(
+                            td("Dessert"),
+                            td("Ice Cream"),
+                        )
+                    )),
+                )
+            else
+                div(cls := "food foodEmpty",
+                    div(cls := "info",
+                        //span("Sat Apr 27 2019"),
+                        div(cls := "controls",
+                            //button("Z"),
+                            //button("O"),
+                            //button("X"),
+                        )
                     ),
-                    tr(
-                        td(""),
-                        td("Krůtí nudličky po provensálsku, bramborové špecle"),
-                    ),
-                    tr(
-                        td("Dessert"),
-                        td("Ice Cream"),
-                    )
-                )),
-            )
-        else
-            div(cls := "food foodEmpty",
-                div(cls := "info",
-                    //span("Sat Apr 27 2019"),
-                    div(cls := "controls",
-                        //button("Z"),
-                        //button("O"),
-                        //button("X"),
-                    )
-                ),
-                table(tbody(
-                    //for (_ <- 0 until 4) yield tr(td("."), td("."))
-                )),
-            )
-    )
+                    table(tbody(
+                        //for (_ <- 0 until 4) yield tr(td("."), td("."))
+                    )),
+                )
+        )
+    }
 
     cssScoped { import liwec.cssDsl._
         c.food -> (
