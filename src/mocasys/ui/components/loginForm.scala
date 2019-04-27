@@ -114,7 +114,8 @@ class LoginForm(var username: String = "", var password: String = "",
                         gridRow := "2",
                     ),
                     e.input -> (
-                        gridRow := "3"
+                        gridRow := "3",
+                        background := "#fff",
                     ),
                 ),
 
@@ -123,7 +124,8 @@ class LoginForm(var username: String = "", var password: String = "",
                         gridRow := "5",
                     ),
                     e.input -> (
-                        gridRow := "6"
+                        gridRow := "6",
+                        backgroundColor := "#fff",
                     ),
                 ),
 
