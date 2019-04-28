@@ -46,7 +46,6 @@ class Food(
 
     cssScoped { import liwec.cssDsl._
         c.food -> (
-            fontFamily := "Helvetica",
             height := "10em",
             backgroundColor := "white",
             border := "1px solid #dadce0",
@@ -54,30 +53,27 @@ class Food(
             borderRadius := "4px",
 
             c.info -> (
-                display := "grid",
+                display := "flex",
+                flexDirection := "row",
                 borderBottom := "1px solid #dadce0",
                 height := "31px",
 
                 e.span -> (
-                    gridColumn := "1 / 3",
                     marginLeft := "0.8em",
                     marginTop := "0.5em",
                     marginBottom := "0.2em",
                 ),
 
                 c.controls -> (
-                    gridColumn := "3 / 3",
-                    gridColumnGap := "4px",
-                    display := "grid",
-                    gridTemplateColumns := "repeat(3, 1fr)",
-                    gridTemplateRows := "1fr",
+                    marginLeft := "auto",
 
                     e.button -> (
+                        marginLeft := "10px",
                         height := "100%",
+                        lineHeight := "100%",
                         borderRadius := "0",
                         border := "0px",
                         fontWeight := "bold",
-                        font := "Tahoma",
                         backgroundColor := "#e69857",
                     ),
 
@@ -90,7 +86,6 @@ class Food(
 
             e.table -> (
                 maxWidth := "50%",
-                fontSize := "0.9em",
                 paddingLeft := "0.8em",
 
                 RawSelector("td:first-child") -> (
