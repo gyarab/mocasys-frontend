@@ -14,11 +14,47 @@ import liwec.cssDslTypes.RawSelector
 import mocasys._
 import mocasys.ui.main.textInput
 
+class MenuNode
+case class MenuItem(val value: String,
+                    val action: Unit => Unit = {Unit => Unit}
+    ) extends MenuNode
+case class SubMenu(val item: MenuItem, val children: Seq[MenuNode]) extends MenuNode
+
 class MainMenu() extends Component {
+
+    lazy val rootNode: SubMenu =
+        SubMenu(MenuItem("Menu"),
+            Seq(
+                SubMenu(MenuItem("Submenu"),
+                    Seq(
+                        MenuItem("1"), MenuItem("2")
+                    )
+                ),
+                MenuItem("3")
+            )
+        )
+
+    def renderMenu(node: SubMenu, root: Boolean = false): liwec.htmlDsl.VNodeFrag =
+        if (root)
+            node match {
+                case s: SubMenu => div(cls := "menuContainer",
+                    h2(cls := "menuHeader", node.item.value),
+                    ul(cls := "rootMenu", renderMenu(node))
+                )
+            }
+        else
+            for (child <- node.children) yield child match {
+                case s: SubMenu => li(cls := "menuItem",
+                    h4(cls := "menuHeader", s.item.value),
+                    ul(cls := "menu",
+                        renderMenu(s)
+                    )
+                )
+                case i: MenuItem => li(cls := "menuItem", i.value)
+            }
 
     def render: liwec.VNode = {
         val username = AppState.loggedInUser
-        println(username)
         if (username == None) return scoped(div())
         return scoped(
             div(cls := "mainMenu bgColor1 borderRadius",
@@ -46,9 +82,7 @@ class MainMenu() extends Component {
                         dom.window.alert("Not Yet Implemented!")
                     }),
                 ),
-                div(cls := "menu",
-                
-                ),
+                renderMenu(rootNode, root = true)
             )
         )
     }
@@ -136,6 +170,34 @@ class MainMenu() extends Component {
                     gridRow := "3/4",
                     gridColumn := "1/2",
                 ),
+            ),
+
+            c.menuContainer (
+                listStyle := "none",
+                margin := "0",
+                padding := "1em 0.8em 0 0.8em",
+
+                e.ul (listStyle := "none"),
+
+                RawSelector("*") (
+                    margin := "0",
+                    padding := "0",
+                ),
+
+                c.menu (
+                    margin := "0.2em 0 0.3em 1.6em",
+                ),
+
+                c.menuHeader (
+                    margin := "4px 0 4px 0px",
+                    backgroundColor := "blue",
+                ),
+
+                c.menuItem (
+                    backgroundColor := "red",
+                    margin := "0.1em 0 0.2em 0em",
+                    padding := "5px",
+                )
             ),
         )
     }
