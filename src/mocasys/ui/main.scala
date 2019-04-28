@@ -62,8 +62,4 @@ package object main {
         newDate.setDate(newDate.getDate() + offsetDays)
         return newDate
     }
-
-    def parseQdbRows(rows: js.Array[js.Array[js.Any]]): Seq[Seq[Any]] =
-        Seq(for (row <- rows) yield List(for (dp <- row) yield dp))
-
 }

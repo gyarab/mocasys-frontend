@@ -16,61 +16,33 @@ import mocasys.ui.tables._
 import mocasys.ApiClient._
 
 class Food(
-        val choices: Seq[Seq[Any]]
-    ) extends Component {
-
-    def render: liwec.VNode = {
-        val today: Boolean = false
-        println("null: " + (choices == null).toString())
-        if (choices != null) {
-            println("length: " + choices.length)
-        }
-        return scoped(
-            if (choices != null && choices.length > 0)
-                div(cls := "food" + (if (today) " today" else ""),
-                    div(cls := "info",
-                        span("Date String"),
-                        div(cls := "controls",
-                            button("Z"),
-                            button("O"),
-                            button("X"),
-                        )
-                    ),
-                    table(tbody(
-                        tr(
-                            td("Soup"),
-                            td("Gulasch"),
-                        ),
-                        tr(
-                            td("Main"),
-                            td("Option 1"),
-                        ),
-                        tr(
-                            td(""),
-                            td("Krůtí nudličky po provensálsku, bramborové špecle"),
-                        ),
-                        tr(
-                            td("Dessert"),
-                            td("Ice Cream"),
-                        )
-                    )),
-                )
-            else
-                div(cls := "food foodEmpty",
-                    div(cls := "info",
-                        //span("Sat Apr 27 2019"),
-                        div(cls := "controls",
-                            //button("Z"),
-                            //button("O"),
-                            //button("X"),
-                        )
-                    ),
-                    table(tbody(
-                        //for (_ <- 0 until 4) yield tr(td("."), td("."))
-                    )),
-                )
-        )
+        val date: js.Date,
+        val choices: Seq[DbRow]) extends Component {
+    val isToday = {
+        val today = new js.Date()
+        date.getDate() == today.getDate() &&
+        date.getMonth() == today.getMonth() &&
+        date.getFullYear() == today.getFullYear()
     }
+
+    def render() = scoped(
+        div(cls := "food" + (if (isToday) " today" else ""),
+            div(cls := "info",
+                span(date.toString()),
+                div(cls := "controls",
+                    button("Z"),
+                    button("O"),
+                    button("X"),
+                )
+            ),
+            table(tbody(
+                choices.map(choice => tr(
+                    td(choice("kind").asInstanceOf[String]),
+                    td(choice("name").asInstanceOf[String]),
+                ))
+            )),
+        )
+    )
 
     cssScoped { import liwec.cssDsl._
         c.food -> (

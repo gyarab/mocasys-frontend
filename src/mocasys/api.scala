@@ -82,7 +82,7 @@ class ApiClient(val apiUrl: String) {
             resp
         }
 
-    def queryDbRaw(query: String, params: Seq[js.Any] = Seq()) =
+    def queryDbRaw(query: String, params: Seq[String] = Seq()) =
         Ajax.post(
             s"$apiUrl/qdb",
             data = js.JSON.stringify(
@@ -92,7 +92,7 @@ class ApiClient(val apiUrl: String) {
                 "Authorization" -> s"Token ${this.authToken.getOrElse("")}",
             ))
 
-    def queryDb(query: String, params: Seq[js.Any] = Seq()) =
+    def queryDb(query: String, params: Seq[String] = Seq()) =
         queryDbRaw(query, params)
         .transform {
             case Success(xhr) =>
@@ -100,8 +100,8 @@ class ApiClient(val apiUrl: String) {
             case Failure(e) => { Failure(e) }
         }
 
-    def multiQueryDb(queries: Seq[String], params: Seq[js.Any] = Seq()) =
-        queryDbRaw(queries.mkString(" "), params)
+    def multiQueryDb(query: String, params: Seq[String] = Seq()) =
+        queryDbRaw(query, params)
         .transform {
             case Success(xhr) => Success(js.JSON.parse(xhr.responseText).asInstanceOf[js.Array[QueryDbResp]])
             case Failure(e) => { Failure(e) }
