@@ -21,6 +21,7 @@ case class MenuItem(val value: String,
 case class SubMenu(val item: MenuItem, val children: Seq[MenuNode]) extends MenuNode
 
 class MainMenu() extends Component {
+    var visible: Boolean = false
 
     lazy val rootNode: SubMenu =
         SubMenu(MenuItem("Menu"),
@@ -61,19 +62,14 @@ class MainMenu() extends Component {
         val username = AppState.loggedInUser
         if (username == None) return scoped(div())
         return scoped(
-            div(cls := "mainMenu bgColor1 borderRadius",
+            div(cls := "mainMenu bgColor1 borderRadius "
+                        + (if (visible) "visible" else "invisible"),
                 img(src := "/assets/mocasys_logo_trans.svg"),
                 div(cls := "hider",
                     div(cls := "bar1"), 
                     div(cls := "bar2"),
                     div(cls := "bar3"),
-                    onClick := { e => 
-                        val menu = dom.document.querySelector(".mainMenu")
-                            .asInstanceOf[dom.raw.HTMLElement]
-                        if (menu.style.left == "-16%")
-                            menu.style.left = "0"
-                        else menu.style.left = "-16%"
-                    }
+                    onClick := { e => visible = !visible }
                 ),
                 div(cls := "userMenu",
                     span("Logged in as "), b(username.get),
@@ -93,9 +89,16 @@ class MainMenu() extends Component {
 
     cssScoped { import liwec.cssDsl._
         // TODO: Fix - on small screen buttons popout
+        (c.mainMenu & c.visible) -> (
+            left := "0", // Changed by .hider
+        )
+
+        (c.mainMenu & c.invisible) -> (
+            left := "-16%", // Changed by .hider
+        )
+
         c.mainMenu -> (
             position := "absolute",
-            left := "0",
             top := "0",
             marginTop := "3%",
             width := "16%",

@@ -28,7 +28,7 @@ class Food(
     def render() = scoped(
         div(cls := "food" + (if (isToday) " today" else ""),
             div(cls := "info",
-                span(date.toString()),
+                span(date.toDateString()),
                 div(cls := "controls",
                     button("Z"),
                     button("O"),
