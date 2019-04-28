@@ -50,7 +50,7 @@ class LoginForm(var username: String = "", var password: String = "",
             }),
             div(cls := "form bgColor1 borderRadius", 
                 img(cls := "mocasysLogo",
-                    src := "/assets/mocasys_logo.svg"),
+                    src := "/assets/mocasys_logo_trans.svg"),
                 label(cls := "username",
                     span(cls := "borderShadowColor3 bgColor2 borderRadius", "username"),
                     textInput(username, { username = _ }, onKeyupE = onEnter)
