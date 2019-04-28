@@ -16,7 +16,7 @@ import mocasys.ui.main.textInput
 
 class MenuNode
 case class MenuItem(val value: String,
-                    val action: Unit => Unit = {Unit => Unit}
+                    val action: dom.Event => Unit = {_ => Unit}
     ) extends MenuNode
 case class SubMenu(val item: MenuItem, val children: Seq[MenuNode]) extends MenuNode
 
@@ -25,12 +25,14 @@ class MainMenu() extends Component {
     lazy val rootNode: SubMenu =
         SubMenu(MenuItem("Menu"),
             Seq(
+                MenuItem("/foods", _ => dom.window.location.href = "/foods"),
+                MenuItem("/users", _ => dom.window.location.href = "/users"),
                 SubMenu(MenuItem("Submenu"),
                     Seq(
-                        MenuItem("1"), MenuItem("2")
+                        MenuItem("1", _ => dom.window.alert("Nada!")),
+                        MenuItem("2", _ => dom.window.alert("Nada!"))
                     )
                 ),
-                MenuItem("3")
             )
         )
 
@@ -45,12 +47,14 @@ class MainMenu() extends Component {
         else
             for (child <- node.children) yield child match {
                 case s: SubMenu => li(cls := "menuItem",
-                    h4(cls := "menuHeader", s.item.value),
+                    h4(cls := "menuHeader", s.item.value,
+                        onClick := s.item.action),
                     ul(cls := "menu",
                         renderMenu(s)
                     )
                 )
-                case i: MenuItem => li(cls := "menuItem", i.value)
+                case i: MenuItem => li(cls := "menuItem", span(i.value),
+                                     onClick := i.action)
             }
 
     def render: liwec.VNode = {
@@ -197,6 +201,10 @@ class MainMenu() extends Component {
                     backgroundColor := "red",
                     margin := "0.1em 0 0.2em 0em",
                     padding := "5px",
+
+                    RawSelector("span:hover") (
+                        textDecoration := "underline",
+                    ),
                 )
             ),
         )
