@@ -26,7 +26,7 @@ class Food(
             println("length: " + choices.length)
         }
         return scoped(
-            if (choices != null && choices.length > 0)
+            // if (choices != null && choices.length > 0)
                 div(cls := "food" + (if (today) " today" else ""),
                     div(cls := "info",
                         span("Date String"),
@@ -55,20 +55,20 @@ class Food(
                         )
                     )),
                 )
-            else
-                div(cls := "food foodEmpty",
-                    div(cls := "info",
-                        //span("Sat Apr 27 2019"),
-                        div(cls := "controls",
-                            //button("Z"),
-                            //button("O"),
-                            //button("X"),
-                        )
-                    ),
-                    table(tbody(
-                        //for (_ <- 0 until 4) yield tr(td("."), td("."))
-                    )),
-                )
+            // else
+            //     div(cls := "food foodEmpty",
+            //         div(cls := "info",
+            //             //span("Sat Apr 27 2019"),
+            //             div(cls := "controls",
+            //                 //button("Z"),
+            //                 //button("O"),
+            //                 //button("X"),
+            //             )
+            //         ),
+            //         table(tbody(
+            //             //for (_ <- 0 until 4) yield tr(td("."), td("."))
+            //         )),
+            //     )
         )
     }
 
