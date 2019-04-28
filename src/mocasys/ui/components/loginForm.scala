@@ -59,7 +59,7 @@ class LoginForm(var username: String = "", var password: String = "",
                     span(cls := "borderShadowColor3 bgColor2 borderRadius", "password"),
                     textInput(password, { password = _ }, "password", onKeyupE = onEnter),
                 ),
-                button("Google", cls := "googleButton shadowClick"),
+                button("Google", cls := "googleButton shadowClick", onClick := { e => dom.window.alert("Not Yet Implemented!") }),
                 button("Log In", cls := "submitButton shadowClick", onClick := { e => login(e) }),
             )
         )
@@ -93,6 +93,7 @@ class LoginForm(var username: String = "", var password: String = "",
                 gridTemplateRows := "auto 1fr 1fr 20px 1fr 1fr",
                 backgroundColor := "#265976",
                 padding := "20px",
+                boxShadow := "0px 0px 10px 0px rgba(0, 0, 0, 0.60)",
 
                 c.mocasysLogo -> (
                     gridColumn := "1/6",

@@ -28,13 +28,16 @@ package object main {
     class PageRoot extends Component {
         def render() =
             div(
-                div(cls := "tempStatus",
-                    AppState.loggedInUser match {
-                        case None => "Not Logged In"
-                        case Some(s) => s"User: $s"
-                    }
-                ),
-                AppState.router.currentComponent
+                // div(cls := "tempStatus",
+                //     AppState.loggedInUser match {
+                //         case None => "Not Logged In"
+                //         case Some(s) => s"User: $s"
+                //     }
+                // ),
+                // Do not cite me the old magic, Witch.
+                // I was there when it was written.
+                new MainMenu(),
+                AppState.router.currentComponent,
             )
 
         css { import liwec.cssDsl._

@@ -3,10 +3,12 @@ $color2: #3685a2; //light blue
 $color3: #3ea7b9; //turquoise
 $color4: #f1ffff; //white
 $color5: #ff9b20; //orange
+$color50: #ffb820; //yellow
 $color6: #d23a3f; //red
 
 body, button {
 	background-color: $color4;
+	border: 0;
 }
 
 input {
@@ -31,7 +33,7 @@ input:focus {
 	border-radius: 3px;
 }
 
-.borderShadowColor3, input, button {
+.borderShadowColor3, input {
 	border: 3px solid $color3;
 	border-right-color: $color2;
 	border-bottom-color: $color2;
