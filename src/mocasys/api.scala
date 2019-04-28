@@ -2,9 +2,10 @@ package mocasys
 
 import scala.util.{Success, Failure}
 import scala.scalajs.js
+import org.scalajs.dom
+import org.scalajs.dom.ext._
 import js.JSConverters._
 import scalajs.js.annotation._
-import org.scalajs.dom.ext._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object ApiClient {
@@ -106,5 +107,4 @@ class ApiClient(val apiUrl: String) {
             case Success(xhr) => Success(js.JSON.parse(xhr.responseText).asInstanceOf[js.Array[QueryDbResp]])
             case Failure(e) => { Failure(e) }
         }
-
 }
