@@ -39,7 +39,7 @@ class LoginForm(var username: String = "", var password: String = "",
             }
         else
             loginError = "Please enter both username and password"
-    
+
     def onEnter(e: dom.KeyboardEvent) = if (e.keyCode == 13) login(e)
 
     def render() = scoped(
@@ -48,7 +48,7 @@ class LoginForm(var username: String = "", var password: String = "",
                 case "" => loginError
                 case _ => span(cls := "bgColor6 borderRadius", loginError)
             }),
-            div(cls := "form bgColor1 borderRadius", 
+            div(cls := "form bgColor1 borderRadius",
                 img(cls := "mocasysLogo",
                     src := "/assets/mocasys_logo_trans.svg"),
                 label(cls := "username",
@@ -78,45 +78,51 @@ class LoginForm(var username: String = "", var password: String = "",
             marginTop := "1em",
             marginLeft := "auto",
             marginRight := "auto",
-            width := "50%",
+            width := "90%",
             padding := "15px",
-            fontFamily := "Helvetica",
             color := "#f1ffff",
             maxWidth := "760px",
-            minWidth := "480px",
+            minWidth := "200px",
 
             c.form -> (
                 display := "grid",
                 alignItems := "center",
                 justifyItems := "center",
-                gridTemplateColumns := "repeat(2, 0.2fr 1fr) 0.2fr",
-                gridTemplateRows := "auto 1fr 1fr 20px 1fr 1fr",
                 backgroundColor := "#265976",
                 padding := "20px",
 
+                gridTemplateColumns := "repeat(2, 50fr)",
+                gridGap := "5px 10px",
+                gridTemplateAreas := """
+                    'logo logo'
+                    'usernameLabel usernameLabel'
+                    'usernameInput googleButton'
+                    'passwordLabel passwordLabel'
+                    'passwordInput loginButton'
+                """,
+
                 c.mocasysLogo -> (
-                    gridColumn := "1/6",
-                    gridRow := "1",
+                    gridArea := "logo",
                     marginBottom := "20px",
                     width := "100%",
                 ),
 
                 c.username -> (
                     e.span -> (
-                        gridRow := "2",
+                        gridArea := "usernameLabel",
                     ),
                     e.input -> (
-                        gridRow := "3",
+                        gridArea := "usernameInput",
                         background := "#fff",
                     ),
                 ),
 
                 c.password -> (
                     e.span -> (
-                        gridRow := "5",
+                        gridArea := "passwordLabel",
                     ),
                     e.input -> (
-                        gridRow := "6",
+                        gridArea := "passwordInput",
                         backgroundColor := "#fff",
                     ),
                 ),
@@ -126,12 +132,9 @@ class LoginForm(var username: String = "", var password: String = "",
 
                     e.input -> (
                         width := "100%",
-                        height := "3em",
-                        gridColumn := "2",
                     ),
 
                     e.span -> (
-                        gridColumn := "2",
                         padding := "4px 6px 2px 6px",
                         justifySelf := "left",
                         // marginLeft := "12.5%",
@@ -140,32 +143,25 @@ class LoginForm(var username: String = "", var password: String = "",
 
                 (c.googleButton | c.submitButton) (
                     width := "100%",
-                    height := "85%",
-                    padding := "0",
-                    gridColumn := "4",
-                    justifySelf := "center",
+                    maxWidth := "10em",
+                    justifySelf := "right",
                     alignSelf := "end",
                     border := "0",
                     color := "#265976",
                 ),
 
                 c.googleButton -> (
+                    gridArea := "googleButton",
                     backgroundImage := "url('/assets/google_logo.svg')",
                     backgroundRepeat :=  "no-repeat",
                     backgroundSize := "1.15em",
                     backgroundPosition := "1.1em center",
-                    gridRow := "2 / 4",
-                    padding := "0 25%",
                     borderRadius := "3px",
-                    fontSize := "1.4em",
-                    textAlign := "right",
-                    fontWeight := "450",
+                    textAlign := "center",
                 ),
 
                 c.submitButton (
-                    gridRow := "5 / 7",
-                    fontSize := "2em",
-                    fontWeight := "400",
+                    gridArea := "loginButton",
                 ),
             ),
 
