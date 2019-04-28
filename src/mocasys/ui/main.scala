@@ -17,8 +17,11 @@ import mocasys.ui.pages._
 package object main {
     def textInput(strValue: String,
                   onChange: String => Unit,
-                  typ: String = "text") =
-        input(typeAttr := typ, value := strValue, onInput := {
+                  typ: String = "text",
+                  onKeyupE: dom.KeyboardEvent => Unit = {
+                      e => Unit
+                  }) =
+        input(typeAttr := typ, onKeyup := onKeyupE, value := strValue, onInput := {
             e => onChange(e.target.asInstanceOf[dom.raw.HTMLInputElement].value)
         })
 

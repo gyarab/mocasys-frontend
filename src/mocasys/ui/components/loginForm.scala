@@ -19,106 +19,105 @@ class LoginForm(var username: String = "", var password: String = "",
             extends Component {
     var loginError: String = ""
 
+    def login(e: dom.Event) =
+        // TODO: Set the button active
+        if (password.length > 0 && username.length > 0)
+            AppState.loginWithPassword(username, password)
+            .onComplete {
+                case Success(_) => loginError = "Success!"
+                case Failure(e) => {
+                    // Compiler cries without the cast
+                    val response = e.asInstanceOf[AjaxException]
+                    // TODO: Change this once json parsing for errors is done
+                    val json = js.JSON.parse(response.xhr.responseText)
+                    var message = s"Unknown error: ${json.message}"
+                    if (response.xhr.status == 400) {
+                        message = "Invalid username or password"
+                    }
+                    loginError = message
+                }
+            }
+        else
+            loginError = "Please enter both username and password"
+    
+    def onEnter(e: dom.KeyboardEvent) = if (e.keyCode == 13) login(e)
+
     def render() = scoped(
-        div(cls := "loginForm",
-            img(cls := "mocasysLogo", src := "/assets/mocasys_logo.svg"),
+        div(cls := "loginForm borderRadius",
             div(cls := "error", loginError match {
                 case "" => loginError
-                case _ => span(loginError)
+                case _ => span(cls := "bgColor6 borderRadius", loginError)
             }),
-            div(cls := "form",
-                img(src := "/assets/google_logo.svg"),
+            div(cls := "form bgColor1 borderRadius", 
+                img(cls := "mocasysLogo",
+                    src := "/assets/mocasys_logo_trans.svg"),
                 label(cls := "username",
-                    span("username"),
-                    textInput(username, { username = _ })
+                    span(cls := "borderShadowColor3 bgColor2 borderRadius", "username"),
+                    textInput(username, { username = _ }, onKeyupE = onEnter)
                 ),
                 label(cls := "password",
-                    span("password"),
-                    textInput(password, { password = _ }, "password")
+                    span(cls := "borderShadowColor3 bgColor2 borderRadius", "password"),
+                    textInput(password, { password = _ }, "password", onKeyupE = onEnter),
                 ),
-                button("> login", cls := "submitButton", onClick := { e =>
-                    if (password.length > 0 && username.length > 0) {
-                        AppState.loginWithPassword(username, password)
-                        .onComplete {
-                            case Success(_) => loginError = "Success!"
-                            case Failure(e) => {
-                                // Compiler cries without the cast
-                                val response = e.asInstanceOf[AjaxException]
-                                // TODO: Change this once json parsing for errors is done
-                                val json = js.JSON.parse(response.xhr.responseText)
-                                var message = s"Unknown error: ${json.message}"
-                                if (response.xhr.status == 400) {
-                                    message = "Invalid username or password"
-                                }
-                                loginError = message
-                            }
-                        }
-                    } else {
-                        loginError = "Please enter both username and password"
-                    }
-                }),
+                button("Google", cls := "googleButton shadowClick"),
+                button("Log In", cls := "submitButton shadowClick", onClick := { e => login(e) }),
             )
         )
     )
 
+    //TODO: import this default colorTheme to css
+    //val color1 : String = "#265976" //dark blue
+    //val color2 : String = "#3685a2" //light blue
+    //val color3 : String = "#3ea7b9" //turquoise
+    //val color4 : String = "#f1ffff" //white
+    //val color5 : String = "#ff9b20" //orange
+    //val color6 : String = "#d23a3f" //red
+
     cssScoped { import liwec.cssDsl._
         c.loginForm (
-            marginTop := "4em",
+            marginTop := "1em",
             marginLeft := "auto",
             marginRight := "auto",
             width := "50%",
             padding := "15px",
             fontFamily := "Helvetica",
             color := "#f1ffff",
-
-            e.img -> (
-                borderRadius := "3px",
-            ),
-
-            c.mocasysLogo -> (
-                width := "100%",
-            ),
+            maxWidth := "760px",
+            minWidth := "480px",
 
             c.form -> (
                 display := "grid",
                 alignItems := "center",
                 justifyItems := "center",
-                gridTemplateColumns := "1fr 20px 1fr",
-                gridTemplateRows := "1fr 1fr 20px 1fr 1fr",
+                gridTemplateColumns := "repeat(2, 0.2fr 1fr) 0.2fr",
+                gridTemplateRows := "auto 1fr 1fr 20px 1fr 1fr",
                 backgroundColor := "#265976",
                 padding := "20px",
-                borderRadius := "3px",
 
-                e.img -> (
-                    gridColumn := "3",
-                    gridRowStart := "1",
-                    gridRowEnd := "3",
-                    width := "3.5em",
-                    padding := "0.5em",
-                    backgroundColor := "#f1ffff",
-                    justifySelf := "right",
-                    marginRight := "17.5%",
-                ),
-
-                RawSelector("img:hover") -> (
-                    backgroundColor := "#ff9b20",
+                c.mocasysLogo -> (
+                    gridColumn := "1/6",
+                    gridRow := "1",
+                    marginBottom := "20px",
+                    width := "100%",
                 ),
 
                 c.username -> (
                     e.span -> (
-                        gridRow := "1",
+                        gridRow := "2",
                     ),
                     e.input -> (
-                        gridRow := "2"
+                        gridRow := "3",
+                        background := "#fff",
                     ),
                 ),
 
                 c.password -> (
                     e.span -> (
-                        gridRow := "4",
+                        gridRow := "5",
                     ),
                     e.input -> (
-                        gridRow := "5"
+                        gridRow := "6",
+                        backgroundColor := "#fff",
                     ),
                 ),
 
@@ -126,39 +125,53 @@ class LoginForm(var username: String = "", var password: String = "",
                     display := "contents",
 
                     e.input -> (
-                        width := "70%",
+                        width := "100%",
                         height := "3em",
-                        gridColumn := "1",
+                        gridColumn := "2",
                     ),
 
                     e.span -> (
-                        gridColumn := "1",
-                        backgroundColor := "#3685a2",
+                        gridColumn := "2",
                         padding := "4px 6px 2px 6px",
-                        borderRadius := "2px",
+                        justifySelf := "left",
+                        // marginLeft := "12.5%",
                     ),
                 ),
 
-                c.submitButton (
-                    gridRowStart := "4",
-                    gridRowEnd := "6",
-                    gridColumn := "3",
-                    width := "75%",
-                    height := "70%",
+                (c.googleButton | c.submitButton) (
+                    width := "100%",
+                    height := "85%",
                     padding := "0",
-                    border := "0",
-                    borderRadius := "3px",
+                    gridColumn := "4",
+                    justifySelf := "center",
                     alignSelf := "end",
+                    border := "0",
+                    color := "#265976",
                 ),
 
-                RawSelector(".submitButton:hover") -> (
-                    backgroundColor := "#ff9b20",
+                c.googleButton -> (
+                    backgroundImage := "url('/assets/google_logo.svg')",
+                    backgroundRepeat :=  "no-repeat",
+                    backgroundSize := "1.15em",
+                    backgroundPosition := "1.1em center",
+                    gridRow := "2 / 4",
+                    padding := "0 25%",
+                    borderRadius := "3px",
+                    fontSize := "1.4em",
+                    textAlign := "right",
+                    fontWeight := "450",
+                ),
+
+                c.submitButton (
+                    gridRow := "5 / 7",
+                    fontSize := "2em",
+                    fontWeight := "400",
                 ),
             ),
 
             c.error -> (
-                marginTop := "4em",
-                marginBottom := "4em",
+                marginTop := "2em",
+                marginBottom := "1em",
                 height := "2.4em",
             ),
 
@@ -166,10 +179,8 @@ class LoginForm(var username: String = "", var password: String = "",
                 display := "block",
                 marginLeft := "4em",
                 marginRight := "4em",
-                backgroundColor := "#d23a3f",
                 padding := "10px 0px 8px",
                 textAlign := "center",
-                borderRadius := "3px",
             ),
         )
     }
