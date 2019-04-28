@@ -48,15 +48,15 @@ class LoginForm(var username: String = "", var password: String = "",
                 case "" => loginError
                 case _ => span(cls := "bgRed borderRadius", loginError)
             }),
-            div(cls := "form bgBlueDarker borderRadius", 
+            div(cls := "form bgColor1 borderRadius", 
                 img(cls := "mocasysLogo",
                     src := "/assets/mocasys_logo.svg"),
                 label(cls := "username",
-                    span(cls := "borderShadowBlue bgBlue borderRadius", "username"),
+                    span(cls := "borderShadowColor3 bgColor2 borderRadius", "username"),
                     textInput(username, { username = _ }, onKeyupE = onEnter)
                 ),
                 label(cls := "password",
-                    span(cls := "borderShadowBlue bgBlue borderRadius", "password"),
+                    span(cls := "borderShadowColor3 bgColor2 borderRadius", "password"),
                     textInput(password, { password = _ }, "password", onKeyupE = onEnter),
                 ),
                 button("Google", cls := "googleButton shadowClick"),
@@ -64,6 +64,14 @@ class LoginForm(var username: String = "", var password: String = "",
             )
         )
     )
+
+    //TODO: import this default colorTheme to css
+    //val color1 : String = "#265976" //dark blue
+    //val color2 : String = "#3685a2" //light blue
+    //val color3 : String = "#3ea7b9" //turquoise
+    //val color4 : String = "#f1ffff" //white
+    //val color5 : String = "#ff9b20" //orange
+    //val color6 : String = "#d23a3f" //red
 
     cssScoped { import liwec.cssDsl._
         c.loginForm (
@@ -89,6 +97,7 @@ class LoginForm(var username: String = "", var password: String = "",
                 c.mocasysLogo -> (
                     gridColumn := "1/6",
                     gridRow := "1",
+                    marginBottom := "20px",
                     width := "100%",
                 ),
 
@@ -146,9 +155,8 @@ class LoginForm(var username: String = "", var password: String = "",
                     backgroundSize := "1.15em",
                     backgroundPosition := "1.1em center",
                     gridRow := "2 / 4",
-                    padding := "0 16%",
+                    padding := "0 25%",
                     borderRadius := "3px",
-                    fontWeight := "450",
                     fontSize := "1.4em",
                     textAlign := "right",
                     fontWeight := "450",
