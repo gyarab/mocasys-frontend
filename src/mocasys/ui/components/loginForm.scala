@@ -46,7 +46,7 @@ class LoginForm(var username: String = "", var password: String = "",
         div(cls := "loginForm borderRadius",
             div(cls := "error", loginError match {
                 case "" => loginError
-                case _ => span(cls := "bgRed borderRadius", loginError)
+                case _ => span(cls := "bgColor6 borderRadius", loginError)
             }),
             div(cls := "form bgColor1 borderRadius", 
                 img(cls := "mocasysLogo",
