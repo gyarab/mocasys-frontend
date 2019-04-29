@@ -39,11 +39,18 @@ package object tables {
                 } }
         }
 
-    def linkedRendererForGroup(linkGetter: DbRow => String)(col: DbField):
-            (DbRow, Any) => VNodeApplicable[ElementVNode] = {
+    def linkedRendererForColumn(linkGetter: DbRow => String)(col: DbField)
+            : (DbRow, Any) => VNodeFrag = {
         val renderer = rendererForColumn(col)
         (row, value) =>
             a(href := linkGetter(row), renderer(row, value))
+    }
+
+    def onClickRendererForColumn(clickHandler: DbRow => Unit)(col: DbField)
+            : (DbRow, Any) => VNodeFrag = {
+        val renderer = rendererForColumn(col)
+        (row, value) =>
+            Seq(renderer(row, value), onClick := { _ => clickHandler(row) })
     }
 
     def colsFromQuery(

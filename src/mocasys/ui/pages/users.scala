@@ -13,21 +13,33 @@ import mocasys._
 import mocasys.ui.components._
 import mocasys.ui.main.textInput
 import mocasys.ui.tables._
+import mocasys.ui.forms._
 import mocasys.ApiClient._
 
 class UsersPage extends Component {
+    var form: Option[Form] = None
 
     def render = scoped(
         div(cls := "queryTest",
-            new InteractiveTable("SELECT * FROM users"),
+            form.map { form =>
+                div(cls := "userForm",
+                    div(s"User selected: ${form.data("id")}"),
+                    label(span("Username:"),
+                          form.text("username")),
+                    label(span("Person:"),
+                          form.textInt("id_person")),
+                    form.save("Save", "users", Seq("id")),
+                )
+            },
+            button("New user", onClick := { _ =>
+                form = Some(new Form(this, Map(
+                    "id" -> 0, "username" -> "", "id_person" -> 0)))
+            }),
+            new InteractiveTable(
+                "SELECT * FROM users",
+                onClickRendererForColumn({ row =>
+                    form = Some(new Form(this, row))
+                })),
         )
     )
-
-    cssScoped { import liwec.cssDsl._
-        c.queryTest -> (
-            (e.input & RawSelector("[type=text]")) -> (
-                width := "60%",
-            ),
-        ),
-    }
 }

@@ -66,7 +66,7 @@ class MainMenu() extends Component {
                         + (if (visible) "visible" else "invisible"),
                 img(src := "/assets/mocasys_logo_trans.svg"),
                 div(cls := "hider",
-                    div(cls := "bar1"), 
+                    div(cls := "bar1"),
                     div(cls := "bar2"),
                     div(cls := "bar3"),
                     onClick := { e => visible = !visible }
@@ -107,7 +107,6 @@ class MainMenu() extends Component {
             borderBottomLeftRadius := "0",
             borderTopLeftRadius := "0",
             color := "#f1ffff",
-            fontFamily := "Helvetica",
             transition := "left 0.3s ease-in-out",
 
             e.img (

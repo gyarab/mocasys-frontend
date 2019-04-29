@@ -102,9 +102,7 @@ class FoodSelection extends Component {
             padding := "1.5em",
 
             c.foodList -> (
-                padding := "1.5em",
-                gridColumnStart := "1",
-                gridColumnEnd := "4",
+                gridColumn := "1 / 4",
             ),
 
             e.h2 -> (
