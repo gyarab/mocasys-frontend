@@ -11,7 +11,12 @@ $color6: #d23a3f; //red
 	font-family: "sans-serif";
 }
 
-body, button {
+body {
+	background-color: $color4;
+	margin: 0;
+}
+
+button {
 	background-color: $color4;
 	border: 0;
 }
