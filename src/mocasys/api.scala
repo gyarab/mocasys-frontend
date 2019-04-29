@@ -30,18 +30,34 @@ object ApiClient {
     case class DbRow(
             val data: js.Array[js.Any],
             val fields: js.Array[DbField]) {
-        def apply(fieldName: String) = {
+        def getOption(fieldName: String) = {
             // TODO: Map for more efficiency? It'd need to be cached at the
             // QueryDbResp level
-            val fieldIndex =
-                fields.zipWithIndex
-                .filter { case (c, i) => c.columnName == fieldName }
-                .map { case (c, i) => i }
-                .head
-            data(fieldIndex)
+            fields.zipWithIndex
+            .filter { case (c, i) => c.columnName == fieldName }
+            .map { case (c, i) => i }
+            .headOption
+            .map(fi => data(fi))
+        }
+        def apply(fieldName: String) = {
+            getOption(fieldName).head
         }
 
         def apply(i: Int) = data(i)
+    }
+    implicit class DbRowAsMap(val row: DbRow) extends Map[String, Any] {
+        def get(key: String) = row.getOption(key)
+        def + [V1 >: Any](kv: (String, V1)): Map[String, V1] = this.toMap + kv
+        def - (key: String) = this.toMap - key
+        def iterator = new Iterator[(String, Any)] {
+            var i = 0
+            def hasNext = i < row.data.length
+            def next() = {
+                val col = (row.fields(i).columnName, row.data(i))
+                i += 1
+                col
+            }
+        }
     }
     class QueryDbResp(
             val rows: js.Array[js.Array[js.Any]],

@@ -97,15 +97,12 @@ class FoodSelection extends Component {
     cssScoped { import liwec.cssDsl._
         c.foodSelection -> (
             display := "grid",
-            marginLeft := "14em", // Placeholder
             backgroundColor := "white",
             height := "100%",
             padding := "1.5em",
 
             c.foodList -> (
-                padding := "1.5em",
-                gridColumnStart := "1",
-                gridColumnEnd := "4",
+                gridColumn := "1 / 4",
             ),
 
             e.h2 -> (
