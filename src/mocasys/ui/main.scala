@@ -37,12 +37,15 @@ package object main {
                 // Do not cite me the old magic, Witch.
                 // I was there when it was written.
                 new MainMenu(),
-                AppState.router.currentComponent,
+                div(cls := "content",
+                    AppState.router.currentComponent,
+                ),
             )
 
         css { import liwec.cssDsl._
-            c.tempStatus -> (
-                width := "10%",
+            c.content -> (
+                paddingLeft := "18.5em",
+                paddingRight := "18.5em",
             )
         }
     }

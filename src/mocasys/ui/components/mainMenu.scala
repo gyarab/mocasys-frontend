@@ -62,7 +62,7 @@ class MainMenu() extends Component {
         val username = AppState.loggedInUser
         if (username == None) return scoped(div())
         return scoped(
-            div(cls := "mainMenu bgColor1 borderRadius "
+            nav(cls := "mainMenu bgColor1 borderRadius "
                         + (if (visible) "visible" else "invisible"),
                 img(src := "/assets/mocasys_logo_trans.svg"),
                 div(cls := "hider",
@@ -71,7 +71,7 @@ class MainMenu() extends Component {
                     div(cls := "bar3"),
                     onClick := { e => visible = !visible }
                 ),
-                div(cls := "userMenu",
+                nav(cls := "userMenu",
                     span("Logged in as "), b(username.get),
                     button("Profile", cls := "profile bgColor4 shadowClick",
                     onClick := { e =>
@@ -94,14 +94,14 @@ class MainMenu() extends Component {
         )
 
         (c.mainMenu & c.invisible) -> (
-            left := "-16%", // Changed by .hider
+            left := "-16em", // Changed by .hider
         )
 
         c.mainMenu -> (
             position := "absolute",
             top := "0",
             marginTop := "3%",
-            width := "16%",
+            width := "16em",
             height := "90%",
             boxShadow := "5px 5px 10px 0px rgba(0, 0, 0, 0.60)",
             borderBottomLeftRadius := "0",
@@ -197,11 +197,11 @@ class MainMenu() extends Component {
 
                 c.menuHeader (
                     margin := "4px 0 4px 0px",
-                    backgroundColor := "blue",
+                    backgroundColor := "blue", // Debug
                 ),
 
                 c.menuItem (
-                    backgroundColor := "red",
+                    backgroundColor := "red", // Debug
                     margin := "0.1em 0 0.2em 0em",
                     padding := "5px",
 
