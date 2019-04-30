@@ -37,17 +37,8 @@ package object main {
                 // Do not cite me the old magic, Witch.
                 // I was there when it was written.
                 new MainMenu(),
-                div(cls := "content",
-                    AppState.router.currentComponent,
-                ),
+                AppState.router.currentComponent,
             )
-
-        css { import liwec.cssDsl._
-            c.content -> (
-                paddingLeft := "18.5em",
-                paddingRight := "18.5em",
-            )
-        }
     }
 
     @JSExportTopLevel("MocasysWeb")
