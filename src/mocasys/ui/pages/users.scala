@@ -23,6 +23,7 @@ class UsersPage extends Component {
         div(cls := "queryTest",
             form.map { form =>
                 div(cls := "userForm",
+                    form.errorText(),
                     div(s"User selected: ${form.data("id")}"),
                     label(span("Username:"),
                           form.text("username")),

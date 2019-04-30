@@ -13,6 +13,7 @@ import liwec.cssMacros._
 import liwec.cssDslTypes.RawSelector
 import mocasys._
 import mocasys.ui.main.textInput
+import mocasys.ApiClient._
 
 class LoginForm(var username: String = "", var password: String = "",
                     val onLogin: Option[() => Unit] = None)
@@ -26,15 +27,11 @@ class LoginForm(var username: String = "", var password: String = "",
             .onComplete {
                 case Success(_) => loginError = "Success!"
                 case Failure(e) => {
-                    // Compiler cries without the cast
-                    val response = e.asInstanceOf[AjaxException]
-                    // TODO: Change this once json parsing for errors is done
-                    val json = js.JSON.parse(response.xhr.responseText)
-                    var message = s"Unknown error: ${json.message}"
-                    if (response.xhr.status == 400) {
-                        message = "Invalid username or password"
+                    val ApiError(status, message) = e
+                    loginError = s"Unknown error: ${message}"
+                    if (status == 400) {
+                        loginError = "Invalid username or password"
                     }
-                    loginError = message
                 }
             }
         else

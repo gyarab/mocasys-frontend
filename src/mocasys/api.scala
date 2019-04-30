@@ -79,6 +79,9 @@ object ApiClient {
             }
         }
     }
+
+    case class ApiError(val httpCode: Int, val message: String)
+        extends Throwable
 }
 
 class ApiClient(val apiUrl: String) {
@@ -108,19 +111,24 @@ class ApiClient(val apiUrl: String) {
                 "Content-Type" -> "application/json",
                 "Authorization" -> s"Token ${this.authToken.getOrElse("")}",
             ))
+        .transform {
+            case Failure(e) => {
+                val resp = e.asInstanceOf[AjaxException]
+                val json = js.JSON.parse(resp.xhr.responseText)
+                Failure(ApiError(resp.xhr.status, json.message.toString()))
+            }
+            case s => s
+        }
 
     def queryDb(query: String, params: Seq[String] = Seq()) =
         queryDbRaw(query, params)
-        .transform {
-            case Success(xhr) =>
-                Success(js.JSON.parse(xhr.responseText).asInstanceOf[QueryDbResp])
-            case Failure(e) => { Failure(e) }
+        .map { xhr =>
+            js.JSON.parse(xhr.responseText).asInstanceOf[QueryDbResp]
         }
 
     def multiQueryDb(query: String, params: Seq[String] = Seq()) =
         queryDbRaw(query, params)
-        .transform {
-            case Success(xhr) => Success(js.JSON.parse(xhr.responseText).asInstanceOf[js.Array[QueryDbResp]])
-            case Failure(e) => { Failure(e) }
+        .map { xhr =>
+            js.JSON.parse(xhr.responseText).asInstanceOf[js.Array[QueryDbResp]]
         }
 }

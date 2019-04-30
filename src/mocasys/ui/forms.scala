@@ -1,5 +1,6 @@
 package mocasys.ui
 
+import scala.util.{Success, Failure}
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import liwec._
@@ -20,6 +21,8 @@ package object forms {
         def this(parent: Component, data: DbRow) =
             this(parent, data, true)
 
+        var error: Option[String] = None
+
         def setData(key: String, value: Any) = {
             data(key) = value
             parent.vm.foreach(Component.queueRedraw)
@@ -31,6 +34,9 @@ package object forms {
         def textInt(key: String) =
             textInput(data(key).asInstanceOf[Integer].toString,
                       { v => data(key) = v.toInt })
+
+        def errorText() =
+            error.map(e => div(cls := "formError", e))
 
         def save(label: String, tableName: String, pkeys: Seq[String]) =
             input(typeAttr := "submit", value := label,
@@ -80,8 +86,14 @@ package object forms {
                     """, params)
                 }
             AppState.apiClient.queryDb(query, params)
-            .foreach { _ =>
-                inDb = true
+            .onComplete { res =>
+                res match {
+                    case Success(_) => inDb = true
+                    case Failure(e) => {
+                        val ApiError(_, msg) = e
+                        error = Some(msg)
+                    }
+                }
                 parent.vm.foreach(Component.queueRedraw)
             }
         }

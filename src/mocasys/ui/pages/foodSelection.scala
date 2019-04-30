@@ -48,9 +48,8 @@ class FoodSelection extends Component {
                 error = ""
             }
             case Failure(e) => {
-                val response = e.asInstanceOf[AjaxException]
-                val json = js.JSON.parse(response.xhr.responseText)
-                error = json.message.toString()
+                val ApiError(_, msg) = e
+                error = msg
             }
         }
 
@@ -62,9 +61,8 @@ class FoodSelection extends Component {
                 error = ""
             }
             case Failure(e) => {
-                val response = e.asInstanceOf[AjaxException]
-                val json = js.JSON.parse(response.xhr.responseText)
-                error = json.message.toString()
+                val ApiError(_, msg) = e
+                error = msg
             }
         }
 
