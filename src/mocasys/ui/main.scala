@@ -63,6 +63,9 @@ package object main {
             dom.window.addEventListener("popstate", { (_: dom.Event) =>
                 Component.queueRedraw(root.vm.get)
             })
+            AppState.router.onUrlChangeListeners.append({ () =>
+                Component.queueRedraw(root.vm.get)
+            })
         }
     }
 
