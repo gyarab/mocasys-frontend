@@ -88,7 +88,10 @@ package object forms {
             AppState.apiClient.queryDb(query, params)
             .onComplete { res =>
                 res match {
-                    case Success(_) => inDb = true
+                    case Success(_) => {
+                        inDb = true
+                        error = None
+                    }
                     case Failure(e) => {
                         val ApiError(_, msg) = e
                         error = Some(msg)
