@@ -18,16 +18,18 @@ class MenuNode
 case class MenuItem(val value: String,
                     val action: dom.Event => Unit = {_ => Unit}
     ) extends MenuNode
-case class SubMenu(val item: MenuItem, val children: Seq[MenuNode]) extends MenuNode
+case class SubMenu(val item: MenuItem,
+                   val children: Seq[MenuNode]
+    ) extends MenuNode
 
 class MainMenu() extends Component {
     var visible: Boolean = false
 
     lazy val rootNode: SubMenu =
-        SubMenu(MenuItem("Menu"),
+        SubMenu(MenuItem("Menu", _ => AppState.router.goToUrl("")),
             Seq(
-                MenuItem("/foods", _ => dom.window.location.href = "/foods"),
-                MenuItem("/users", _ => dom.window.location.href = "/users"),
+                MenuItem("Food Selection", _ => AppState.router.goToUrl("foods")),
+                MenuItem("Users", _ => AppState.router.goToUrl("users")),
                 SubMenu(MenuItem("Submenu"),
                     Seq(
                         MenuItem("1", _ => dom.window.alert("Nada!")),
@@ -37,26 +39,28 @@ class MainMenu() extends Component {
             )
         )
 
+    def renderMenuRoot(node: SubMenu, showHeader: Boolean = true): liwec.htmlDsl.VNodeFrag =
+        div(cls := "menuContainer",
+            (if (showHeader) h2(cls := "menuHeader borderRadius borderShadowColor3",
+                                node.item.value,
+                                onClick := node.item.action) 
+                else None),
+            ul(cls := "rootMenu", renderMenu(node)
+        ))
+
     def renderMenu(node: SubMenu, root: Boolean = false): liwec.htmlDsl.VNodeFrag =
-        if (root)
-            node match {
-                case s: SubMenu => div(cls := "menuContainer",
-                    h2(cls := "menuHeader", node.item.value),
-                    ul(cls := "rootMenu", renderMenu(node))
+        for (child <- node.children) yield child match {
+            case s: SubMenu => li(cls := "menuItem",
+                h4(cls := "menuHeader borderRadius borderShadowColor3", s.item.value,
+                    onClick := s.item.action),
+                    ul(cls := "menu", renderMenu(s))
                 )
-            }
-        else
-            for (child <- node.children) yield child match {
-                case s: SubMenu => li(cls := "menuItem",
-                    h4(cls := "menuHeader", s.item.value,
-                        onClick := s.item.action),
-                    ul(cls := "menu",
-                        renderMenu(s)
-                    )
+            case i: MenuItem => 
+                li(cls := "menuItem",
+                    span(i.value),
+                    onClick := i.action
                 )
-                case i: MenuItem => li(cls := "menuItem", span(i.value),
-                                     onClick := i.action)
-            }
+        }
 
     def render: liwec.VNode = {
         val username = AppState.loggedInUser
@@ -82,11 +86,9 @@ class MainMenu() extends Component {
                                    }),
                             button("Log Out",
                                    cls := "logout bgColor4 shadowClick",
-                                   onClick := { e =>
-                                       dom.window.alert("Not Yet Implemented!")
-                                   }),
+                                   onClick := { e => AppState.logout }),
                         ),
-                        renderMenu(rootNode, root = true),
+                        renderMenuRoot(rootNode),
                     )
                 )
             )
@@ -199,14 +201,15 @@ class MainMenu() extends Component {
                     ),
 
                     c.menuHeader (
-                        margin := "4px 0 4px 0px",
-                        backgroundColor := "blue", // Debug
+                        padding := "5px",
+                        backgroundColor := "#3685a2", // Debug
                     ),
 
                     c.menuItem (
-                        backgroundColor := "red", // Debug
+                        // backgroundColor := "red", // Debug
                         margin := "0.1em 0 0.2em 0em",
                         padding := "5px",
+                        paddingLeft := "0",
 
                         RawSelector("span:hover") (
                             textDecoration := "underline",

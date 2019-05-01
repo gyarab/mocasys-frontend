@@ -18,16 +18,23 @@ package object mocasys {
             return this._loggedInUser
         }
 
-        def loginWithPassword(username: String, password: String) = {
+        def loginWithPassword(username: String, password: String) =
             // Fetch user info into an object eventually
             apiClient.loginWithPassword(username, password)
             .map { resp =>
                 localStorage.setItem("apiAuthToken", resp.sessionToken)
                 localStorage.setItem("username", username)
                 this._loggedInUser = Some(username)
-                location.href = "/foods"
+                this.router.goToUrl("foods")
             }
+
+        def logout = {
+            localStorage.removeItem("apiAuthToken")
+            localStorage.removeItem("username")
+            apiClient.authToken = None
+            this._loggedInUser = None
         }
+
     }
 
     /** An object holding all global state for the web app. All global mutable
