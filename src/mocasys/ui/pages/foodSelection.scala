@@ -31,8 +31,6 @@ class FoodSelection extends Component {
         fetchFoodList()
     }
 
-    def isoDate(date: js.Date) = date.toISOString.substring(0, 10)
-
     // TODO: Replace with query builder
     val balanceQuery = """
         SELECT account_balance FROM diners
@@ -45,7 +43,7 @@ class FoodSelection extends Component {
         LEFT JOIN food_choice AS fc ON fa.day = fc.day AND fa.kind = fc.kind
         JOIN food AS f ON f.id = fa.id_food
         WHERE fa.day BETWEEN '$start' AND '$end'
-        ORDER BY day, fa.kind;
+        ORDER BY day, fa.kind, option;
         """
 
     def fetchBalance() =

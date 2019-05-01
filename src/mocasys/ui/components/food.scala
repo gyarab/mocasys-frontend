@@ -25,6 +25,12 @@ class Food(
         date.getFullYear() == today.getFullYear()
     }
 
+    def radioName(choice: DbRow) =
+        s"${choice("kind")}_${choice("day").toString().substring(0, 10)}"
+
+    def forAttrValue(choice: DbRow) =
+        s"${choice("name")}_${choice("id_food")}_${choice("day").toString().substring(0, 10)}"
+
     def render: liwec.VNode = {
         scoped(
             div(cls := "food borderRadius" + (if (isToday) " today" else ""),
@@ -33,9 +39,19 @@ class Food(
                 ),
                 table(tbody(
                     choices.map(choice => tr(
-                        td(choice("kind").asInstanceOf[String]),
-                        td(choice("name").asInstanceOf[String]),
-                        td(choice("option").asInstanceOf[String]),
+                        td(label(forAttr := forAttrValue(choice),
+                            choice("kind").asInstanceOf[String]
+                        )),
+                        td(label(forAttr := forAttrValue(choice),
+                            choice("name").asInstanceOf[String]
+                        )),
+                        td(label(forAttr := forAttrValue(choice),
+                            choice("option").asInstanceOf[String]
+                        )),
+                        td(
+                            input(typeAttr := "radio", id := forAttrValue(choice),
+                                    value := "", name := radioName(choice))
+                        ),
                     ))
                 )),
             )
@@ -44,7 +60,8 @@ class Food(
 
     cssScoped { import liwec.cssDsl._
         c.food -> (
-            height := "10em",
+            minHeight := "10em",
+            maxHeight := "15em",
             backgroundColor := "white",
             boxShadow := "4px 4px 8px 0px rgba(0, 0, 0, 0.60)",
             borderTop := "3px solid #3ea7b9",
@@ -68,12 +85,11 @@ class Food(
                 marginTop := "0.3em",
                 paddingLeft := "0.8em",
 
-                RawSelector("td:first-child") -> (
-                    fontWeight := "bold",
-                ),
+                e.td (paddingLeft := "1em"),
 
-                RawSelector("td:nth-child(2)") -> (
-                    paddingLeft := "0.5em",
+                RawSelector("td:nth-child(1)") -> (
+                    fontWeight := "bold",
+                    paddingLeft := "0",
                 ),
             ),
         )

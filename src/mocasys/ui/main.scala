@@ -85,4 +85,6 @@ package object main {
         newDate.setDate(newDate.getDate() + offsetDays)
         return newDate
     }
+
+    def isoDate(date: js.Date) = date.toISOString.substring(0, 10)
 }
