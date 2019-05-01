@@ -3,6 +3,7 @@ package mocasys.ui.components
 import scala.util.{Success, Failure}
 import scalajs.js
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalajs.dom
 import org.scalajs.dom.ext._
 import liwec._
 import liwec.htmlDsl._
@@ -24,12 +25,37 @@ class Food(
         date.getMonth() == today.getMonth() &&
         date.getFullYear() == today.getFullYear()
     }
+    var error: String = ""
+
+    def insertChoiceQuery(choice: DbRow): String = s"""
+        INSERT INTO food_choice (id_diner, day, kind, option) VALUES
+        (session_person_get(), '${choice("day")}', '${choice("kind")}', '${choice("option")}');
+        """
 
     def radioName(choice: DbRow) =
         s"${choice("kind")}_${choice("day").toString().substring(0, 10)}"
 
     def forAttrValue(choice: DbRow) =
-        s"${choice("name")}_${choice("id_food")}_${choice("day").toString().substring(0, 10)}"
+        s"radio_${choice("kind")}_${choice("id_food")}_${choice("day").toString().substring(0, 10)}"
+    
+    def shouldBeChecked(choice: DbRow): Boolean =
+        choice("option") == choice("option2") || shouldBeDisabled(choice)
+
+    def shouldBeDisabled(choice: DbRow): Boolean =
+        choice("option").toString().isEmpty()
+
+    def onChange(choice: DbRow) =
+        AppState.apiClient.queryDb(insertChoiceQuery(choice))
+        .onComplete {
+            case Success(res) => {
+                println("SAVED!", res)
+            }
+            case Failure(e) => {
+                val ApiError(_, msg) = e
+                error = msg
+                println(msg)
+            }
+        }
 
     def render: liwec.VNode = {
         scoped(
@@ -48,10 +74,12 @@ class Food(
                         td(label(forAttr := forAttrValue(choice),
                             choice("option").asInstanceOf[String]
                         )),
-                        td(
-                            input(typeAttr := "radio", id := forAttrValue(choice),
-                                    value := "", name := radioName(choice))
-                        ),
+                        td(input(typeAttr := "radio", id := forAttrValue(choice),
+                            name := radioName(choice),
+                            onInput := { e => onChange(choice) },
+                            (if (shouldBeChecked(choice)) checked := "1" else None),
+                            (if (shouldBeDisabled(choice)) disabled := "1" else None)
+                        )),
                     ))
                 )),
             )
