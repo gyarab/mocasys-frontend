@@ -77,3 +77,16 @@ button {
 .bgColor6 {
 	background-color: $color6;
 }
+
+.scrollToTop {
+	position: fixed;
+	right: 1.5em;
+	bottom: 1.5em;
+	background-color: $color1;
+	color: white;
+}
+
+.showOnScroll {
+	opacity: 0;
+	transition: opacity 0.2s;
+}

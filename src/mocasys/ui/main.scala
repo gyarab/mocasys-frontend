@@ -38,6 +38,9 @@ package object main {
                 // I was there when it was written.
                 new MainMenu(),
                 AppState.router.currentComponent,
+                button(cls := "scrollToTop showOnScroll", "Up", onClick := { e => {
+                    dom.window.scrollTo(0, 0);
+                }})
             )
     }
 
@@ -56,6 +59,23 @@ package object main {
             })
             AppState.router.onUrlChangeListeners.append({ () =>
                 Component.queueRedraw(root.vm.get)
+            })
+            // Elements that should be hidden/shown on scroll
+            dom.window.addEventListener("scroll", { (e: dom.UIEvent) => 
+                val elems = dom.document.querySelectorAll(".showOnScroll")
+                if (dom.document.body.scrollTop > 100) {
+                    // Show
+                    for (elem <- elems) {
+                        val e = elem.asInstanceOf[dom.raw.HTMLElement]
+                        e.style.opacity = "1"
+                    }
+                } else {
+                    // Hide
+                    for (elem <- elems) {
+                        val e = elem.asInstanceOf[dom.raw.HTMLElement]
+                        e.style.opacity = "0"
+                    }
+                }
             })
         }
     }
