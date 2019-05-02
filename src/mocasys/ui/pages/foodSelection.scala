@@ -27,8 +27,8 @@ class FoodSelection extends Component {
     var prevEndDate: js.Date = incrDate(endDate, -1)
 
     override def onMount() {
-        fetchBalance()
-        fetchFoodList()
+        fetchBalance
+        fetchFoodListIfDateDiff
     }
 
     // TODO: Replace with query builder
@@ -71,6 +71,13 @@ class FoodSelection extends Component {
                 error = msg
             }
         }
+    
+    def fetchFoodListIfDateDiff =
+        if (startDate != prevStartDate || endDate != prevEndDate) {
+            prevStartDate = startDate
+            prevEndDate = endDate
+            fetchFoodList()
+        }
 
     def foodByDate =
         foodList.map(
@@ -79,13 +86,7 @@ class FoodSelection extends Component {
             .sortBy(_._1))
 
     def render: liwec.VNode = {
-        if (startDate != prevStartDate || endDate != prevEndDate) {
-            prevStartDate = startDate
-            prevEndDate = endDate
-            fetchFoodList()
-        }
-        println(startDate.toUTCString())
-        println(startDate.toISOString())
+        fetchFoodListIfDateDiff
         return scoped(
             div(cls := "foodSelection",
                 div(cls := "firstRow borderRadius",
@@ -93,12 +94,8 @@ class FoodSelection extends Component {
                         span(cls := "borderShadowColor3 bgColor2 borderRadius",
                             "Date Start"),
                         textInput(isoDate(startDate),
-                            { str => {
-                                    println(str)
-                                    startDate =
-                                    (if (str.isEmpty()) startDate else new js.Date(str))
-                                }
-                            },
+                            { str => startDate =
+                                (if (str.isEmpty()) startDate else new js.Date(str))},
                             "date"
                         ),
                     ),
@@ -107,8 +104,7 @@ class FoodSelection extends Component {
                             "Date End"),
                         textInput(isoDate(endDate),
                             { str => endDate =
-                                (if (str.isEmpty()) endDate else new js.Date(str))
-                            },
+                                (if (str.isEmpty()) endDate else new js.Date(str))},
                             "date"
                         ),
                     ),
