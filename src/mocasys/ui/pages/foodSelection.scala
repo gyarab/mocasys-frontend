@@ -20,7 +20,7 @@ class FoodSelection extends Component {
     var foodList: Option[Seq[DbRow]] = None
     var balance: String = ""
     var error: String = ""
-    var startDate: js.Date = new js.Date()
+    var startDate: js.Date = incrDate(new js.Date(), -1)
     var endDate: js.Date = incrDate(startDate, 6)
     // Prev dates will be set on food list fetch
     var prevStartDate: js.Date = incrDate(startDate, -1)
@@ -84,6 +84,8 @@ class FoodSelection extends Component {
             prevEndDate = endDate
             fetchFoodList()
         }
+        println(startDate.toUTCString())
+        println(startDate.toISOString())
         return scoped(
             div(cls := "foodSelection",
                 div(cls := "firstRow borderRadius",
@@ -91,13 +93,24 @@ class FoodSelection extends Component {
                         span(cls := "borderShadowColor3 bgColor2 borderRadius",
                             "Date Start"),
                         textInput(isoDate(startDate),
-                                { str => startDate = new js.Date(str) }, "date"),
+                            { str => {
+                                    println(str)
+                                    startDate =
+                                    (if (str.isEmpty()) startDate else new js.Date(str))
+                                }
+                            },
+                            "date"
+                        ),
                     ),
                     label(cls := "dateEnd",
                         span(cls := "borderShadowColor3 bgColor2 borderRadius",
                             "Date End"),
                         textInput(isoDate(endDate),
-                                { str => endDate = new js.Date(str) }, "date"),
+                            { str => endDate =
+                                (if (str.isEmpty()) endDate else new js.Date(str))
+                            },
+                            "date"
+                        ),
                     ),
                     label(cls := "balance",
                         span(cls := "borderShadowColor3 bgColor2 borderRadius balanceLabel", "Balance"),

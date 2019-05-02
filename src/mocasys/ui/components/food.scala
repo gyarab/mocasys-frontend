@@ -27,10 +27,21 @@ class Food(
     }
     var error: String = ""
 
-    def insertChoiceQuery(choice: DbRow): String = s"""
-        INSERT INTO food_choice (id_diner, day, kind, option) VALUES
-        (session_person_get(), '${choice("day")}', '${choice("kind")}', '${choice("option")}');
-        """
+    // TODO: Replace once the query builder is finished
+    def insertChoiceQuery(choice: DbRow): String =
+        if (choice("option2") == null)
+            s"""
+            INSERT INTO food_choice (id_diner, day, kind, option) VALUES
+            (session_person_get(), '${choice("day")}', '${choice("kind")}', '${choice("option")}');
+            """
+        else
+            s"""
+            UPDATE food_choice
+            SET option = ${choice("option")}
+            WHERE id_diner = session_person_get()
+                AND day = '${choice("day")}'
+                AND kind = '${choice("kind")}';
+            """
 
     def radioName(choice: DbRow) =
         s"${choice("kind")}_${choice("day").toString().substring(0, 10)}"
@@ -65,14 +76,15 @@ class Food(
                 ),
                 table(tbody(
                     choices.map(choice => tr(
+                        (if (shouldBeChecked(choice)) cls := "chosenRow" else None),
                         td(label(forAttr := forAttrValue(choice),
-                            choice("kind").asInstanceOf[String]
+                            span(choice("kind").asInstanceOf[String])
                         )),
                         td(label(forAttr := forAttrValue(choice),
-                            choice("name").asInstanceOf[String]
+                            span(choice("name").asInstanceOf[String])
                         )),
                         td(label(forAttr := forAttrValue(choice),
-                            choice("option").asInstanceOf[String]
+                            span(choice("option").asInstanceOf[String])
                         )),
                         td(input(typeAttr := "radio", id := forAttrValue(choice),
                             name := radioName(choice),
@@ -108,17 +120,25 @@ class Food(
             ),
 
             e.table (
-                maxWidth := "50%",
+                maxWidth := "70%",
                 maxHeight := "100%",
                 marginTop := "0.3em",
                 paddingLeft := "0.8em",
 
-                e.td (paddingLeft := "1em"),
+                (e.tr / e.span) (
+                    display := "block",
+                    width := "100%",
+                    paddingLeft := "1em"
+                ),
 
-                RawSelector("td:nth-child(1)") (
+                e.input (marginBottom := "0.2em"),
+
+                RawSelector("td:nth-child(1) span") (
                     fontWeight := "bold",
                     paddingLeft := "0",
                 ),
+
+                RawSelector("td:nth-child(2)") (width := "20em"),
             ),
         )
 
