@@ -12,7 +12,6 @@ import liwec.htmlMacros._
 import liwec.cssMacros._
 import liwec.cssDslTypes.RawSelector
 import mocasys._
-import mocasys.ui.main.textInput
 
 class MenuNode
 case class MenuItem(val value: String,

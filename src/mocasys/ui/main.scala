@@ -15,16 +15,6 @@ import mocasys.ui.components._
 import mocasys.ui.pages._
 
 package object main {
-    def textInput(strValue: String,
-                  onChange: String => Unit,
-                  typ: String = "text",
-                  onKeyupE: dom.KeyboardEvent => Unit = {
-                      e => Unit
-                  }) =
-        input(typeAttr := typ, onKeyup := onKeyupE, value := strValue, onInput := {
-            e => onChange(e.target.asInstanceOf[dom.raw.HTMLInputElement].value)
-        })
-
     class PageRoot extends Component {
         def render() =
             div(

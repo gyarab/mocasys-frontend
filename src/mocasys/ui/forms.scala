@@ -5,7 +5,7 @@ import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import liwec._
 import liwec.htmlDsl._
-import mocasys.ui.main.textInput
+import mocasys.ui.functionComponents._
 import mocasys.ApiClient._
 import mocasys.AppState
 

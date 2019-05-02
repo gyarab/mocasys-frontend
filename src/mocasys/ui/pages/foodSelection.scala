@@ -13,6 +13,7 @@ import liwec.cssDslTypes.RawSelector
 import mocasys._
 import mocasys.ui.components._
 import mocasys.ui.main._
+import mocasys.ui.functionComponents._
 import mocasys.ui.tables._
 import mocasys.ApiClient._
 

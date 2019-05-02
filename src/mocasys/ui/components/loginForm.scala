@@ -12,7 +12,7 @@ import liwec.htmlMacros._
 import liwec.cssMacros._
 import liwec.cssDslTypes.RawSelector
 import mocasys._
-import mocasys.ui.main.textInput
+import mocasys.ui.functionComponents._
 import mocasys.ApiClient._
 
 class LoginForm(var username: String = "", var password: String = "",

@@ -10,7 +10,7 @@ import liwec.htmlDsl._
 import liwec.htmlMacros._
 import mocasys._
 import mocasys.ApiClient._
-import mocasys.ui.main.textInput
+import mocasys.ui.functionComponents._
 
 package object tables {
     case class Column[R](
