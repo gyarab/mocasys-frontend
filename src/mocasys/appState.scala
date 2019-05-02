@@ -17,14 +17,14 @@ package object mocasys {
         // TODO: Find a way to refactor this
         def loggedInUser: Option[String] = {
             if (this._loggedInUser == None) {
-                this._loggedInUser = Some(localStorage.getItem("username"))
+                this._loggedInUser = Option(localStorage.getItem("username"))
             }
             return this._loggedInUser
         }
 
         def permissions: Option[js.Array[String]] = {
             if (this._permissions == None) {
-                this._permissions = Some(
+                this._permissions = Option(
                     js.JSON.parse(localStorage.getItem("permissions"))
                     .asInstanceOf[js.Array[String]]
                 )
@@ -51,8 +51,7 @@ package object mocasys {
                 case Failure(e) => println(e)
             }
 
-        def logout = if (this.apiClient.authToken != None) {
-            println(this._loggedInUser != None)
+        def logout = {
             localStorage.removeItem("apiAuthToken")
             localStorage.removeItem("username")
             this.apiClient.authToken = None

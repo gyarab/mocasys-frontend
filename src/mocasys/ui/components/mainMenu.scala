@@ -76,23 +76,29 @@ class MainMenu() extends Component {
                             + (if (visible) "visible" else "invisible"),
                     div(cls := "container",
                         img(src := "/assets/mocasys_logo_trans.svg"),
-                        nav(cls := "userMenu",
-                            span("Logged in as "), b(username.get),
-                            button("Profile",
-                                   cls := "profile bgColor4 shadowClick",
-                                   onClick := { e =>
-                                       dom.window.alert("Not Yet Implemented!")
-                                   }),
-                            button("Log Out",
-                                   cls := "logout bgColor4 shadowClick",
-                                   onClick := { e => AppState.logout }),
-                        ),
+                        renderUserMenu(username),
                         renderMenuRoot(rootNode),
                     )
                 )
             )
         )
     }
+
+    def renderUserMenu(username: Option[String]) =
+        nav(cls := "userMenu",
+            span("Logged in as "), b(username.get),
+            button("Profile",
+                    cls := "profile bgColor4 shadowClick",
+                    onClick := { e =>
+                        dom.window.alert("Not Yet Implemented!")
+                    }),
+            button("Log Out",
+                    cls := "logout bgColor4 shadowClick",
+                    onClick := { e => {
+                        visible = false
+                        AppState.logout
+                    }}),
+        )
 
     cssScoped { import liwec.cssDsl._
         c.hider (
