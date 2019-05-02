@@ -102,7 +102,12 @@ class MainMenu() extends Component {
             padding := "3px",
             width := "2.1em",
             height := "2.1em",
+            padding := "6px 8px 8px 3px",
             gridTemplateRows := "repeat(5, 1fr)",
+            boxShadow := "2px 2px 4px 0px rgba(0, 0, 0, 0.60)",
+            borderBottomRightRadius := "10px",
+            borderTopRightRadius := "10px",
+            backgroundColor := "f1ffff",
 
             e.div (
                 border := "2px solid #ffb820",

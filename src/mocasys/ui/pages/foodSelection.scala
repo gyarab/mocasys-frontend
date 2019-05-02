@@ -135,7 +135,7 @@ class FoodSelection extends Component {
                 display := "flex",
                 flexDirection := "row",
                 backgroundColor := "#265976",
-                padding := "1.5em",
+                padding := "1.5em 4em",
                 color := "white",
                 boxShadow := "5px 5px 10px 0px rgba(0, 0, 0, 0.60)",
 
