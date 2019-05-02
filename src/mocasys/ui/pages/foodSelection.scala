@@ -117,7 +117,7 @@ class FoodSelection extends Component {
     }
 
     cssScoped { import liwec.cssDsl._
-        c.foodSelection -> (
+        c.foodSelection (
             display := "grid",
             gridTemplateRows := "auto 2em 100%",
             gridRowGap := "0.3em",

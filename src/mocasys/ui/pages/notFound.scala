@@ -24,7 +24,7 @@ class NotFoundPage extends Component {
     )
 
     cssScoped { import liwec.cssDsl._
-        c.notFoundPage -> (
+        c.notFoundPage (
             color := "white",
             padding := "2em",
             paddingTop := "0.4em",

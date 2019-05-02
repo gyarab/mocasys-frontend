@@ -87,7 +87,7 @@ class Food(
     }
 
     cssScoped { import liwec.cssDsl._
-        c.food -> (
+        c.food (
             minHeight := "10em",
             maxHeight := "15em",
             backgroundColor := "white",
@@ -95,19 +95,19 @@ class Food(
             borderTop := "3px solid #3ea7b9",
             color := "white",
 
-            c.info -> (
+            c.info (
                 display := "flex",
                 flexDirection := "row",
                 height := "31px",
                 backgroundColor := "#265976",
 
-                e.span -> (
+                e.span (
                     marginLeft := "0.8em",
                     marginTop := "0.4em",
                 ),
             ),
 
-            e.table -> (
+            e.table (
                 maxWidth := "50%",
                 maxHeight := "100%",
                 marginTop := "0.3em",
@@ -115,14 +115,14 @@ class Food(
 
                 e.td (paddingLeft := "1em"),
 
-                RawSelector("td:nth-child(1)") -> (
+                RawSelector("td:nth-child(1)") (
                     fontWeight := "bold",
                     paddingLeft := "0",
                 ),
             ),
         )
 
-        c.food /+ c.food -> (
+        (c.food /+ c.food) (
             marginTop := "1em",
         )
     }

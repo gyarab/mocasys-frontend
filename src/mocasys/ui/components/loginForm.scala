@@ -29,9 +29,8 @@ class LoginForm(var username: String = "", var password: String = "",
                 case Failure(e) => {
                     val ApiError(status, message) = e
                     loginError = s"Unknown error: ${message}"
-                    if (status == 400) {
+                    if (status == 400)
                         loginError = "Invalid username or password"
-                    }
                 }
             }
         else
@@ -56,8 +55,10 @@ class LoginForm(var username: String = "", var password: String = "",
                     span(cls := "borderShadowColor3 bgColor2 borderRadius", "password"),
                     textInput(password, { password = _ }, "password", onKeyupE = onEnter),
                 ),
-                button("Google", cls := "googleButton shadowClick", onClick := { e => dom.window.alert("Not Yet Implemented!") }),
-                button("Log In", cls := "submitButton shadowClick", onClick := { e => login(e) }),
+                button("Google", cls := "googleButton shadowClick",
+                        onClick := { e => dom.window.alert("Not Yet Implemented!") }),
+                button("Log In", cls := "submitButton shadowClick",
+                        onClick := { e => login(e) }),
             )
         )
     )
@@ -81,7 +82,7 @@ class LoginForm(var username: String = "", var password: String = "",
             maxWidth := "760px",
             minWidth := "200px",
 
-            c.form -> (
+            c.form (
                 display := "grid",
                 alignItems := "center",
                 justifyItems := "center",
@@ -99,28 +100,28 @@ class LoginForm(var username: String = "", var password: String = "",
                     'passwordInput loginButton'
                 """,
 
-                c.mocasysLogo -> (
+                c.mocasysLogo (
                     gridArea := "logo",
                     marginBottom := "20px",
                     width := "100%",
                 ),
 
-                c.username -> (
-                    e.span -> (
+                c.username (
+                    e.span (
                         gridArea := "usernameLabel",
                     ),
-                    e.input -> (
+                    e.input (
                         gridArea := "usernameInput",
                         backgroundColor := "#f1ffff",
                         color := "#265976",
                     ),
                 ),
 
-                c.password -> (
-                    e.span -> (
+                c.password (
+                    e.span (
                         gridArea := "passwordLabel",
                     ),
-                    e.input -> (
+                    e.input (
                         gridArea := "passwordInput",
                         backgroundColor := "#f1ffff",
                         color := "#265976",
@@ -130,11 +131,11 @@ class LoginForm(var username: String = "", var password: String = "",
                 e.label (
                     display := "contents",
 
-                    e.input -> (
+                    e.input (
                         width := "100%",
                     ),
 
-                    e.span -> (
+                    e.span (
                         padding := "4px 6px 2px 6px",
                         justifySelf := "left",
                         // marginLeft := "12.5%",
@@ -150,7 +151,7 @@ class LoginForm(var username: String = "", var password: String = "",
                     color := "#265976",
                 ),
 
-                c.googleButton -> (
+                c.googleButton (
                     gridArea := "googleButton",
                     backgroundImage := "url('/assets/google_logo.svg')",
                     backgroundRepeat :=  "no-repeat",
@@ -165,13 +166,13 @@ class LoginForm(var username: String = "", var password: String = "",
                 ),
             ),
 
-            c.error -> (
+            c.error (
                 marginTop := "2em",
                 marginBottom := "1em",
                 height := "2.4em",
             ),
 
-            c.error / e.span -> (
+            (c.error / e.span) (
                 display := "block",
                 marginLeft := "4em",
                 marginRight := "4em",

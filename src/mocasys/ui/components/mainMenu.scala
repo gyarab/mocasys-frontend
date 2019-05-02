@@ -118,11 +118,11 @@ class MainMenu() extends Component {
             c.bar3 (gridRow := "5"),
         )
 
-        (c.mainMenu & c.invisible) -> (
+        (c.mainMenu & c.invisible) (
             width := "0",
         )
 
-        c.mainMenu -> (
+        c.mainMenu (
             position := "absolute",
             overflowX := "hidden",
             top := "0",
