@@ -75,13 +75,13 @@ class Food(
                     choices.map(choice => tr(
                         (if (shouldBeChecked(choice)) cls := "chosenRow" else None),
                         td(label(forAttr := forAttrValue(choice),
-                            span(choice("kind").asInstanceOf[String])
+                            p(choice("kind").asInstanceOf[String])
                         )),
                         td(label(forAttr := forAttrValue(choice),
-                            span(choice("option").asInstanceOf[String])
+                            p(choice("option").asInstanceOf[String])
                         )),
-                        td(label(forAttr := forAttrValue(choice),
-                            span(choice("name").asInstanceOf[String])
+                        td(cls := "foodName",label(forAttr := forAttrValue(choice),
+                            p(choice("name").asInstanceOf[String])
                         )),
                         td(input(typeAttr := "radio", id := forAttrValue(choice),
                             name := radioName(choice),
@@ -122,20 +122,19 @@ class Food(
                 marginTop := "0.3em",
                 paddingLeft := "0.8em",
 
-                (e.tr / e.span) (
-                    display := "block",
-                    width := "100%",
-                    paddingLeft := "1em"
+                (e.tr / e.p) (
+                    paddingLeft := "1em",
+                    margin := "0",
                 ),
 
                 e.input (marginBottom := "0.2em"),
 
-                RawSelector("td:nth-child(1) span") (
+                RawSelector("td:nth-child(1) p") (
                     fontWeight := "bold",
                     paddingLeft := "0",
                 ),
 
-                RawSelector("td:nth-child(3)") (width := "20em"),
+                c.foodName (width := "20em"),
             ),
         )
 

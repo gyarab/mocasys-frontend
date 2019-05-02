@@ -23,8 +23,8 @@ class FoodSelection extends Component {
     var startDate: js.Date = incrDate(new js.Date(), -1)
     var endDate: js.Date = incrDate(startDate, 6)
     // Prev dates will be set on food list fetch
-    var prevStartDate: js.Date = incrDate(startDate, -1)
-    var prevEndDate: js.Date = incrDate(endDate, -1)
+    var prevStartDate: js.Date = null
+    var prevEndDate: js.Date = null
 
     override def onMount() {
         fetchBalance
