@@ -12,6 +12,7 @@ import liwec.cssMacros._
 import liwec.cssDslTypes.RawSelector
 import mocasys._
 import mocasys.ui.components._
+import mocasys.ui.functionComponents._
 import mocasys.ui.main._
 import mocasys.ui.tables._
 import mocasys.ApiClient._
@@ -83,11 +84,12 @@ class Food(
                         td(cls := "foodName",label(forAttr := forAttrValue(choice),
                             p(choice("name").asInstanceOf[String])
                         )),
-                        td(input(typeAttr := "radio", id := forAttrValue(choice),
-                            name := radioName(choice),
-                            onInput := { e => onChange(choice) },
-                            (if (shouldBeChecked(choice)) checked := "1" else None),
-                            (if (shouldBeDisabled(choice)) disabled := "1" else None)
+                        td(radioInput(
+                            forAttrValue(choice),
+                            radioName(choice),
+                            { _ => onChange(choice) },
+                            shouldBeChecked(choice),
+                            shouldBeDisabled(choice),
                         )),
                     ))
                 )),
