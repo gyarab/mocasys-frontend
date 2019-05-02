@@ -1,3 +1,4 @@
+$color0: #1f475e; //super dark blue
 $color1: #265976; //dark blue
 $color2: #3685a2; //light blue
 $color3: #3ea7b9; //turquoise
@@ -23,7 +24,7 @@ button {
 
 input {
 	padding: 7px;
-	color: $color1;
+	color: $color0;
 	background-color: $color4;
 
 	&:focus {

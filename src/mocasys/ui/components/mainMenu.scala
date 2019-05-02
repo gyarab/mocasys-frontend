@@ -207,14 +207,20 @@ class MainMenu() extends Component {
 
                     c.menuHeader (
                         padding := "5px",
-                        backgroundColor := "#3685a2", // Debug
+                        backgroundColor := "#3685a2",
+                        boxShadow := "1px 1px 3px 0px rgba(0, 0, 0, 0.60)",
+                    ),
+
+                    RawSelector(".menuHeader:hover") (
+                        textDecoration := "underline",
                     ),
 
                     c.menuItem (
-                        // backgroundColor := "red", // Debug
                         margin := "0.1em 0 0.2em 0em",
                         padding := "5px",
                         paddingLeft := "0",
+
+                        c.menuHeader(marginLeft := "0.6em"),
 
                         RawSelector("span:hover") (
                             textDecoration := "underline",

@@ -58,13 +58,10 @@ class Food(
     def onChange(choice: DbRow) =
         AppState.apiClient.queryDb(insertChoiceQuery(choice))
         .onComplete {
-            case Success(res) => {
-                println("SAVED!", res)
-            }
+            case Success(res) => Unit
             case Failure(e) => {
                 val ApiError(_, msg) = e
                 error = msg
-                println(msg)
             }
         }
 
@@ -81,10 +78,10 @@ class Food(
                             span(choice("kind").asInstanceOf[String])
                         )),
                         td(label(forAttr := forAttrValue(choice),
-                            span(choice("name").asInstanceOf[String])
+                            span(choice("option").asInstanceOf[String])
                         )),
                         td(label(forAttr := forAttrValue(choice),
-                            span(choice("option").asInstanceOf[String])
+                            span(choice("name").asInstanceOf[String])
                         )),
                         td(input(typeAttr := "radio", id := forAttrValue(choice),
                             name := radioName(choice),
@@ -138,7 +135,7 @@ class Food(
                     paddingLeft := "0",
                 ),
 
-                RawSelector("td:nth-child(2)") (width := "20em"),
+                RawSelector("td:nth-child(3)") (width := "20em"),
             ),
         )
 
