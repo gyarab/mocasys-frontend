@@ -112,8 +112,6 @@ class LoginForm(var username: String = "", var password: String = "",
                     ),
                     e.input (
                         gridArea := "usernameInput",
-                        backgroundColor := "#f1ffff",
-                        color := "#265976",
                     ),
                 ),
 
@@ -123,8 +121,6 @@ class LoginForm(var username: String = "", var password: String = "",
                     ),
                     e.input (
                         gridArea := "passwordInput",
-                        backgroundColor := "#f1ffff",
-                        color := "#265976",
                     ),
                 ),
 
