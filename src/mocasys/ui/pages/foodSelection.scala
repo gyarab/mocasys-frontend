@@ -41,7 +41,9 @@ class FoodSelection extends Component {
         SELECT fa.day, fa.id_food, f.name, fa.kind,
             fc.kind as kind2, fa.option, fc.option as option2
         FROM food_assignments AS fa
-        LEFT JOIN food_choice AS fc ON fa.day = fc.day AND fa.kind = fc.kind
+        LEFT JOIN food_choice AS fc ON fa.day = fc.day
+            AND fa.kind = fc.kind
+            AND fc.id_diner = session_person_get()
         JOIN food AS f ON f.id = fa.id_food
         WHERE fa.day BETWEEN '$start' AND '$end'
         ORDER BY day, fa.kind, option;
@@ -90,7 +92,7 @@ class FoodSelection extends Component {
         fetchFoodListIfDateDiff
         return scoped(
             div(cls := "foodSelection",
-                div(cls := "firstRow borderRadius",
+                div(cls := "firstRow borderRadius boxShadowBig",
                     label(cls := "dateStart",
                         span(cls := "borderShadowColor3 bgColor2 borderRadius",
                             "Date Start"),
@@ -147,7 +149,6 @@ class FoodSelection extends Component {
                 backgroundColor := "#265976",
                 padding := "1.5em 4em",
                 color := "white",
-                boxShadow := "5px 5px 10px 0px rgba(0, 0, 0, 0.60)",
 
                 e.span (
                     padding := "4px 6px 2px 6px",

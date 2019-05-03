@@ -18,7 +18,7 @@ package object functionComponents {
         input(typeAttr := typ, onKeyup := onKeyupE, value := strValue, onInput := {
             e => onChange(e.target.asInstanceOf[dom.raw.HTMLInputElement].value)
         })
-    
+
     def radioCheckboxInput(radio: Boolean, idAttrVal: String, nameAttrVal: String,
             onChange: String => Unit,
             checkedB: Boolean, disabledB: Boolean) =
@@ -35,13 +35,13 @@ package object functionComponents {
             ),
             span(cls := "checkmark"),
         )
-    
+
     def radioInput(idAttrVal: String, nameAttrVal: String,
                     onChange: String => Unit,
                     checkedB: Boolean = false, disabledB: Boolean = false) =
         radioCheckboxInput(true, idAttrVal, nameAttrVal,
             onChange, checkedB, disabledB)
-    
+
     def checkboxInput(idAttrVal: String, nameAttrVal: String,
                     onChange: String => Unit,
                     checkedB: Boolean = false, disabledB: Boolean = false) =

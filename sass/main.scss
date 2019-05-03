@@ -36,6 +36,10 @@ button {
 	padding: 10px; // Same height as the input
 }
 
+.boxShadowBig {
+	box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.60);
+}
+
 .shadowClick:hover {
 	background-color: $color5;
 	box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.60);

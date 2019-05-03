@@ -15,7 +15,7 @@ import mocasys._
 
 class MenuNode
 case class MenuItem(val value: String,
-                    val action: dom.Event => Unit = {_ => Unit}
+                    val action: dom.Event => Unit = { _ => Unit }
     ) extends MenuNode
 case class SubMenu(val item: MenuItem,
                    val children: Seq[MenuNode]
@@ -72,7 +72,7 @@ class MainMenu() extends Component {
                     div(cls := "bar3"),
                     onClick := { e => visible = !visible },
                 ),
-                nav(cls := "mainMenu bgColor1 borderRadius "
+                nav(cls := "mainMenu bgColor1 borderRadius boxShadowBig "
                             + (if (visible) "visible" else "invisible"),
                     div(cls := "container",
                         img(src := "/assets/mocasys_logo_trans.svg"),
@@ -89,13 +89,11 @@ class MainMenu() extends Component {
             span("Logged in as "), b(username.get),
             button("Profile",
                     cls := "profile bgColor4 shadowClick",
-                    onClick := { e =>
-                        dom.window.alert("Not Yet Implemented!")
-                    }),
+                    onClick := { e => AppState.router.goToUrl("profile") }),
             button("Log Out",
                     cls := "logout bgColor4 shadowClick",
                     onClick := { e => {
-                        visible = false
+                        // visible = false
                         AppState.logout
                     }}),
         )
@@ -103,6 +101,8 @@ class MainMenu() extends Component {
     cssScoped { import liwec.cssDsl._
         c.hider (
             position := "absolute",
+            left := "0",
+            top := "0",
             display := "grid",
             padding := "3px",
             width := "2.1em",
@@ -140,7 +140,6 @@ class MainMenu() extends Component {
             maxWidth := "20em",
             height := "calc(100% - 3em)",
             marginTop := "3em",
-            boxShadow := "5px 5px 10px 0px rgba(0, 0, 0, 0.60)",
             borderBottomLeftRadius := "0",
             borderTopLeftRadius := "0",
             color := "#f1ffff",

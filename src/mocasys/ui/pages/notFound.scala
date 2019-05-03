@@ -17,7 +17,7 @@ import mocasys.ApiClient._
 class NotFoundPage extends Component {
 
     def render = scoped(
-        div(cls := "notFoundPage bgBlue borderRadius",
+        div(cls := "notFoundPage bgColor1 borderRadius",
             h2("404: Not Found"),
         )
     )
@@ -30,6 +30,7 @@ class NotFoundPage extends Component {
             height := "6em",
             width := "40%",
             margin := "4em auto 0 auto",
+	        boxShadow := "5px 5px 10px 0px rgba(0, 0, 0, 0.60)",
         ),
     }
 }
