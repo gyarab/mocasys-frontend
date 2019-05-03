@@ -39,7 +39,7 @@ class FoodSelection extends Component {
         """
     def foodListQuery(start: String, end: String) = s"""
         SELECT fa.day, fa.id_food, f.name, fa.kind,
-            fc.kind as kind2, fa.option, fc.option as option2
+            fa.option, fc.option as option2
         FROM food_assignments AS fa
         LEFT JOIN food_choice AS fc ON fa.day = fc.day
             AND fa.kind = fc.kind
