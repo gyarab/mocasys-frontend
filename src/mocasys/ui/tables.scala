@@ -8,6 +8,9 @@ import liwec._
 import liwec.domvm.ElementVNode
 import liwec.htmlDsl._
 import liwec.htmlMacros._
+import liwec.cssDsl._
+import liwec.cssMacros._
+import liwec.cssDslTypes.RawSelector
 import mocasys._
 import mocasys.ApiClient._
 import mocasys.ui.functionComponents._
@@ -106,5 +109,17 @@ package object tables {
                 }
             )
         )
+
+        cssScoped { import liwec.cssDsl._
+            e.div (
+                e.tr (
+                    lineHeight := "1.5em",
+                ),
+
+                RawSelector("tr:nth-child(odd)") (
+                    backgroundColor := "lightgrey",
+                ),
+            )
+        }
     }
 }

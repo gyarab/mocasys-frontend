@@ -20,10 +20,19 @@ class UsersPage extends Component {
 
     def render = scoped(
         div(cls := "queryTest",
+            div(cls := "controls",
+                button("New user", cls := "bgColor3", onClick := { _ =>
+                    form = Some(new Form(this, Map(
+                        "username" -> "", "id_person" -> 0)))
+                }),
+                hr(),
+            ),
             form.map { form =>
                 div(cls := "userForm",
                     form.errorText(),
-                    div(s"User selected: ${form.data("id")}"),
+                    (if (form.data.keySet.exists(_ == "id")) 
+                        div(s"User selected: ${form.data("id")}")
+                    else None),
                     label(span("Username:"),
                           form.text("username")),
                     label(span("Person:"),
@@ -31,15 +40,48 @@ class UsersPage extends Component {
                     form.save("Save", "users", Seq("id")),
                 )
             },
-            button("New user", onClick := { _ =>
-                form = Some(new Form(this, Map(
-                    "id" -> 0, "username" -> "", "id_person" -> 0)))
-            }),
-            new InteractiveTable(
-                "SELECT * FROM users",
-                onClickRendererForColumn({ row =>
-                    form = Some(new Form(this, row))
-                })),
+            div(cls := "dataTable",
+                new InteractiveTable(
+                    "SELECT * FROM users ORDER BY id",
+                    onClickRendererForColumn({ row =>
+                        form = Some(new Form(this, row))
+                    })),
+            ),
         )
     )
+
+    cssScoped { import liwec.cssDsl._
+        c.queryTest (
+            width := "80%",
+            marginLeft := "auto",
+            marginRight := "auto",
+            padding := "1.5em",
+            display := "grid",
+            gridTemplateColumns := "1fr 1fr",
+
+            c.error (
+                color := "white",
+                padding := "1em",
+            ),
+
+            c.controls (
+                gridColumn := "1 / 3",
+                gridRow := "1",
+
+                e.button (
+                    margin := "1em",
+                ),
+            ),
+
+            c.userform (
+                gridColumn := "1",
+                gridRow := "2",
+            ),
+
+            c.dataTable (
+                gridRow := "2",
+                gridColumn := "2",
+            ),
+        )
+    }
 }

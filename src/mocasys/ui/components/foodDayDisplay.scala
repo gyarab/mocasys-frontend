@@ -18,6 +18,7 @@ import mocasys.ApiClient._
 
 class FoodDayDisplay(val date: js.Date = new js.Date()) extends Component {
     var meals: Option[Seq[DbRow]] = None
+    var noData: Boolean = false
 
     override def onMount = {
         fetchMeals
@@ -48,52 +49,47 @@ class FoodDayDisplay(val date: js.Date = new js.Date()) extends Component {
     def fetchMeals =
         AppState.apiClient.queryDb(queryMeal(this.date))
         .onComplete {
-            case Success(res) => meals = {
-                println(isoDate(this.date))
-                println(this.date)
-                println(res(0))
-                Some(res)
+            case Success(res) => {
+                if (js.isUndefined(res(0).data)) {
+                    noData = true
+                    meals = None
+                } else meals = Some(res)
             }
             case Failure(e) => val ApiError(_, msg) = e
         }
 
     def render = scoped(
         div(cls := "box meals borderRadius boxShadowBalanced",
-            if (meals != None)
-                div(
-                    div(cls := "boxHeader bgColor1",
-                        h3(date.toDateString),
-                        button("Select Future Meals",
-                            cls := "shadowClick",
-                            onClick := { _ => AppState.router.goToUrl("foods") }),
-                    ),
-                    div(cls := "boxBody",
-                        table(
-                            thead(tr(
-                                meals.get.head.map { case (key, _) =>
-                                    td(key.toString.capitalize),
-                                }
-                            )),
-                            tbody(meals.get.map(meal =>
-                                tr(meal.map { case (_, value) =>
-                                    td(
-                                        if (value == null)
-                                            None
-                                        else
-                                            value.toString
-                                    )
-                                })
-                            ))
-                        ),
-                    ),
-                )
-            else
-                div(
-                    div(cls := "boxHeader bgColor1",
-                        h3(),
-                    ),
-                    div(cls := "boxBody"),
-                )
+            div(cls := "boxHeader bgColor1",
+                h3(date.toDateString),
+                button("Select Future Meals",
+                    cls := "shadowClick",
+                    onClick := { _ => AppState.router.goToUrl("foods") }),
+            ),
+            div(cls := "boxBody",
+                if (meals != None)
+                    table(
+                        thead(tr(
+                            meals.get.head.map { case (key, _) =>
+                                td(key.toString.capitalize),
+                            }
+                        )),
+                        tbody(meals.get.map(meal =>
+                            tr(meal.map { case (_, value) =>
+                                td(
+                                    if (value == null)
+                                        None
+                                    else
+                                        value.toString
+                                )
+                            })
+                        ))
+                    )
+                else if (noData)
+                    p("No data for this day found.")
+                else
+                    None
+            ),
         )
     )
 
@@ -101,6 +97,7 @@ class FoodDayDisplay(val date: js.Date = new js.Date()) extends Component {
         c.meals (
             color := "white",
             minWidth := "26em",
+            height := "100%",
             borderTop := "3px solid #3ea7b9",
 
             c.boxHeader (
@@ -109,17 +106,19 @@ class FoodDayDisplay(val date: js.Date = new js.Date()) extends Component {
 
                 e.h3 (
                     display := "inline-block",
+                    marginTop := "0.7em",
                 ),
 
                 e.button (
                     position := "absolute",
-                    top := "0.55em",
+                    top := "0.4em",
                     right := "0.5em",
                 ),
             ),
 
             c.boxBody (
                 padding := "0.5em",
+                e.p (color := "black"),
             ),
 
             e.table (

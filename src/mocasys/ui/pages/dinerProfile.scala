@@ -53,14 +53,18 @@ class DinerProfilePage extends Component {
         )
 
     def render: liwec.VNode = {
-        return scoped(
-            div(cls := "dinerProfile",
-                h1(AppState.loggedInUser.getOrElse("").toString),
+        return scoped(div(cls := "dinerProfile",
+            h1(AppState.loggedInUser.getOrElse("").toString),
+            div(cls := "grid",
                 renderProfile,
-                new FoodDayDisplay(new js.Date("2019-05-01T03:00:00")),
-                new FoodDayDisplay(new js.Date("2019-05-02T03:00:00")),
+                div(cls := "box_1_3",
+                    new FoodDayDisplay(new js.Date("2019-05-01T03:00:00"))
+                ),
+                div(cls := "box_2_3",
+                    new FoodDayDisplay(new js.Date("2019-05-09T03:00:00")),
+                ),
             )
-        )
+        ))
     }
 
     cssScoped { import liwec.cssDsl._
@@ -69,40 +73,47 @@ class DinerProfilePage extends Component {
             marginTop := "5em",
             marginLeft := "auto",
             marginRight := "auto",
-            display := "grid",
-            gridColumnGap := "2em",
-            gridTemplateColumns := "repeat(3, 1fr)",
 
             e.h1 (
                 fontSize := "20pt",
                 textDecoration := "underline",
             ),
 
-            c.box (
-                padding := "0.5em 1em",
-                color := "white",
-                minHeight := "8em",
-            ),
-
-            e.table (
-                color := "white",
-                width := "100%",
-
-                (e.thead / e.td) (
-                    fontWeight := "bold",
-                    paddingBottom := "0.3em",
-                ),
-            ),
-
-            c.profile (gridColumn := "1"),
-
-            c.dataRow (
+            c.grid (
                 display := "grid",
-                gridTemplateColumns := "auto auto",
+                gridGap := "2em",
+                gridTemplateColumns := "2fr 2fr 3fr",
+                gridTemplateRows := "repeat(3, 1fr)",
 
-                c.value (
-                    fontWeight := "bold",
-                    justifySelf := "end"
+                c.box (
+                    padding := "0.5em 1em",
+                    color := "white",
+                    minHeight := "8em",
+                ),
+
+                c.box_1_3 (
+                    gridRow := "1",
+                    gridColumn := "3",
+                ),
+
+                c.box_2_3 (
+                    gridRow := "2",
+                    gridColumn := "3",
+                ),
+
+                c.profile (
+                    gridRow := "1 / 3",
+                    gridColumn := "1 / 3"
+                ),
+
+                c.dataRow (
+                    display := "grid",
+                    gridTemplateColumns := "auto auto",
+
+                    c.value (
+                        fontWeight := "bold",
+                        justifySelf := "end"
+                    ),
                 ),
             ),
         )
