@@ -40,6 +40,10 @@ button {
 	box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.60);
 }
 
+.boxShadowBalanced {
+	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.6);
+}
+
 .shadowClick:hover {
 	background-color: $color5;
 	box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.60);
@@ -171,5 +175,9 @@ $radioCheckboxSize: 18px;
 		height: 8 * $radioCheckboxSize / 25;
 		border-radius: 50%;
 		background: white;
+	}
+
+	input:disabled + .checkmark {
+		background-color: darkgrey;
 	}
 }

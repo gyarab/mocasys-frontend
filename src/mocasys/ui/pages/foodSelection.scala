@@ -21,7 +21,8 @@ class FoodSelection extends Component {
     var foodList: Option[Seq[DbRow]] = None
     var balance: String = ""
     var error: String = ""
-    var startDate: js.Date = incrDate(new js.Date(), -1)
+    // TODO: Change
+    var startDate: js.Date = new js.Date(2019, 4, 1)
     var endDate: js.Date = incrDate(startDate, 6)
     // Prev dates will be set on food list fetch
     var prevStartDate: js.Date = null
@@ -162,7 +163,6 @@ class FoodSelection extends Component {
                     display := "flex",
                     flexDirection := "column",
                     marginRight := "0.5em",
-
                 ),
             ),
 

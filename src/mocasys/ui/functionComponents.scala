@@ -30,8 +30,8 @@ package object functionComponents {
                 onInput := {
                     e => onChange(e.target.asInstanceOf[dom.raw.HTMLInputElement].value)
                 },
-                (if (checkedB) checked := "1" else None),
-                (if (disabledB) disabled := "1" else None),
+                (if (checkedB) checked := "true" else None),
+                (if (disabledB) disabled := "true" else None),
             ),
             span(cls := "checkmark"),
         )

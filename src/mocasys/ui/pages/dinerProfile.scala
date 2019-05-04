@@ -24,7 +24,6 @@ class DinerProfilePage extends Component {
 
     override def onMount = {
         fetchUser
-        fetchNextMeal
     }
 
     val queryUser = """
@@ -34,17 +33,6 @@ class DinerProfilePage extends Component {
         WHERE p.id = session_person_get();
         """
 
-    val queryNextMeal = s"""
-        SELECT fa.kind as meal, f.name, fc.option
-        FROM food_assignments AS fa
-        LEFT JOIN food_choice AS fc ON fa.day = fc.day
-            AND fa.kind = fc.kind
-            AND fa.option = fc.option
-            AND fc.id_diner = session_person_get()
-        JOIN food AS f ON f.id = fa.id_food
-        WHERE fa.day = '${isoDate(date)}';
-        """
-
     def fetchUser =
         AppState.apiClient.queryDb(queryUser)
         .onComplete {
@@ -52,15 +40,8 @@ class DinerProfilePage extends Component {
             case Failure(e) => val ApiError(_, msg) = e
         }
     
-    def fetchNextMeal =
-        AppState.apiClient.queryDb(queryNextMeal)
-        .onComplete {
-            case Success(res) => nextMeals = Some(res)
-            case Failure(e) => val ApiError(_, msg) = e
-        }
-    
     def renderProfile =
-        div(cls := "box profile bgColor1 borderRadius boxShadowBig",
+        div(cls := "box profile bgColor1 borderRadius boxShadowBalanced",
             if (userData != None)
                 userData.get.map { case (key, value) =>
                     div(cls := "dataRow",
@@ -71,44 +52,13 @@ class DinerProfilePage extends Component {
                 p("Loading...")
         )
 
-    def renderNextMeals =
-        div(cls := "box nextMeals bgColor2 borderRadius boxShadowBig",
-            if (nextMeals != None)
-                div(
-                    h3(date.toDateString),
-                    table(
-                        thead(tr(
-                            nextMeals.get.head.map { case (key, _) =>
-                                td(key.toString.capitalize),
-                            }
-                        )),
-                        tbody(nextMeals.get.map(meal =>
-                            tr(meal.map { case (_, value) =>
-                                td(
-                                    if (value == null)
-                                        None
-                                    else
-                                        value.toString
-                                )
-                            })
-                        ))
-                    ),
-                    br(),
-                    button("Select Future Meals",
-                        cls := "shadowClick",
-                        onClick := { _ => AppState.router.goToUrl("foods") }),
-                    br(),
-                )
-            else
-                p("Loading...")
-        )
-
     def render: liwec.VNode = {
         return scoped(
             div(cls := "dinerProfile",
                 h1(AppState.loggedInUser.getOrElse("").toString),
                 renderProfile,
-                renderNextMeals,
+                new FoodDayDisplay(new js.Date("2019-05-01T03:00:00")),
+                new FoodDayDisplay(new js.Date("2019-05-02T03:00:00")),
             )
         )
     }
@@ -145,11 +95,6 @@ class DinerProfilePage extends Component {
             ),
 
             c.profile (gridColumn := "1"),
-            c.nextMeals (
-                gridColumn := "2",
-                
-                e.button (margin := "1em 0"),
-            ),
 
             c.dataRow (
                 display := "grid",
