@@ -29,6 +29,7 @@ class MainMenu() extends Component {
             Seq(
                 MenuItem("Food Selection", _ => AppState.router.goToUrl("foods")),
                 MenuItem("Users", _ => AppState.router.goToUrl("users")),
+                MenuItem("Diners", _ => AppState.router.goToUrl("diners")),
                 SubMenu(MenuItem("Submenu"),
                     Seq(
                         MenuItem("1", _ => dom.window.alert("Nada!")),

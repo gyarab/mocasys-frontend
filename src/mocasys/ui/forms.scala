@@ -8,6 +8,7 @@ import liwec.htmlDsl._
 import mocasys.ui.functionComponents._
 import mocasys.ApiClient._
 import mocasys.AppState
+import java.math.BigDecimal
 
 package object forms {
     class Form(
@@ -34,6 +35,10 @@ package object forms {
         def textInt(key: String) =
             textInput(data(key).asInstanceOf[Integer].toString,
                       { v => data(key) = v.toInt })
+
+        def textMoney(key: String) =
+            textInput(new BigDecimal(data(key).toString).toString,
+                      { v => data(key) = new BigDecimal(v) })
 
         def errorText() =
             error.map(e => div(cls := "formError", e))

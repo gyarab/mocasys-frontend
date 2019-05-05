@@ -20,14 +20,16 @@ package object tables {
         val title: String,
         val render: R => VNodeFrag)
 
-    def dataTable[R](cols: Seq[Column[R]], data: Seq[R]) =
+    def dataTable[R](cols: Seq[Column[R]], data: Seq[R], ignored: Seq[String] = Seq()) =
         table(cls := "dataTable",
             thead(
-                for(col <- cols) yield th(col.title)
+                for(col <- cols if !ignored.contains(col.title))
+                    yield th(col.title)
             ),
             tbody(
                 for(row <- data) yield
-                    tr(for(col <- cols) yield td(col.render(row)))
+                    tr(for(col <- cols if !ignored.contains(col.title))
+                        yield td(col.render(row)))
             ),
         )
 
@@ -73,7 +75,8 @@ package object tables {
     class InteractiveTable(
             var query: String,
             val rendererGetter: DbField => (DbRow, Any) => VNodeFrag
-                = rendererForColumn _)
+                = rendererForColumn _,
+            val ignoredCols: Seq[String] = Seq())
             extends Component {
         var result: Option[Either[String, QueryDbResp]] = None
 
@@ -82,7 +85,7 @@ package object tables {
 
         def table(res: QueryDbResp) = {
             val cols = colsFromQuery(res, rendererGetter)
-            dataTable(cols, res)
+            dataTable(cols, res, ignoredCols)
         }
 
         def executeQuery() =
