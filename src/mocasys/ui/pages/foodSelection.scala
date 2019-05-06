@@ -22,7 +22,7 @@ class FoodSelection extends Component {
     var balance: String = ""
     var error: String = ""
     // TODO: Change
-    var startDate: js.Date = new js.Date(2019, 4, 1)
+    var startDate: js.Date = new js.Date()
     var endDate: js.Date = incrDate(startDate, 6)
     // Prev dates will be set on food list fetch
     var prevStartDate: js.Date = null

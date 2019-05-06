@@ -18,6 +18,7 @@ import mocasys.ApiClient._
 
 class UsersPage extends TablePage {
     var form: Option[Form] = None
+    override val name: String = "Users"
 
     override def renderForm =
         form.map { form =>

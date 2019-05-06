@@ -18,6 +18,7 @@ import mocasys.ApiClient._
 
 abstract class TablePage extends Component {
     var error: String = ""
+    val name: String = "<name>"
 
     def setError(error: String) = this.error = error
 
@@ -31,6 +32,7 @@ abstract class TablePage extends Component {
 
     def render = scoped(
         div(cls := "tablePage",
+            h1(name),
             errorBox(error),
             div(cls := "controls",
                 renderControls,
@@ -54,11 +56,12 @@ abstract class TablePage extends Component {
             gridTemplateColumns := "1fr 1fr",
             gridRowGap := "1em",
 
+            e.h1 (fontSize := "1.5em"),
+
             c.errorMessage (
                 gridRow := "1",
                 gridColumn := "1 / 3",
                 color := "white",
-                padding := "1em",
             ),
 
             c.controls (
