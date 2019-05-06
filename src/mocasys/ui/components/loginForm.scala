@@ -79,6 +79,8 @@ class LoginForm(var username: String = "", var password: String = "",
             maxWidth := "760px",
             minWidth := "200px",
 
+            c.errorMessage (height := "2.4em"),
+
             c.form (
                 display := "grid",
                 alignItems := "center",

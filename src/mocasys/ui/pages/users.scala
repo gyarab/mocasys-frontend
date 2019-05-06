@@ -19,7 +19,7 @@ import mocasys.ApiClient._
 class UsersPage extends TablePage {
     var form: Option[Form] = None
 
-    override def renderForm: VNodeFrag = 
+    override def renderForm =
         form.map { form =>
             div(cls := "userForm",
                 form.errorText(),
@@ -34,14 +34,14 @@ class UsersPage extends TablePage {
             )
         }
 
-    override def renderTable: VNodeFrag = 
+    override def renderTable =
         new InteractiveTable(
             "SELECT * FROM users ORDER BY id",
             onClickRendererForColumn({ row =>
                 form = Some(new Form(this, row))
             }), Seq("sys_period"))
 
-    override def renderControls: VNodeFrag = 
+    override def renderControls = 
         button("New user", cls := "bgColor3", onClick := { _ =>
             form = Some(new Form(this, Map(
                 "username" -> "", "id_person" -> 0)))

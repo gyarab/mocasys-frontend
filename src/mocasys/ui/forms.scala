@@ -3,8 +3,10 @@ package mocasys.ui
 import scala.util.{Success, Failure}
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
+import scalajs.js
 import liwec._
 import liwec.htmlDsl._
+import mocasys.ui.main._
 import mocasys.ui.functionComponents._
 import mocasys.ApiClient._
 import mocasys.AppState
@@ -34,11 +36,17 @@ package object forms {
 
         def textInt(key: String) =
             textInput(data(key).asInstanceOf[Integer].toString,
-                      { v => data(key) = v.toInt })
+                      { v => data(key) = v.toInt }, "number")
 
         def textMoney(key: String) =
             textInput(new BigDecimal(data(key).toString).toString,
                       { v => data(key) = new BigDecimal(v) })
+
+        def textDate(key: String) =
+            textInput(isoDate(data(key).asInstanceOf[js.Date]),
+                    { v => data(key) =
+                        (if (v.isEmpty()) data(key) else new js.Date(v)) },
+                    "date")
 
         def errorText() =
             error.map(e => div(cls := "formError", e))
