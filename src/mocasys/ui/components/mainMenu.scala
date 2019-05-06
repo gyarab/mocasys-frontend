@@ -145,6 +145,7 @@ class MainMenu() extends Component {
             borderTopLeftRadius := "0",
             color := "#f1ffff",
             transition := "width 0.3s ease-in-out",
+            zIndex := "10",
 
             e.img (
                 width := "100%",

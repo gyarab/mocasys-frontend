@@ -45,7 +45,7 @@ class UsersPage extends Component {
                     "SELECT * FROM users ORDER BY id",
                     onClickRendererForColumn({ row =>
                         form = Some(new Form(this, row))
-                    })),
+                    }), Seq("sys_period")),
             ),
         )
     )

@@ -85,12 +85,16 @@ class Food(
                         td(cls := "foodName",label(forAttr := forAttrValue(choice),
                             p(choice("name").asInstanceOf[String])
                         )),
-                        td(radioInput(
-                            forAttrValue(choice),
-                            radioName(choice),
-                            { _ => onChange(choice) },
-                            shouldBeChecked(choice),
-                            shouldBeDisabled(choice),
+                        (if (shouldBeDisabled(choice))
+                            td()
+                        else
+                            td(radioInput(
+                                forAttrValue(choice),
+                                radioName(choice),
+                                { _ => onChange(choice) },
+                                shouldBeChecked(choice),
+                                shouldBeDisabled(choice),
+                            )
                         )),
                     ))
                 )),

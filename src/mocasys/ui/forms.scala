@@ -47,6 +47,7 @@ package object forms {
             input(typeAttr := "submit", value := label,
                   onClick := { _ => sqlSave(tableName, pkeys) })
 
+        // TODO: Add delete action
         def sqlSave(tableName: String, pkeys: Seq[String]) = {
             // TODO: Proper query builder
             // TODO: Get primary key columns from DB
