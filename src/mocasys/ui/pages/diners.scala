@@ -18,6 +18,7 @@ import mocasys.ApiClient._
 
 class DinersPage extends TablePage {
     var form: Option[Form] = None
+    override val name: String = "Diners"
 
     override def renderForm: VNodeFrag =
         form.map { form =>
