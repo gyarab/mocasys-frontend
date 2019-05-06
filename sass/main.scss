@@ -140,6 +140,8 @@ $radioCheckboxSize: 18px;
 
 	&:hover input ~ .checkmark {
 		background-color: #cccccc;
+		transform: scale(.9);
+		transition: .3s;
 	}
 
 	input:checked ~ .checkmark {
