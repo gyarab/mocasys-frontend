@@ -113,6 +113,7 @@ class FoodDayDisplay(val date: js.Date = new js.Date()) extends Component {
                     position := "absolute",
                     top := "0.4em",
                     right := "0.5em",
+                    padding := "10px",
                 ),
             ),
 

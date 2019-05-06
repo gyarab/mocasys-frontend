@@ -44,9 +44,14 @@ class DinerProfilePage extends Component {
         div(cls := "box profile bgColor1 borderRadius boxShadowBalanced",
             if (userData != None)
                 userData.get.map { case (key, value) =>
-                    div(cls := "dataRow",
-                        p(key.toString),
-                        p(cls := "value", value.toString))
+                    if (key.toString == "name")
+                        div(cls := "dataRow firstRow",
+                            p(key.toString),
+                            p(cls := "value", value.toString))
+                    else
+                        div(cls := "dataRow",
+                            p(key.toString),
+                            p(cls := "value", value.toString))
                 }
             else
                 p("Loading...")
@@ -54,7 +59,7 @@ class DinerProfilePage extends Component {
 
     def render: liwec.VNode = {
         return scoped(div(cls := "dinerProfile",
-            h1(AppState.loggedInUser.getOrElse("").toString),
+            h1(AppState.loggedInUser.getOrElse("").toString, cls := "borderRadius boxShadowBalanced"),
             div(cls := "grid",
                 renderProfile,
                 div(cls := "box_1_3",
@@ -76,7 +81,11 @@ class DinerProfilePage extends Component {
 
             e.h1 (
                 fontSize := "20pt",
-                textDecoration := "underline",
+                color := "f1ffff",
+                backgroundColor := "265976",
+                borderTop := "3px solid #3685a2",
+                width := "max-content",
+                padding := "8px 16px",
             ),
 
             c.grid (
@@ -86,7 +95,7 @@ class DinerProfilePage extends Component {
                 gridTemplateRows := "repeat(3, 1fr)",
 
                 c.box (
-                    padding := "0.5em 1em",
+                    padding := "0.5em 0.6em",
                     color := "white",
                     minHeight := "8em",
                 ),
@@ -109,11 +118,22 @@ class DinerProfilePage extends Component {
                 c.dataRow (
                     display := "grid",
                     gridTemplateColumns := "auto auto",
+                    color := "265976",
+                    backgroundColor := "f1ffff",
+                    padding := "0 1em",
 
                     c.value (
                         fontWeight := "bold",
                         justifySelf := "end"
                     ),
+                ),
+                
+                c.firstRow (
+                    borderTop := "3px solid #3ea7b9",
+                    backgroundColor := "3685a2",
+                    color := "f1ffff",
+                    borderTopLeftRadius := "3px",
+                    borderTopRightRadius := "3px",
                 ),
             ),
         )
