@@ -6,6 +6,7 @@ $color4: #f1ffff; //white
 $color5: #ff9b20; //orange
 $color6: #d23a3f; //red
 $color7: #ffb820; //yellow
+$color8: #b0dde4; //ultra light blue
 
 * {
 	font-size: 12pt;
@@ -20,6 +21,8 @@ body {
 button {
 	background-color: $color4;
 	border: 0;
+	//padding: 10px; // Same height as the input (breaks buttons)
+	color: $color1;
 }
 
 input {
@@ -30,10 +33,6 @@ input {
 	&:focus {
 		border-color: $color5;
 	}
-}
-
-button {
-	padding: 10px; // Same height as the input
 }
 
 .boxShadowBig {
