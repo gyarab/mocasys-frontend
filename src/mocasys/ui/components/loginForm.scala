@@ -40,10 +40,7 @@ class LoginForm(var username: String = "", var password: String = "",
 
     def render() = scoped(
         div(cls := "loginForm borderRadius",
-            div(cls := "error", loginError match {
-                case "" => loginError
-                case _ => span(cls := "bgColor6 borderRadius", loginError)
-            }),
+            errorBox(loginError),
             div(cls := "form bgColor1 borderRadius",
                 img(cls := "mocasysLogo",
                     src := "/assets/mocasys_logo_trans.svg"),
@@ -160,20 +157,6 @@ class LoginForm(var username: String = "", var password: String = "",
                 c.submitButton (
                     gridArea := "loginButton",
                 ),
-            ),
-
-            c.error (
-                marginTop := "2em",
-                marginBottom := "1em",
-                height := "2.4em",
-            ),
-
-            (c.error / e.span) (
-                display := "block",
-                marginLeft := "4em",
-                marginRight := "4em",
-                padding := "10px 0px 8px",
-                textAlign := "center",
             ),
         )
     }

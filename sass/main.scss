@@ -102,6 +102,21 @@ button {
 	transition: opacity 0.2s;
 }
 
+.errorMessage {
+	margin-top: 2em;
+	margin-bottom: 1em;
+	height: 2.4em; // mby remove
+}
+
+.errorMessage span {
+	display: block;
+	margin-left: 4em;
+	margin-right: 4em;
+	padding: 10px 0px 8px;
+	text-align: center;
+}
+
+// Adapted from
 // https://www.w3schools.com/howto/howto_css_custom_checkbox.asp
 $radioCheckboxSize: 18px;
 

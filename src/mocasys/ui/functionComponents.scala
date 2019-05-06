@@ -48,4 +48,11 @@ package object functionComponents {
         radioCheckboxInput(false, idAttrVal, nameAttrVal,
             onChange, checkedB, disabledB)
 
+    // Pass an empty string to be invisible
+    def errorBox(message: String) =
+        div(cls := "errorMessage", message match {
+            case "" => message
+            case _ => span(cls := "bgColor6 borderRadius", message)
+        }),
+
 }
