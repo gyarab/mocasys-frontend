@@ -113,7 +113,7 @@ class MainMenu() extends Component {
             boxShadow := "2px 2px 4px 0px rgba(0, 0, 0, 0.60)",
             borderBottomRightRadius := "10px",
             borderTopRightRadius := "10px",
-            backgroundColor := "f1ffff",
+            backgroundColor := "b0dde4",
 
             e.div (
                 border := "2px solid #ffb820",

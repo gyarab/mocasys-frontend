@@ -143,7 +143,7 @@ class LoginForm(var username: String = "", var password: String = "",
                     justifySelf := "right",
                     alignSelf := "end",
                     border := "0",
-                    color := "#265976",
+                    padding := "10px",
                 ),
 
                 c.googleButton (

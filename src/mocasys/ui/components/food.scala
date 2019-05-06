@@ -71,6 +71,7 @@ class Food(
             div(cls := "food borderRadius" + (if (isToday) " today" else ""),
                 div(cls := "info",
                     span(date.toDateString()),
+                    //TODO: implement this button to cancel food
                     button("Cancel", cls := "cancelButton shadowClick"),
                 ),
                 table(tbody(
@@ -124,6 +125,8 @@ class Food(
                 c.cancelButton (
                     fontSize := "15",
                     margin := "2px 2em 2px auto",
+                    borderRadius := "0",
+                    color := "265976",
                 ),
             ),
 
