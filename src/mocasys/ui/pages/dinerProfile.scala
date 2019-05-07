@@ -43,7 +43,7 @@ class DinerProfilePage extends Component {
         }
     
     def renderProfile =
-        div(cls := "box profile bgColor1 borderRadius boxShadowBalanced",
+        div(cls := "box profile borderRadius boxShadowBalanced",
             (if (userData != None)
                 userData.get.map { case (key, value) =>
                     if (key.toString == "name")
@@ -102,10 +102,8 @@ class DinerProfilePage extends Component {
                 gridTemplateRows := "repeat(3, 1fr)",
 
                 c.box (
-                    padding := "0.5em 0.6em",
                     color := "white",
                     minHeight := "8em",
-                    borderTop := "3px solid #3ea7b9",
                 ),
 
                 c.box_1_3 (
@@ -137,7 +135,8 @@ class DinerProfilePage extends Component {
                 ),
                 
                 c.firstRow (
-                    backgroundColor := "3685a2",
+                    backgroundColor := "#265976",
+                    borderTop := "3px solid #3ea7b9",
                     color := "f1ffff",
                     borderTopLeftRadius := "3px",
                     borderTopRightRadius := "3px",
