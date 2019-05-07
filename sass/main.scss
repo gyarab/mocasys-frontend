@@ -196,3 +196,9 @@ $radioCheckboxSize: 18px;
 		background-color: darkgrey;
 	}
 }
+
+.foodRating span:hover:before, .foodRating span:hover ~ span:before {
+	position: absolute;
+	content: "\2605";
+	color: $color7;
+}
