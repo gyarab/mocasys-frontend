@@ -37,6 +37,7 @@ class FoodLander(var kind: String,
     def render = scoped(div(cls := "foodLander"
                             + (if (changed) " changed" else "")
                             + (if (delete) " delete" else ""),
+        // TODO: add placeholder
         textInput(kind, { s => kind = s }),
         textInput(option, { s => option = s }),
         div(cls := "lander",
@@ -53,7 +54,7 @@ class FoodLander(var kind: String,
             (if (!foodName.isEmpty) div(new Food(foodName)) else None)
         ),
         // Reset action
-        button("C", cls := "resetButton", onClick := { e => {
+        button("Cancel", cls := "shadowClick", onClick := { e => {
             foodName = originalFoodName
             kind = originalKind
             option = originalOption
@@ -61,10 +62,10 @@ class FoodLander(var kind: String,
         }}),
         // Delete action
         (if (fromDb)
-            button("X", cls := "deleteBtn", onClick := { e =>
+            button("Delete", cls := "shadowClick", onClick := { e =>
                 delete = !delete })
         else
-            button("X", cls := "deleteBtn", onClick := { e =>
+            button("Delete", cls := "shadowClick", onClick := { e =>
                 remove(this) })
         )
     ))
@@ -95,15 +96,15 @@ class FoodLander(var kind: String,
 
             c.lander (
                 gridColumn := "3",
-                backgroundColor := "#ff9b20",
 
                 e.span (
                     display := "block",
+                    backgroundColor := "257685",
                 ),
             ),
 
             e.button (
-                width := "1.5em",
+                width := "5em",
                 textAlign := "center",
             ),
         )

@@ -19,14 +19,16 @@ import mocasys.ApiClient._
 
 class Food(val name: String) extends Component {
 
-    def render = scoped(div(cls := "food",
+    def render = scoped(div(cls := "food borderShadowColor3",
         span(name),
     ))
 
     cssScoped { import liwec.cssDsl._
         c.food (
             padding := "0.3em 0.2em",
-            backgroundColor := "grey",
+            backgroundColor := "#3685a2",
+            color := "#f1ffff",
+            minHeight := "1.5em",
         )
     }
 }

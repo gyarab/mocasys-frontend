@@ -146,7 +146,7 @@ class FoodAssignmentPage extends Component {
                     "date"
                 ),
             ),
-            button("Save", onClick := save)
+            button("Save", onClick := save, cls := "shadowClick saveButton")
         )
 
     def renderFoods =
@@ -174,11 +174,13 @@ class FoodAssignmentPage extends Component {
             span(cls := "newAssignment", "DROP TO ADD NEW",
                 onDragover := { e: dom.DragEvent => {
                     e.preventDefault()
-                    e.target.asInstanceOf[dom.raw.HTMLElement].style.border = "2px solid black"
+                    e.target.asInstanceOf[dom.raw.HTMLElement].style.transform = "translateY(-2px)"
+                    e.target.asInstanceOf[dom.raw.HTMLElement].style.backgroundColor = "#ff9b20"
                 }},
                 onDragleave := { e: dom.DragEvent => {
                     e.preventDefault()
-                    e.target.asInstanceOf[dom.raw.HTMLElement].style.border = "2px solid #00000000"
+                    e.target.asInstanceOf[dom.raw.HTMLElement].style.transform = "translateY(0px)"
+                    e.target.asInstanceOf[dom.raw.HTMLElement].style.backgroundColor = "#f1ffff"
                 }},
                 onDrop := addAssignment),
             div(cls := "newAssignments",
@@ -195,8 +197,7 @@ class FoodAssignmentPage extends Component {
 
     cssScoped { import liwec.cssDsl._
         c.foodAssignment (
-            width := "80%",
-            backgroundColor := "#dddddd",
+            width := "90%",
             margin := "3em auto 0 auto",
             padding := "1em",
             display := "grid",
@@ -214,6 +215,7 @@ class FoodAssignmentPage extends Component {
                 display := "flex",
                 flexDirection := "row",
                 backgroundColor := "#265976",
+                borderTop := "3px solid #3ea7b9",
                 color := "white",
 
                 e.span (
@@ -226,11 +228,18 @@ class FoodAssignmentPage extends Component {
                     flexDirection := "column",
                     marginRight := "0.5em",
                 ),
+                c.saveButton (
+                    padding := "20px",
+                    fontSize := "20",
+                ),
             ),
 
             c.foods (
                 gridRow := "2",
                 gridColumn := "2",
+                backgroundColor := "#265976",
+                borderTop := "3px solid #3685a2",
+                borderRadius := "3px",
 
                 (c.foodDraggable /+ c.foodDraggable) (
                     marginTop := "0.3em",
@@ -240,16 +249,21 @@ class FoodAssignmentPage extends Component {
             c.assignment (
                 gridRow := "2",
                 gridColumn := "1",
+                width := "40em",
+                backgroundColor := "#265976",
+                borderTop := "3px solid #3ea7b9",
+                borderRadius := "3px",
 
                 (e.div /+ e.div) (marginTop := "0.5em"),
 
                 c.newAssignment (
-                    border := "2px solid #00000000",
                     display := "block",
                     padding := "0.7em",
-                    marginTop := "0.7em",
+                    margin := "0.7em 0.3em",
                     textAlign := "center",
-                    backgroundColor := "grey",
+                    backgroundColor := "#f1ffff",
+                    color := "#265976",
+                    fontWeight := "550",
                 )
             )
         )
