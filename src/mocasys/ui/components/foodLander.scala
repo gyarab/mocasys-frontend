@@ -38,8 +38,8 @@ class FoodLander(var kind: String,
                             + (if (changed) " changed" else "")
                             + (if (delete) " delete" else ""),
         // TODO: add placeholder
-        textInput(kind, { s => kind = s }),
-        textInput(option, { s => option = s }),
+        textInput(kind, { s => kind = s }, placeholderVal = "kind"),
+        textInput(option, { s => option = s }, placeholderVal = "option"),
         div(cls := "lander",
             onDrop := { e: dom.DragEvent => {
                 // TODO: Check that the dropped element is supposed to be here

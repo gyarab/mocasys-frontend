@@ -14,10 +14,10 @@ package object functionComponents {
                   typ: String = "text",
                   onKeyupE: dom.KeyboardEvent => Unit = {
                       e => Unit
-                  }) =
+                  }, placeholderVal: String = "") =
         input(typeAttr := typ, onKeyup := onKeyupE, value := strValue, onInput := {
             e => onChange(e.target.asInstanceOf[dom.raw.HTMLInputElement].value)
-        })
+        }, placeholder := placeholderVal)
 
     def radioCheckboxInput(radio: Boolean, idAttrVal: String, nameAttrVal: String,
             onChange: String => Unit,
