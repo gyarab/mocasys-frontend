@@ -66,42 +66,38 @@ class FoodChoser(
             }
         }
 
-    def render: liwec.VNode = {
-        scoped(
-            div(cls := "food borderRadius" + (if (isToday) " today" else ""),
-                div(cls := "info",
-                    span(date.toDateString()),
-                    //TODO: implement this button to cancel food
-                    button("Cancel", cls := "cancelButton shadowClick"),
-                ),
-                table(tbody(
-                    choices.map(choice => tr(
-                        (if (shouldBeChecked(choice)) cls := "chosenRow" else None),
-                        td(label(forAttr := forAttrValue(choice),
-                            p(choice("kind").asInstanceOf[String])
-                        )),
-                        td(label(forAttr := forAttrValue(choice),
-                            p(choice("option").asInstanceOf[String])
-                        )),
-                        td(cls := "foodName",label(forAttr := forAttrValue(choice),
-                            p(choice("name").asInstanceOf[String])
-                        )),
-                        (if (shouldBeDisabled(choice))
-                            td()
-                        else
-                            td(radioInput(
-                                forAttrValue(choice),
-                                radioName(choice),
-                                { _ => onChange(choice) },
-                                shouldBeChecked(choice),
-                                shouldBeDisabled(choice),
-                            )
-                        )),
-                    ))
+    def render = scoped(div(cls := "food borderRadius" + (if (isToday) " today" else ""),
+        div(cls := "info",
+            span(date.toDateString()),
+            //TODO: implement this button to cancel food
+            button("Cancel", cls := "cancelButton shadowClick"),
+        ),
+        table(tbody(
+            choices.map(choice => tr(
+                (if (shouldBeChecked(choice)) cls := "chosenRow" else None),
+                td(label(forAttr := forAttrValue(choice),
+                    p(choice("kind").asInstanceOf[String])
                 )),
-            )
-        )
-    }
+                td(label(forAttr := forAttrValue(choice),
+                    p(choice("option").asInstanceOf[String])
+                )),
+                td(cls := "foodName",label(forAttr := forAttrValue(choice),
+                    p(choice("name").asInstanceOf[String])
+                )),
+                (if (shouldBeDisabled(choice))
+                    td()
+                else
+                    td(radioInput(
+                        forAttrValue(choice),
+                        radioName(choice),
+                        { _ => onChange(choice) },
+                        shouldBeChecked(choice),
+                        shouldBeDisabled(choice),
+                    )
+                )),
+            ))
+        )),
+    ))
 
     cssScoped { import liwec.cssDsl._
         c.food (

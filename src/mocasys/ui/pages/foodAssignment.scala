@@ -106,6 +106,7 @@ class FoodAssignmentPage extends Component {
                 case Success(res) => println(s"Created ${fl.foodName}")
                 case Failure(e) => val ApiError(_, msg) = e
             }
+        newFoodLanders.clear
         fetchCurrentAssignments
     }
 
