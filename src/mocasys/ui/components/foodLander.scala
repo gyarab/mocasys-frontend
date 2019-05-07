@@ -21,7 +21,9 @@ import mocasys.ApiClient._
 class FoodLander(var kind: String,
                 var option: String,
                 var foodName: String,
-                var foodId: Integer) extends Component {
+                var foodId: Integer,
+                val fromDb: Boolean = true,
+                val remove: FoodLander => Unit = { _ => Unit }) extends Component {
     var originalKind = kind
     var originalOption = option
     var originalFoodName = foodName
@@ -58,9 +60,13 @@ class FoodLander(var kind: String,
             foodId = originalFoodId
         }}),
         // Delete action
-        button("X", cls := "deleteBtn", onClick := { e => {
-            delete = !delete
-        }}),
+        (if (fromDb)
+            button("X", cls := "deleteBtn", onClick := { e =>
+                delete = !delete })
+        else
+            button("X", cls := "deleteBtn", onClick := { e =>
+                remove(this) })
+        )
     ))
 
     cssScoped { import liwec.cssDsl._
@@ -101,5 +107,19 @@ class FoodLander(var kind: String,
                 textAlign := "center",
             ),
         )
+    }
+
+    override def equals(other: Any): Boolean = other match {
+        case that: FoodLander =>
+            foodName == that.foodName &&
+            kind == that.kind &&
+            option == that.option &&
+            foodId == that.foodId
+        case _ => false
+    }
+
+    override def hashCode(): Int = {
+        val state = Seq(foodName, kind, option, foodId)
+        state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
     }
 }

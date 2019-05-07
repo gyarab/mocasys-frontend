@@ -24,6 +24,8 @@ class FoodAssignmentPage extends Component {
     var date: js.Date = new js.Date()
     var prevDate: js.Date = null
     var foodLanders: Seq[FoodLander] = Seq()
+    var newFoodLanders: mutable.ArrayBuffer[FoodLander] = mutable.ArrayBuffer()
+    var changed: Boolean = false
 
     override def onMount() {
         fetchFood
@@ -57,12 +59,6 @@ class FoodAssignmentPage extends Component {
             }
             case Failure(e) => val ApiError(_, msg) = e
         }
-
-    def fetchFoodAssignmentsIfDateDiff =
-        if (date != prevDate) {
-            prevDate = date
-            fetchCurrentAssignments
-        }
     
     def faWhereFl(fl: FoodLander) = s"""
         WHERE day = '${isoDate(date)}'
@@ -84,8 +80,13 @@ class FoodAssignmentPage extends Component {
         ${faWhereFl(fl)}
     """
 
+    def faCreateQuery(fl: FoodLander) = s"""
+        INSERT INTO food_assignments (day, kind, option, id_food)
+        VALUES ('${isoDate(date)}', '${fl.kind}', '${fl.option}', ${fl.foodId})
+    """
+
     def save(e: dom.Event) = {
-        for (fl <- foodLanders if fl.changed || fl.delete) {
+        for (fl <- foodLanders if (fl.changed && !fl.kind.isEmpty) || fl.delete) {
             if (fl.delete)
                 AppState.apiClient.queryDb(faDeleteQuery(fl))
                 .onComplete {
@@ -98,34 +99,35 @@ class FoodAssignmentPage extends Component {
                     case Success(res) => println(s"Updated from ${fl.originalFoodName} to ${fl.foodName}")
                     case Failure(e) => val ApiError(_, msg) = e
                 }
-
         }
+        for (fl <- newFoodLanders if fl.changed && !fl.kind.isEmpty)
+            AppState.apiClient.queryDb(faCreateQuery(fl))
+            .onComplete {
+                case Success(res) => println(s"Created ${fl.foodName}")
+                case Failure(e) => val ApiError(_, msg) = e
+            }
         fetchCurrentAssignments
     }
 
-    // TODO: Make functional
+    // TODO: Fix deletion
     def addAssignment(e: dom.DragEvent) = {
         e.preventDefault()
         e.target.asInstanceOf[dom.raw.HTMLElement].style.border = "2px solid #00000000"
-        val self = e.target.asInstanceOf[dom.raw.HTMLElement]
-        if (foodAssignmentData == None)
-            foodAssignmentData = Some(Seq())
-        val s: Seq[DbRow] = foodAssignmentData.get
-        // TODO: If needed, add fields
-        println(s)
-        val dbRow = new DbRow(js.Array(
-            isoDate(date),
-            "<kind>",
-            "<option>",
+        newFoodLanders += new FoodLander("",
+            "",
             e.dataTransfer.getData("name"),
-            e.dataTransfer.getData("id").toInt
-        ), js.Array())
-        println(dbRow)
-        s :+ dbRow
-        foodAssignmentData.get.map {
-            row => println(row("name").toString)
-        }
-        // change = !change
+            e.dataTransfer.getData("id").toInt,
+            false,
+            { fl => {
+                println(newFoodLanders.contains(fl))
+                newFoodLanders -= fl
+                println(newFoodLanders.contains(fl))
+                println(newFoodLanders.length)
+                changed = !changed
+            }}
+        )
+        changed = !changed
+        println(newFoodLanders.length)
     }
 
     def renderControls =
@@ -134,8 +136,12 @@ class FoodAssignmentPage extends Component {
                 span(cls := "borderShadowColor3 bgColor2 borderRadius",
                     "Date"),
                 textInput(isoDate(date),
-                    { str => date =
-                        (if (str.isEmpty()) date else new js.Date(str))},
+                    { str => if (str.isEmpty)
+                        date = date
+                    else {
+                        date = new js.Date(str)
+                        fetchCurrentAssignments
+                    }},
                     "date"
                 ),
             ),
@@ -174,17 +180,17 @@ class FoodAssignmentPage extends Component {
                     e.target.asInstanceOf[dom.raw.HTMLElement].style.border = "2px solid #00000000"
                 }},
                 onDrop := addAssignment),
+            div(cls := "newAssignments",
+                newFoodLanders.toList.map { lander => div(lander) },
+            ),
         )
     }
 
-    def render: VNode = {
-        fetchFoodAssignmentsIfDateDiff
-        return scoped(div(cls := "foodAssignment",
+    def render = scoped(div(cls := "foodAssignment",
             renderControls,
             renderFoods,
             renderAssignments,
         ))
-    }
 
     cssScoped { import liwec.cssDsl._
         c.foodAssignment (
