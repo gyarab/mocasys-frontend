@@ -110,10 +110,15 @@ class FoodAssignmentPage extends Component {
         fetchCurrentAssignments
     }
 
+    def addDropAreaDefaultStyle(elem: dom.raw.HTMLElement) = {
+        elem.style.transform = "translateY(0px)"
+        elem.style.backgroundColor = "#f1ffff"
+    }
+
     // TODO: Fix deletion
     def addAssignment(e: dom.DragEvent) = {
         e.preventDefault()
-        e.target.asInstanceOf[dom.raw.HTMLElement].style.border = "2px solid #00000000"
+        addDropAreaDefaultStyle(e.target.asInstanceOf[dom.raw.HTMLElement])
         newFoodLanders += new FoodLander("",
             "",
             e.dataTransfer.getData("name"),
@@ -132,7 +137,7 @@ class FoodAssignmentPage extends Component {
     }
 
     def renderControls =
-        div(cls := "controls borderRadius",
+        div(cls := "controls borderRadius boxShadowBalanced",
             label(cls := "dateStart",
                 span(cls := "borderShadowColor3 bgColor2 borderRadius",
                     "Date"),
@@ -150,7 +155,7 @@ class FoodAssignmentPage extends Component {
         )
 
     def renderFoods =
-        div(cls := "foods",
+        div(cls := "foods boxShadowBalanced",
             (if (foodData == None)
                 None
             else
@@ -169,7 +174,7 @@ class FoodAssignmentPage extends Component {
         )
 
     def renderAssignments: VNodeFrag = {
-        return div(cls := "assignment",
+        return div(cls := "assignment boxShadowBalanced",
             foodLanders.map { lander => div(lander) },
             span(cls := "newAssignment", "DROP TO ADD NEW",
                 onDragover := { e: dom.DragEvent => {
@@ -179,8 +184,7 @@ class FoodAssignmentPage extends Component {
                 }},
                 onDragleave := { e: dom.DragEvent => {
                     e.preventDefault()
-                    e.target.asInstanceOf[dom.raw.HTMLElement].style.transform = "translateY(0px)"
-                    e.target.asInstanceOf[dom.raw.HTMLElement].style.backgroundColor = "#f1ffff"
+                    addDropAreaDefaultStyle(e.target.asInstanceOf[dom.raw.HTMLElement])
                 }},
                 onDrop := addAssignment),
             div(cls := "newAssignments",
