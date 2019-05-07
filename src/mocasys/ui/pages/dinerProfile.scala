@@ -90,7 +90,7 @@ class DinerProfilePage extends Component {
                 fontSize := "20pt",
                 color := "f1ffff",
                 backgroundColor := "265976",
-                borderTop := "3px solid #3685a2",
+                borderTop := "3px solid #3ea7b9",
                 width := "max-content",
                 padding := "8px 16px",
             ),
@@ -105,6 +105,7 @@ class DinerProfilePage extends Component {
                     padding := "0.5em 0.6em",
                     color := "white",
                     minHeight := "8em",
+                    borderTop := "3px solid #3ea7b9",
                 ),
 
                 c.box_1_3 (
@@ -136,7 +137,6 @@ class DinerProfilePage extends Component {
                 ),
                 
                 c.firstRow (
-                    borderTop := "3px solid #3ea7b9",
                     backgroundColor := "3685a2",
                     color := "f1ffff",
                     borderTopLeftRadius := "3px",
