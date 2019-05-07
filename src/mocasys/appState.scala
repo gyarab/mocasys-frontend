@@ -42,6 +42,14 @@ package object mocasys {
                 this.router.goToUrl("foods")
                 this.fetchPermissions
             }
+
+        def changeLoginPassword(username: String,
+                                currentPassword: String,
+                                newPassword: String) =
+            apiClient.changeLoginPassword(username, currentPassword, newPassword)
+            .map { resp =>
+                println(resp)
+            }
         
         def fetchPermissions =
             apiClient.queryDb("SELECT name FROM permissions;")

@@ -13,7 +13,14 @@ object ApiClient {
             val username: String,
             val password: String,
         ) extends js.Object
-    class PasswordLoginResp(val sessionToken: String) extends js.Object
+    class PasswordLoginResp(val sessionToken: String,
+                            val expiresIn: Long) extends js.Object
+    
+    class PasswordChangeRequest(
+            val username: String,
+            val currentPassword: String,
+            val newPassword: String
+        ) extends js.Object
 
     class QueryDbRequest(
             val query_str: String,
@@ -101,6 +108,14 @@ class ApiClient(val apiUrl: String) {
             this.authToken = Some(resp.sessionToken)
             resp
         }
+
+    def changeLoginPassword(username: String,
+                            currentPassword: String,
+                            newPassword: String) =
+        Ajax.put(s"$apiUrl/auth/password",
+            data = js.JSON.stringify(new PasswordChangeRequest(username, currentPassword, newPassword)),
+            headers = Map("Content-Type" -> "application/json")
+        )
 
     def queryDbRaw(query: String, params: Seq[String] = Seq()) =
         Ajax.post(

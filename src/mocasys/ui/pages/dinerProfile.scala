@@ -22,6 +22,8 @@ class DinerProfilePage extends Component {
     var form: Option[Form] = None
     var date = new js.Date("2019-05-01")
 
+    val passwordChanger = new PasswordChanger()
+
     override def onMount = {
         fetchUser
     }
@@ -42,7 +44,7 @@ class DinerProfilePage extends Component {
     
     def renderProfile =
         div(cls := "box profile bgColor1 borderRadius boxShadowBalanced",
-            if (userData != None)
+            (if (userData != None)
                 userData.get.map { case (key, value) =>
                     if (key.toString == "name")
                         div(cls := "dataRow firstRow",
@@ -54,7 +56,12 @@ class DinerProfilePage extends Component {
                             p(cls := "value", value.toString))
                 }
             else
-                p("Loading...")
+                p("Loading...")),
+            // TODO: TODOs are located in passwordChanger.scala
+            (if (userData != None)
+                button("Change Password", onClick := { e => passwordChanger.visible(true) })
+            else None),
+            passwordChanger,
         )
 
     def render: liwec.VNode = {
