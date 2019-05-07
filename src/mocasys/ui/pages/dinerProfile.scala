@@ -59,7 +59,7 @@ class DinerProfilePage extends Component {
                 p("Loading...")),
             // TODO: TODOs are located in passwordChanger.scala
             (if (userData != None)
-                button("Change Password", onClick := { e => passwordChanger.visible(true) })
+                button("Change Password", cls := "changePassBtn shadowClick", onClick := { e => passwordChanger.visible(true) })
             else None),
             passwordChanger,
         )
@@ -104,6 +104,7 @@ class DinerProfilePage extends Component {
                 c.box (
                     color := "white",
                     minHeight := "8em",
+                    backgroundColor := "#265976",
                 ),
 
                 c.box_1_3 (
@@ -140,6 +141,11 @@ class DinerProfilePage extends Component {
                     color := "f1ffff",
                     borderTopLeftRadius := "3px",
                     borderTopRightRadius := "3px",
+                ),
+
+                c.changePassBtn (
+                    margin := "0.5em 1em",
+                    padding := "6px 10px",
                 ),
             ),
         )
