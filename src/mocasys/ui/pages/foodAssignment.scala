@@ -23,6 +23,7 @@ class FoodAssignmentPage extends Component {
     var foodAssignmentData: Option[Seq[DbRow]] = None
     var date: js.Date = new js.Date()
     var prevDate: js.Date = null
+    var foodLanders: Seq[FoodLander] = Seq()
 
     override def onMount() {
         fetchFood
@@ -36,29 +37,97 @@ class FoodAssignmentPage extends Component {
             case Success(res) => foodData = Some(res)
             case Failure(e) => val ApiError(_, msg) = e
         }
-    
+
     def fetchCurrentAssignments =
         AppState.apiClient.queryDb(s"""
-            SELECT fa.day, fa.kind, fa.option, f.name FROM food_assignments AS fa
+            SELECT fa.day, fa.kind, fa.option, f.name, f.id FROM food_assignments AS fa
             LEFT JOIN food AS f ON fa.id_food = f.id
             WHERE fa.day = '${isoDate(date)}'
             ORDER BY fa.day;
         """)
         .onComplete {
-            case Success(res) => foodAssignmentData = Some(res)
+            case Success(res) => {
+                foodAssignmentData = Some(res)
+                foodLanders = for(row <- res)
+                    yield new FoodLander(row("kind").toString,
+                        row("option").toString,
+                        row("name").toString,
+                        row("id").toString.toInt
+                )
+            }
             case Failure(e) => val ApiError(_, msg) = e
         }
-    
+
     def fetchFoodAssignmentsIfDateDiff =
         if (date != prevDate) {
             prevDate = date
             fetchCurrentAssignments
         }
     
+    def faWhereFl(fl: FoodLander) = s"""
+        WHERE day = '${isoDate(date)}'
+            AND kind = '${fl.originalKind}'
+            AND option = '${fl.originalOption}'
+            AND id_food = ${fl.originalFoodId}
+    """
+
+    def faUpdateQuery(fl: FoodLander) = s"""
+        UPDATE food_assignments
+        SET option = '${fl.option}',
+            kind = '${fl.kind}',
+            id_food = ${fl.foodId}
+        ${faWhereFl(fl)}
+    """
+
+    def faDeleteQuery(fl: FoodLander) = s"""
+        DELETE FROM food_assignments
+        ${faWhereFl(fl)}
+    """
+
     def save(e: dom.Event) = {
-        println("Saving " + isoDate(date))
+        for (fl <- foodLanders if fl.changed || fl.delete) {
+            if (fl.delete)
+                AppState.apiClient.queryDb(faDeleteQuery(fl))
+                .onComplete {
+                    case Success(res) => println(s"Deleted from ${fl.originalFoodName} to ${fl.foodName}")
+                    case Failure(e) => val ApiError(_, msg) = e
+                }
+            else
+                AppState.apiClient.queryDb(faUpdateQuery(fl))
+                .onComplete {
+                    case Success(res) => println(s"Updated from ${fl.originalFoodName} to ${fl.foodName}")
+                    case Failure(e) => val ApiError(_, msg) = e
+                }
+
+        }
+        fetchCurrentAssignments
     }
-    
+
+    // TODO: Make functional
+    def addAssignment(e: dom.DragEvent) = {
+        e.preventDefault()
+        e.target.asInstanceOf[dom.raw.HTMLElement].style.border = "2px solid #00000000"
+        val self = e.target.asInstanceOf[dom.raw.HTMLElement]
+        if (foodAssignmentData == None)
+            foodAssignmentData = Some(Seq())
+        val s: Seq[DbRow] = foodAssignmentData.get
+        // TODO: If needed, add fields
+        println(s)
+        val dbRow = new DbRow(js.Array(
+            isoDate(date),
+            "<kind>",
+            "<option>",
+            e.dataTransfer.getData("name"),
+            e.dataTransfer.getData("id").toInt
+        ), js.Array())
+        println(dbRow)
+        s :+ dbRow
+        foodAssignmentData.get.map {
+            row => println(row("name").toString)
+        }
+        // change = !change
+    }
+
     def renderControls =
         div(cls := "controls borderRadius",
             label(cls := "dateStart",
@@ -72,7 +141,7 @@ class FoodAssignmentPage extends Component {
             ),
             button("Save", onClick := save)
         )
-    
+
     def renderFoods =
         div(cls := "foods",
             (if (foodData == None)
@@ -82,34 +151,31 @@ class FoodAssignmentPage extends Component {
                     div(cls := "foodDraggable",
                         id := s"foodDraggable_$i",
                         draggable := "true",
-                        onDragstart := { e: dom.DragEvent =>
-                            e.dataTransfer.setData("name", row("name").toString) },
+                        onDragstart := { e: dom.DragEvent => {
+                            e.dataTransfer.setData("name", row("name").toString)
+                            e.dataTransfer.setData("id", row("id").toString)
+                        }},
                         new Food(row("name").toString),
                     )
                 }
             ),
         )
 
-    def renderAssignments =
-        div(cls := "assignment",
-            (if (foodAssignmentData == None)
-                None
-            else
-                foodAssignmentData.get.map { row =>
-                    div(new FoodLander(row("kind").toString,
-                        row("option").toString,
-                        row("name").toString
-                    ))
-                }
-            ),
+    def renderAssignments: VNodeFrag = {
+        return div(cls := "assignment",
+            foodLanders.map { lander => div(lander) },
             span(cls := "newAssignment", "DROP TO ADD NEW",
                 onDragover := { e: dom.DragEvent => {
+                    e.preventDefault()
                     e.target.asInstanceOf[dom.raw.HTMLElement].style.border = "2px solid black"
                 }},
                 onDragleave := { e: dom.DragEvent => {
+                    e.preventDefault()
                     e.target.asInstanceOf[dom.raw.HTMLElement].style.border = "2px solid #00000000"
-                }}),
+                }},
+                onDrop := addAssignment),
         )
+    }
 
     def render: VNode = {
         fetchFoodAssignmentsIfDateDiff

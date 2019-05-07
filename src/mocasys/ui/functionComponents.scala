@@ -53,6 +53,6 @@ package object functionComponents {
         div(cls := "errorMessage", message match {
             case "" => message
             case _ => span(cls := "bgColor6 borderRadius", message)
-        }),
+        })
 
 }
