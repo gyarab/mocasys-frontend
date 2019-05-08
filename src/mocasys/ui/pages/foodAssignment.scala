@@ -26,28 +26,34 @@ class FoodAssignmentPage extends Component {
     var foodLanders: Seq[FoodLander] = Seq()
     var newFoodLanders: mutable.ArrayBuffer[FoodLander] = mutable.ArrayBuffer()
     var changed: Boolean = false
+    var foodSearch: String = ""
 
     override def onMount() {
         fetchFood
         fetchCurrentAssignments
     }
 
+    def foodQuery = if (foodSearch.isEmpty)
+            AppState.apiClient.queryDb("SELECT id, name FROM food")
+        else
+            AppState.apiClient.queryDb("SELECT id, name FROM food WHERE name LIKE $1",
+                Seq(s"%${foodSearch}%"))
+
     // TODO: Paging
     def fetchFood =
-        AppState.apiClient.queryDb("SELECT id, name FROM food")
-        .onComplete {
+        foodQuery.onComplete {
             case Success(res) => foodData = Some(res)
             case Failure(e) => val ApiError(_, msg) = e
         }
 
     def fetchCurrentAssignments =
-        AppState.apiClient.queryDb(s"""
-            SELECT fa.day, fa.kind, fa.option, f.name, f.id FROM food_assignments AS fa
+        AppState.apiClient.queryDb(
+            """SELECT fa.day, fa.kind, fa.option, f.name, f.id FROM food_assignments AS fa
             LEFT JOIN food AS f ON fa.id_food = f.id
-            WHERE fa.day = '${isoDate(date)}'
-            ORDER BY fa.kind, fa.option;
-        """)
-        .onComplete {
+            WHERE fa.day = $1
+            ORDER BY fa.kind, fa.option""",
+            Seq(isoDate(date))
+        ).onComplete {
             case Success(res) => {
                 foodAssignmentData = Some(res)
                 foodLanders = for(row <- res)
@@ -119,7 +125,7 @@ class FoodAssignmentPage extends Component {
     def addAssignment(e: dom.DragEvent) = {
         e.preventDefault()
         addDropAreaDefaultStyle(e.target.asInstanceOf[dom.raw.HTMLElement])
-        newFoodLanders += new FoodLander("",
+        val lander: FoodLander = new FoodLander("",
             "",
             e.dataTransfer.getData("name"),
             e.dataTransfer.getData("id").toInt,
@@ -156,6 +162,10 @@ class FoodAssignmentPage extends Component {
 
     def renderFoods =
         div(cls := "foods boxShadowBalanced",
+            div(cls := "foodControls",
+                textInput(foodSearch, { str => foodSearch = str }, "text", placeholderVal = "Search Foods"),
+                button("Search", onClick := { e => fetchFood })
+            ),
             (if (foodData == None)
                 None
             else
@@ -247,7 +257,9 @@ class FoodAssignmentPage extends Component {
 
                 (c.foodDraggable /+ c.foodDraggable) (
                     marginTop := "0.3em",
-                )
+                ),
+
+                c.foodControls (marginBottom := "0.4em"),
             ),
 
             c.assignment (

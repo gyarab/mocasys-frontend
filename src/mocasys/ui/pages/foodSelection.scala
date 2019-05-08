@@ -33,25 +33,9 @@ class FoodSelection extends Component {
         fetchFoodListIfDateDiff
     }
 
-    // TODO: Replace with query builder
-    val balanceQuery = """
-        SELECT account_balance FROM diners
-        WHERE id_person = session_person_get();
-        """
-    def foodListQuery(start: String, end: String) = s"""
-        SELECT fa.day, fa.id_food, f.name, fa.kind,
-            fa.option, fc.option as option2
-        FROM food_assignments AS fa
-        LEFT JOIN food_choice AS fc ON fa.day = fc.day
-            AND fa.kind = fc.kind
-            AND fc.id_diner = session_person_get()
-        JOIN food AS f ON f.id = fa.id_food
-        WHERE fa.day BETWEEN '$start' AND '$end'
-        ORDER BY day, fa.kind, option;
-        """
-
     def fetchBalance() =
-        AppState.apiClient.queryDb(balanceQuery)
+        AppState.apiClient.queryDb("""SELECT account_balance FROM diners
+            WHERE id_person = session_person_get()""")
         .onComplete {
             case Success(res) => {
                 balance = res.rows.pop.pop.asInstanceOf[String]
@@ -64,8 +48,18 @@ class FoodSelection extends Component {
         }
 
     def fetchFoodList() =
-        AppState.apiClient.queryDb(foodListQuery(isoDate(startDate), isoDate(endDate)))
-        .onComplete {
+        AppState.apiClient.queryDb(
+            """SELECT fa.day, fa.id_food, f.name, fa.kind,
+                fa.option, fc.option as option2
+            FROM food_assignments AS fa
+            LEFT JOIN food_choice AS fc ON fa.day = fc.day
+                AND fa.kind = fc.kind
+                AND fc.id_diner = session_person_get()
+            JOIN food AS f ON f.id = fa.id_food
+            WHERE fa.day BETWEEN $1 AND $2
+            ORDER BY day, fa.kind, option""",
+            Seq(isoDate(startDate), isoDate(endDate))
+        ).onComplete {
             case Success(res) => {
                 foodList = Some(res)
                 error = ""

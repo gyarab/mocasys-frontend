@@ -117,11 +117,11 @@ class ApiClient(val apiUrl: String) {
             headers = Map("Content-Type" -> "application/json")
         )
 
-    def queryDbRaw(query: String, params: Seq[String] = Seq()) =
+    def queryDbRaw(query: String, params: Seq[Any] = Seq()) =
         Ajax.post(
             s"$apiUrl/qdb",
             data = js.JSON.stringify(
-                new QueryDbRequest(query, params.toJSArray)),
+                new QueryDbRequest(query, params.map(_.toString).toJSArray)),
             headers = Map(
                 "Content-Type" -> "application/json",
                 "Authorization" -> s"Token ${this.authToken.getOrElse("")}",
@@ -135,7 +135,7 @@ class ApiClient(val apiUrl: String) {
             case s => s
         }
 
-    def queryDb(query: String, params: Seq[String] = Seq()) =
+    def queryDb(query: String, params: Seq[Any] = Seq()) =
         queryDbRaw(query, params)
         .map { xhr =>
             js.JSON.parse(xhr.responseText).asInstanceOf[QueryDbResp]

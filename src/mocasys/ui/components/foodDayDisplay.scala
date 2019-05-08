@@ -25,50 +25,48 @@ class FoodDayDisplay(val date: js.Date = new js.Date()) extends Component {
     }
 
     // When David made this only God and him knew how it works.
-    def queryMeal(date: js.Date) = s"""
-        SELECT kinds.kind, opts.option, sel_food.name
-        FROM (
-            SELECT DISTINCT kind, day
-            FROM food_assignments
-            WHERE day = '${isoDate(date)}'
-            ) AS kinds
-        LEFT JOIN LATERAL (
-            SELECT COALESCE(
-                (
-                    SELECT fc.option
-                    FROM food_choice AS fc
-                    INNER JOIN food_assignments AS fa2
-                        ON fa2.day = kinds.day
-                        AND fa2.kind = kinds.kind
-                        AND fa2.option = fc.option
-                    WHERE id_diner = session_person_get()
-                        AND fc.kind = kinds.kind
-                        AND fc.day = kinds.day
-                ),
-                (
-                    SELECT fa2.option
-                    FROM food_assignments AS fa2
-                    INNER JOIN food ON food.id = fa2.id_food
-                    -- TODO: Some kind of ordering for defaults
-                    WHERE day = kinds.day AND fa2.kind = kinds.kind
-                    ORDER BY fa2.option
-                    LIMIT 1
-                )
-            ) AS option
-        ) AS opts ON true
-        LEFT JOIN LATERAL (
-            SELECT food.name from food
-            INNER JOIN food_assignments AS fa2
-                ON food.id = fa2.id_food
-            WHERE fa2.kind = kinds.kind
-                AND fa2.day = kinds.day
-                AND fa2.option = opts.option
-        ) AS sel_food ON true
-        """
-
     def fetchMeals =
-        AppState.apiClient.queryDb(queryMeal(this.date))
-        .onComplete {
+        AppState.apiClient.queryDb(
+            """SELECT kinds.kind, opts.option, sel_food.name
+            FROM (
+                SELECT DISTINCT kind, day
+                FROM food_assignments
+                WHERE day = $1
+                ) AS kinds
+            LEFT JOIN LATERAL (
+                SELECT COALESCE(
+                    (
+                        SELECT fc.option
+                        FROM food_choice AS fc
+                        INNER JOIN food_assignments AS fa2
+                            ON fa2.day = kinds.day
+                            AND fa2.kind = kinds.kind
+                            AND fa2.option = fc.option
+                        WHERE id_diner = session_person_get()
+                            AND fc.kind = kinds.kind
+                            AND fc.day = kinds.day
+                    ),
+                    (
+                        SELECT fa2.option
+                        FROM food_assignments AS fa2
+                        INNER JOIN food ON food.id = fa2.id_food
+                        -- TODO: Some kind of ordering for defaults
+                        WHERE day = kinds.day AND fa2.kind = kinds.kind
+                        ORDER BY fa2.option
+                        LIMIT 1
+                    )
+                ) AS option
+            ) AS opts ON true
+            LEFT JOIN LATERAL (
+                SELECT food.name from food
+                INNER JOIN food_assignments AS fa2
+                    ON food.id = fa2.id_food
+                WHERE fa2.kind = kinds.kind
+                    AND fa2.day = kinds.day
+                    AND fa2.option = opts.option
+            ) AS sel_food ON true""",
+            Seq(isoDate(date))
+        ).onComplete {
             case Success(res) => {
                 if (js.isUndefined(res(0).data)) {
                     noData = true

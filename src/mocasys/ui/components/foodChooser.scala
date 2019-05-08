@@ -37,20 +37,22 @@ class FoodChooser(
     var error: String = ""
 
     // TODO: Replace once the query builder is finished
-    def choiceQuery(choice: DbRow): String =
+    def choiceQuery(choice: DbRow) =
         if (choice("option2") == null)
-            s"""
-            INSERT INTO food_choice (id_diner, day, kind, option) VALUES
-            (session_person_get(), '${choice("day")}', '${choice("kind")}', '${choice("option")}');
-            """
+            AppState.apiClient.queryDb(
+                """INSERT INTO food_choice (id_diner, day, kind, option) VALUES
+                (session_person_get(), $1, $2, $3)""",
+                Seq(choice("day"), choice("kind"), choice("option"))
+            )
         else
-            s"""
-            UPDATE food_choice
-            SET option = ${choice("option")}
-            WHERE id_diner = session_person_get()
-                AND day = '${choice("day")}'
-                AND kind = '${choice("kind")}';
-            """
+            AppState.apiClient.queryDb(
+                """UPDATE food_choice
+                SET option = $1
+                WHERE id_diner = session_person_get()
+                    AND day = $2
+                    AND kind = $3""",
+                Seq(choice("option"), choice("day"), choice("kind"))
+            )
 
     def radioName(choice: DbRow) =
         s"${choice("kind")}_${choice("day").toString().substring(0, 10)}"
@@ -65,7 +67,7 @@ class FoodChooser(
         choice("option").toString.isEmpty
 
     def onChange(choice: DbRow) =
-        AppState.apiClient.queryDb(choiceQuery(choice))
+        choiceQuery(choice)
         .onComplete {
             // TODO: Do more efficiently
             case Success(res) => parent.fetchFoodList
