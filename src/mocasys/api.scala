@@ -117,6 +117,7 @@ class ApiClient(val apiUrl: String) {
             headers = Map("Content-Type" -> "application/json")
         )
 
+    // TODO: Trim!
     def queryDbRaw(query: String, params: Seq[Any] = Seq()) =
         Ajax.post(
             s"$apiUrl/qdb",
