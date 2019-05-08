@@ -25,12 +25,14 @@ class NotFoundPage extends Component {
     cssScoped { import liwec.cssDsl._
         c.notFoundPage (
             color := "white",
-            padding := "2em",
+            textAlign := "center",
+            padding := "5em",
             paddingTop := "0.4em",
             height := "6em",
             width := "40%",
             margin := "4em auto 0 auto",
-	        boxShadow := "5px 5px 10px 0px rgba(0, 0, 0, 0.60)",
+            boxShadow := "5px 5px 10px 0px rgba(0, 0, 0, 0.60)",
+            borderTop := "3px solid #3685a2",
         ),
     }
 }
