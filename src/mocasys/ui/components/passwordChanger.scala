@@ -17,21 +17,12 @@ import mocasys.ui.main._
 import mocasys.ui.tables._
 import mocasys.ApiClient._
 
-// TODO: Hide by default
-// TODO: Show when called upon
-// TODO: Close button
 class PasswordChanger extends Component {
-    var show: Boolean = false
-    var username: String = ""
+    var username: String = AppState.loggedInUser.getOrElse("")
     var currentPassword: String = ""
     var newPassword: String = ""
     var newPasswordConfirm: String = ""
     var error: String = ""
-
-    def visible(v: Boolean) = {
-        println(v)
-        show = v
-    }
 
     def changePassword(e: dom.Event): Unit = {
         if (newPassword != newPasswordConfirm) {
@@ -43,12 +34,18 @@ class PasswordChanger extends Component {
         }
         AppState.changeLoginPassword(username, currentPassword, newPassword)
         .onComplete {
-            case Success(_) => error = "Success"
+            case Success(_) => {
+                error = "The password was successfully changed. You will be logged out now."
+                js.timers.setTimeout(3000) {
+                    dom.document.getElementById("passwordIDDD")
+                        .asInstanceOf[dom.raw.HTMLElement].style.display = "none"
+                    AppState.logout
+                }
+
+            }
             case Failure(e) => {
                 val ApiError(status, message) = e
-                error = s"Unknown error: ${message}"
-                if (status == 400)
-                    error = "Invalid username or password"
+                error = message
             }
         }
     }
@@ -56,7 +53,7 @@ class PasswordChanger extends Component {
     def onEnter(e: dom.KeyboardEvent) =
         if (e.keyCode == 13) changePassword(e)
 
-    def render = scoped(div(cls := "passwordChanger borderRadius" + (if (show) " show" else ""),
+    def render = scoped(div(id := "passwordIDDD", cls := "passwordChanger borderRadius",
         div(cls := "form bgColor1 borderRadius",
             errorBox(error),
             label(cls := "username",
@@ -66,28 +63,31 @@ class PasswordChanger extends Component {
             label(cls := "currentPassword",
                 span(cls := "borderShadowColor3 bgColor2 borderRadius", "current password"),
                 textInput(currentPassword, { currentPassword = _ },
-                    "currentPassword", onKeyupE = onEnter),
+                    "password", onKeyupE = onEnter),
             ),
             label(cls := "newPassword",
                 span(cls := "borderShadowColor3 bgColor2 borderRadius", "new password"),
                 textInput(newPassword, { newPassword = _ },
-                    "newPassword", onKeyupE = onEnter),
+                    "password", onKeyupE = onEnter),
             ),
             label(cls := "newPasswordConfirm",
                 span(cls := "borderShadowColor3 bgColor2 borderRadius", "confirm new password"),
                 textInput(newPasswordConfirm, { newPasswordConfirm = _ },
-                    "newPasswordConfirm", onKeyupE = onEnter),
+                    "password", onKeyupE = onEnter),
             ),
             button("Change", cls := "submitButton shadowClick",
                     onClick := { e => changePassword(e) }),
-        )
+        ),
+        span(cls := "cross", "x",
+            onClick := { e => e.target.asInstanceOf[dom.raw.HTMLElement]
+                .parentNode.asInstanceOf[dom.raw.HTMLElement].style.display = "none" }),
     ))
 
     cssScoped { import liwec.cssDsl._
         c.passwordChanger (
-            // display := "none",
+            display := "none",
             position := "absolute",
-            top := "10em",
+            top := "3em",
             left := "0",
             right := "0",
             margin := "4em auto 0 auto",
@@ -96,6 +96,14 @@ class PasswordChanger extends Component {
             maxWidth := "760px",
             minWidth := "200px",
             zIndex := "5",
+
+            c.cross (
+                position := "absolute",
+                top := "0.3em",
+                right := "0.5em",
+                fontSize := "1.7em",
+                fontWeight := "bold",
+            ),
 
             c.form (
                 display := "grid",
@@ -170,10 +178,6 @@ class PasswordChanger extends Component {
                     padding := "10px",
                 ),
             ),
-        )
-
-        c.show (
-            display := "block",
         )
     }
 }

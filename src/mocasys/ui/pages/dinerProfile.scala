@@ -3,6 +3,7 @@ package mocasys.ui.pages
 import scala.util.{Success, Failure}
 import scalajs.js
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalajs.dom
 import org.scalajs.dom.ext._
 import liwec._
 import liwec.htmlDsl._
@@ -57,9 +58,14 @@ class DinerProfilePage extends Component {
                 }
             else
                 p("Loading...")),
-            // TODO: TODOs are located in passwordChanger.scala
             (if (userData != None)
-                button("Change Password", cls := "changePassBtn shadowClick", onClick := { e => passwordChanger.visible(true) })
+                button("Change Password", cls := "changePassBtn shadowClick",
+                    onClick := { e =>
+                        e.target.asInstanceOf[dom.raw.HTMLElement]
+                            .nextSibling.asInstanceOf[dom.raw.HTMLElement]
+                                .style.display = "block"
+                    }
+                )
             else None),
             passwordChanger,
         )
