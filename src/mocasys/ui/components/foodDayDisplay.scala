@@ -24,6 +24,8 @@ class FoodDayDisplay(val date: js.Date = new js.Date()) extends Component {
         fetchMeals
     }
 
+    // When David made this only God and him knew how it works.
+    // Now only God knows.
     def queryMeal(date: js.Date) = s"""
         SELECT kinds.kind, opts.option, sel_food.name
         FROM (
