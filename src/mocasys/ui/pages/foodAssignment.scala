@@ -154,16 +154,23 @@ class FoodAssignmentPage extends Component {
                         date = new js.Date(str)
                         fetchCurrentAssignments
                     }},
-                    "date"
+                    "date",
+                    onKeyupE = onEnter
                 ),
             ),
             button("Save", onClick := save, cls := "shadowClick saveButton")
         )
 
+    def onEnter(e: dom.KeyboardEvent) = if (e.keyCode == 13) fetchFood
+
     def renderFoods =
         div(cls := "foods boxShadowBalanced",
             div(cls := "foodControls",
-                textInput(foodSearch, { str => foodSearch = str }, "text", placeholderVal = "Search Foods"),
+                textInput(foodSearch,
+                    { str => foodSearch = str },
+                    "text",
+                    placeholderVal = "Search Foods",
+                    onKeyupE = onEnter),
                 button("Search", onClick := { e => fetchFood })
             ),
             (if (foodData == None)
