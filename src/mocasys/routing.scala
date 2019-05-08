@@ -9,10 +9,11 @@ class AppRouter extends Router {
         url match {
             case path"/" => new LoginPage()
             case path"/users" => new UsersPage()
-            case path"/foods" => new FoodSelection()
+            case path"/food-selection" => new FoodSelection()
+            case path"/food-assignment" => new FoodAssignmentPage()
             case path"/profile" => new DinerProfilePage()
             case path"/diners" => new DinersPage()
-            case path"/food-assignment" => new FoodAssignmentPage()
+            case path"/food" => new FoodPage()
             case _ => new NotFoundPage()
         }
     }

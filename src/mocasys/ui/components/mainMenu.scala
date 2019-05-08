@@ -27,9 +27,11 @@ class MainMenu() extends Component {
     lazy val rootNode: SubMenu =
         SubMenu(MenuItem("Menu", _ => AppState.router.goToUrl("")),
             Seq(
-                MenuItem("Food Selection", _ => AppState.router.goToUrl("foods")),
+                MenuItem("Food Selection", _ => AppState.router.goToUrl("food-selection")),
+                MenuItem("Food Assignment", _ => AppState.router.goToUrl("food-assignment")),
                 MenuItem("Users", _ => AppState.router.goToUrl("users")),
                 MenuItem("Diners", _ => AppState.router.goToUrl("diners")),
+                MenuItem("Food", _ => AppState.router.goToUrl("food")),
                 SubMenu(MenuItem("Submenu"),
                     Seq(
                         MenuItem("1", _ => dom.window.alert("Nada!")),
