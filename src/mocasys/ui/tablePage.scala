@@ -32,17 +32,19 @@ abstract class TablePage extends Component {
 
     def render = scoped(
         div(cls := "tablePage",
-            h1(name),
+            h1(name, cls := "boxShadowBalanced bgColor1"),
             errorBox(error),
-            div(cls := "controls",
-                renderControls,
-            ),
-            div(cls := "form",
-                renderForm,
-            ),
-            div(cls := "table",
-                renderTable,
-            ),
+            div(cls := "pageBox bgColor1 boxShadowBalanced borderTopColor2 borderRadius",
+                div(cls := "controls",
+                    renderControls,
+                ),
+                div(cls := "form",
+                    renderForm,
+                ),
+                div(cls := "table",
+                    renderTable,
+                ),
+            )
         )
     )
 
@@ -56,7 +58,19 @@ abstract class TablePage extends Component {
             gridTemplateColumns := "1fr 1fr",
             gridRowGap := "1em",
 
-            e.h1 (fontSize := "1.5em"),
+            e.h1 (
+                fontSize := "1.5em",
+                color := "f1ffff",
+                borderTop := "3px solid #3685a2",
+                borderRadius := "3px",
+                width := "max-content",
+                padding := "0.3em 0.5em",
+                textAlign := "center",
+            ),
+
+            c.pageBox (
+                padding := "1em",
+            ),
 
             c.errorMessage (
                 gridRow := "1",
@@ -69,7 +83,7 @@ abstract class TablePage extends Component {
                 gridRow := "2",
 
                 e.button (
-                    margin := "1em",
+                    //margin := "1em",
                 ),
             ),
 
@@ -81,13 +95,13 @@ abstract class TablePage extends Component {
             c.table (
                 gridRow := "4",
                 gridColumn := "1 / 3",
+                paddingTop := "1em",
             ),
         )
 
         (c.tablePage /> (e.div /+ e.div)) (
             marginTop := "1em",
             paddingTop := "1em",
-            borderTop := "1px solid black",
         )
     }
 }

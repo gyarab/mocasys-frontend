@@ -35,6 +35,10 @@ input {
 	}
 }
 
+.btnPadding {
+	padding: 0.3em 0.6em;
+}
+
 .boxShadowBig {
 	box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.60);
 }
@@ -62,6 +66,10 @@ input {
 	border: 3px solid $color3;
 	border-right-color: $color2;
 	border-bottom-color: $color2;
+}
+
+.borderTopColor2 {
+	border-top: 3px solid $color2;
 }
 
 .bgColor1 {

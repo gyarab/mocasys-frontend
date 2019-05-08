@@ -43,7 +43,7 @@ class UsersPage extends TablePage {
             }), Seq("sys_period"))
 
     override def renderControls = 
-        button("New user", cls := "bgColor3", onClick := { _ =>
+        button("New user", cls := "bgColor4 shadowClick btnPadding", onClick := { _ =>
             form = Some(new Form(this, Map(
                 "username" -> "", "id_person" -> 0)))
         })
