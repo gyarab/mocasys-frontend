@@ -70,10 +70,10 @@ class DinerProfilePage extends Component {
             div(cls := "grid",
                 renderProfile,
                 div(cls := "box_1_3",
-                    new FoodDayDisplay(new js.Date("2019-05-01T03:00:00"))
+                    new FoodDayDisplay(new js.Date())
                 ),
                 div(cls := "box_2_3",
-                    new FoodDayDisplay(new js.Date("2019-05-09T03:00:00")),
+                    new FoodDayDisplay(new js.Date(new js.Date().getTime + 86400000)),
                 ),
             )
         ))

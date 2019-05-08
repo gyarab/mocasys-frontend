@@ -45,7 +45,7 @@ class FoodAssignmentPage extends Component {
             SELECT fa.day, fa.kind, fa.option, f.name, f.id FROM food_assignments AS fa
             LEFT JOIN food AS f ON fa.id_food = f.id
             WHERE fa.day = '${isoDate(date)}'
-            ORDER BY fa.day;
+            ORDER BY fa.kind, fa.option;
         """)
         .onComplete {
             case Success(res) => {

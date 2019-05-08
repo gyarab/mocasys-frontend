@@ -20,13 +20,14 @@ import mocasys.ApiClient._
 class FoodChoser(
         val date: js.Date,
         val choices: Seq[DbRow]) extends Component {
+    val today = new js.Date()
     val isToday = {
-        val today = new js.Date()
         date.getDate() == today.getDate() &&
         date.getMonth() == today.getMonth() &&
         date.getFullYear() == today.getFullYear()
     }
     var error: String = ""
+    val deadlineDays = 1
 
     // TODO: Replace once the query builder is finished
     def insertChoiceQuery(choice: DbRow): String =
@@ -52,9 +53,13 @@ class FoodChoser(
     
     def shouldBeChecked(choice: DbRow): Boolean =
         choice("option") == choice("option2") || shouldBeDisabled(choice)
+    
+    def shouldBeHidden(choice: DbRow): Boolean =
+        choice("option").toString.isEmpty
 
     def shouldBeDisabled(choice: DbRow): Boolean =
-        choice("option").toString().isEmpty()
+        deadlineDays * 3600 * 24 * 1000 >
+            (new js.Date(choice("day").toString).getTime - today.getTime)
 
     def onChange(choice: DbRow) =
         AppState.apiClient.queryDb(insertChoiceQuery(choice))
@@ -84,7 +89,7 @@ class FoodChoser(
                 td(cls := "foodName",label(forAttr := forAttrValue(choice),
                     p(choice("name").asInstanceOf[String])
                 )),
-                (if (shouldBeDisabled(choice))
+                (if (shouldBeHidden(choice))
                     td()
                 else
                     td(radioInput(
