@@ -17,17 +17,22 @@ import mocasys.ui.main._
 import mocasys.ui.tables._
 import mocasys.ApiClient._
 
-class FoodChoser(
+class FoodChooser(
         val date: js.Date,
         val choices: Seq[DbRow]) extends Component {
     val today = new js.Date()
-    val isToday = {
+    val deadlineDays: Integer = 1
+
+    lazy val shouldBeDisabled: Boolean =
+        deadlineDays * 3600 * 24 * 1000 >
+            (date.getTime - today.getTime)
+    lazy val isToday: Boolean = {
         date.getDate() == today.getDate() &&
         date.getMonth() == today.getMonth() &&
         date.getFullYear() == today.getFullYear()
     }
+
     var error: String = ""
-    val deadlineDays = 1
 
     // TODO: Replace once the query builder is finished
     def insertChoiceQuery(choice: DbRow): String =
@@ -52,14 +57,10 @@ class FoodChoser(
         s"radio_${choice("kind")}_${choice("id_food")}_${choice("day").toString().substring(0, 10)}"
     
     def shouldBeChecked(choice: DbRow): Boolean =
-        choice("option") == choice("option2") || shouldBeDisabled(choice)
+        choice("option") == choice("option2") || shouldBeDisabled
     
     def shouldBeHidden(choice: DbRow): Boolean =
         choice("option").toString.isEmpty
-
-    def shouldBeDisabled(choice: DbRow): Boolean =
-        deadlineDays * 3600 * 24 * 1000 >
-            (new js.Date(choice("day").toString).getTime - today.getTime)
 
     def onChange(choice: DbRow) =
         AppState.apiClient.queryDb(insertChoiceQuery(choice))
@@ -71,11 +72,16 @@ class FoodChoser(
             }
         }
 
+    //TODO: Actaully cancel the food
+    def cancelFood = Unit
+
     def render = scoped(div(cls := "food borderRadius" + (if (isToday) " today" else ""),
         div(cls := "info",
             span(date.toDateString()),
-            //TODO: implement this button to cancel food
-            button("Cancel", cls := "cancelButton shadowClick"),
+            button("Cancel", cls := "cancelButton shadowClick",
+                (if (shouldBeDisabled) disabled := "true" else None),
+                onClick := { e => cancelFood }
+            ),
         ),
         table(tbody(
             choices.map(choice => tr(
@@ -97,7 +103,7 @@ class FoodChoser(
                         radioName(choice),
                         { _ => onChange(choice) },
                         shouldBeChecked(choice),
-                        shouldBeDisabled(choice),
+                        shouldBeDisabled,
                     )
                 )),
             ))
