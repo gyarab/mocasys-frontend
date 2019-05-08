@@ -143,7 +143,7 @@ class FoodAssignmentPage extends Component {
     }
 
     def renderControls =
-        div(cls := "controls borderRadius boxShadowBalanced",
+        div(cls := "controls borderRadius boxShadowBalanced bgColor1 borderTopColor2",
             label(cls := "dateStart",
                 span(cls := "borderShadowColor3 bgColor2 borderRadius",
                     "Date"),
@@ -161,7 +161,7 @@ class FoodAssignmentPage extends Component {
         )
 
     def renderFoods =
-        div(cls := "foods boxShadowBalanced",
+        div(cls := "foods boxShadowBalanced bgColor1 borderTopColor2",
             div(cls := "foodControls",
                 textInput(foodSearch, { str => foodSearch = str }, "text", placeholderVal = "Search Foods"),
                 button("Search", onClick := { e => fetchFood })
@@ -184,9 +184,9 @@ class FoodAssignmentPage extends Component {
         )
 
     def renderAssignments: VNodeFrag = {
-        return div(cls := "assignment boxShadowBalanced",
+        return div(cls := "assignment boxShadowBalanced bgColor1 borderTopColor2",
             foodLanders.map { lander => div(lander) },
-            span(cls := "newAssignment", "DROP TO ADD NEW",
+            span(cls := "newAssignment bgColor4", "DROP TO ADD NEW",
                 onDragover := { e: dom.DragEvent => {
                     e.preventDefault()
                     e.target.asInstanceOf[dom.raw.HTMLElement].style.transform = "translateY(-2px)"
@@ -219,7 +219,6 @@ class FoodAssignmentPage extends Component {
             gridGap := "0.5em",
 
             (c.controls | c.foods | c.assignment) (
-                backgroundColor := "#bbbbbb",
                 padding := "0.7em",
             ),
 
@@ -228,8 +227,6 @@ class FoodAssignmentPage extends Component {
                 gridColumn := "1 / 3",                
                 display := "flex",
                 flexDirection := "row",
-                backgroundColor := "#265976",
-                borderTop := "3px solid #3ea7b9",
                 color := "white",
 
                 e.span (
@@ -251,9 +248,6 @@ class FoodAssignmentPage extends Component {
             c.foods (
                 gridRow := "2",
                 gridColumn := "2",
-                backgroundColor := "#265976",
-                borderTop := "3px solid #3685a2",
-                borderRadius := "3px",
 
                 (c.foodDraggable /+ c.foodDraggable) (
                     marginTop := "0.3em",
@@ -266,9 +260,6 @@ class FoodAssignmentPage extends Component {
                 gridRow := "2",
                 gridColumn := "1",
                 width := "40em",
-                backgroundColor := "#265976",
-                borderTop := "3px solid #3ea7b9",
-                borderRadius := "3px",
 
                 (e.div /+ e.div) (marginTop := "0.5em"),
 
@@ -277,8 +268,6 @@ class FoodAssignmentPage extends Component {
                     padding := "0.7em",
                     margin := "0.7em 0.3em",
                     textAlign := "center",
-                    backgroundColor := "#f1ffff",
-                    color := "#265976",
                     fontWeight := "550",
                 )
             )
