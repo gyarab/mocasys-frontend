@@ -13,11 +13,13 @@ import liwec.cssDslTypes.RawSelector
 import mocasys._
 import mocasys.ui.components._
 import mocasys.ui.functionComponents._
+import mocasys.ui.pages.FoodSelection
 import mocasys.ui.main._
 import mocasys.ui.tables._
 import mocasys.ApiClient._
 
 class FoodChooser(
+        val parent: FoodSelection,
         val date: js.Date,
         val choices: Seq[DbRow]) extends Component {
     val today = new js.Date()
@@ -35,7 +37,7 @@ class FoodChooser(
     var error: String = ""
 
     // TODO: Replace once the query builder is finished
-    def insertChoiceQuery(choice: DbRow): String =
+    def choiceQuery(choice: DbRow): String =
         if (choice("option2") == null)
             s"""
             INSERT INTO food_choice (id_diner, day, kind, option) VALUES
@@ -63,9 +65,10 @@ class FoodChooser(
         choice("option").toString.isEmpty
 
     def onChange(choice: DbRow) =
-        AppState.apiClient.queryDb(insertChoiceQuery(choice))
+        AppState.apiClient.queryDb(choiceQuery(choice))
         .onComplete {
-            case Success(res) => Unit
+            // TODO: Do more efficiently
+            case Success(res) => parent.fetchFoodList
             case Failure(e) => {
                 val ApiError(_, msg) = e
                 error = msg

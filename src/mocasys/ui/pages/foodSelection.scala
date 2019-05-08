@@ -121,7 +121,7 @@ class FoodSelection extends Component {
                 foodByDate.map(fbd =>
                     div(cls := "foodList",
                         fbd.map { case (date, choices) =>
-                            new FoodChooser(new js.Date(date), choices)
+                            new FoodChooser(this, new js.Date(date), choices)
                         }
                     ),
                 ),
