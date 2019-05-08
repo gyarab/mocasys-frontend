@@ -19,6 +19,12 @@ class NotFoundPage extends Component {
     def render = scoped(
         div(cls := "notFoundPage bgColor1 borderRadius",
             h2("404: Not Found"),
+            // TODO: Remove
+            div(cls := "foodRating",
+                (1 to 5).map { _ => 
+                    span("☆")
+                }
+            ),
         )
     )
 

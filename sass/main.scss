@@ -205,6 +205,20 @@ $radioCheckboxSize: 18px;
 	}
 }
 
+// Source: https://css-tricks.com/examples/StarRating/
+// Source: https://css-tricks.com/star-ratings/
+.foodRating {
+	unicode-bidi: bidi-override;
+	direction: rtl;
+}
+
+.foodRating > span {
+	display: inline-block;
+	position: relative;
+	width: 1.1em;
+	font-size: 1.5em;
+}
+
 .foodRating span:hover:before, .foodRating span:hover ~ span:before {
 	position: absolute;
 	content: "\2605";

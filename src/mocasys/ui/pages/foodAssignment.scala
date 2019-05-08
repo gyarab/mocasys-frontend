@@ -125,7 +125,7 @@ class FoodAssignmentPage extends Component {
     def addAssignment(e: dom.DragEvent) = {
         e.preventDefault()
         addDropAreaDefaultStyle(e.target.asInstanceOf[dom.raw.HTMLElement])
-        val lander: FoodLander = new FoodLander("",
+        newFoodLanders += new FoodLander("",
             "",
             e.dataTransfer.getData("name"),
             e.dataTransfer.getData("id").toInt,
