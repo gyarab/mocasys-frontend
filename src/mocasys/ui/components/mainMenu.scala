@@ -13,7 +13,7 @@ import liwec.cssMacros._
 import liwec.cssDslTypes.RawSelector
 import mocasys._
 
-class MenuNode
+trait MenuNode
 case class MenuItem(val value: String,
                     val action: dom.Event => Unit = { _ => Unit }
     ) extends MenuNode
@@ -21,7 +21,7 @@ case class SubMenu(val item: MenuItem,
                    val children: Seq[MenuNode]
     ) extends MenuNode
 
-class MainMenu() extends Component {
+class MainMenu extends Component {
     var visible: Boolean = false
 
     lazy val rootNode: SubMenu =
@@ -53,7 +53,8 @@ class MainMenu() extends Component {
     def renderMenu(node: SubMenu, root: Boolean = false): liwec.htmlDsl.VNodeFrag =
         for (child <- node.children) yield child match {
             case s: SubMenu => li(cls := "menuItem",
-                h4(cls := "menuHeader borderRadius borderShadowColor3", s.item.value,
+                h4(cls := "menuHeader borderRadius borderShadowColor3",
+                    s.item.value,
                     onClick := s.item.action),
                     ul(cls := "menu", renderMenu(s))
                 )
@@ -75,8 +76,8 @@ class MainMenu() extends Component {
                     div(cls := "bar3"),
                     onClick := { e => visible = !visible },
                 ),
-                nav(cls := "mainMenu bgColor1 borderRadius boxShadowBig "
-                            + (if (visible) "visible" else "invisible"),
+                nav(cls := "mainMenu bgColor1 borderRadius boxShadowBig"
+                            + (if (visible) " visible" else " invisible"),
                     div(cls := "container",
                         img(src := "/assets/mocasys_logo_trans.svg"),
                         renderUserMenu(username),
@@ -145,7 +146,6 @@ class MainMenu() extends Component {
             marginTop := "3em",
             borderBottomLeftRadius := "0",
             borderTopLeftRadius := "0",
-            color := "#f1ffff",
             transition := "width 0.3s ease-in-out",
             zIndex := "10",
 

@@ -14,15 +14,13 @@ $color8: #b0dde4; //ultra light blue
 }
 
 body {
-	background-color: $color4;
 	margin: 0;
 }
 
 button {
 	background-color: $color4;
 	border: 0;
-	//padding: 10px; // Same height as the input (breaks buttons)
-	color: $color1;
+	color: $color0;
 }
 
 input {
@@ -53,6 +51,12 @@ input {
 	transform: translateY(-2px);
 }
 
+.shadowClick:disabled:hover, .shadowClick:disabled {
+	background-color: lightgrey;
+	transform: none;
+	box-shadow: none;
+}
+
 .shadowClick:active {
 	background-color: $color6;
 	transform: translateY(0);
@@ -72,12 +76,19 @@ input {
 	border-top: 3px solid $color2;
 }
 
+.bgWhite {
+	background-color: white;
+	color: $color0;
+}
+
 .bgColor1 {
 	background-color: $color1;
+	color: white;
 }
 
 .bgColor2 {
 	background-color: $color2;
+	color: white;
 }
 
 .bgColor3 {

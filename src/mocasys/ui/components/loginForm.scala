@@ -75,7 +75,6 @@ class LoginForm(var username: String = "", var password: String = "",
             marginRight := "auto",
             width := "90%",
             padding := "15px",
-            color := "#f1ffff",
             maxWidth := "760px",
             minWidth := "200px",
 

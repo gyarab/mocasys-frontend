@@ -84,10 +84,10 @@ class FoodDayDisplay(val date: js.Date = new js.Date()) extends Component {
                     cls := "shadowClick",
                     onClick := { _ => AppState.router.goToUrl("foods") }),
             ),
-            div(cls := "boxBody",
+            div(cls := "boxBody bgWhite",
                 if (meals != None)
                     table(
-                        thead(tr(
+                        thead(cls := "bgWhite", tr(
                             meals.get.head.map { case (key, _) =>
                                 td(key.toString.capitalize),
                             }

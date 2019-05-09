@@ -45,11 +45,11 @@ class DinerProfilePage extends Component {
             (if (userData != None)
                 userData.get.map { case (key, value) =>
                     if (key.toString == "name")
-                        div(cls := "dataRow firstRow",
+                        div(cls := "dataRow firstRow bgColor1",
                             p(key.toString),
                             p(cls := "value", value.toString))
                     else
-                        div(cls := "dataRow",
+                        div(cls := "dataRow bgWhite",
                             p(key.toString),
                             p(cls := "value", value.toString))
                 }
@@ -69,7 +69,8 @@ class DinerProfilePage extends Component {
 
     def render: liwec.VNode = {
         return scoped(div(cls := "dinerProfile",
-            h1(AppState.loggedInUser.getOrElse("").toString, cls := "borderRadius boxShadowBalanced"),
+            h1(AppState.loggedInUser.getOrElse("").toString,
+                cls := "borderRadius boxShadowBalanced bgColor1"),
             div(cls := "grid",
                 renderProfile,
                 div(cls := "box_1_3",
@@ -91,8 +92,6 @@ class DinerProfilePage extends Component {
 
             e.h1 (
                 fontSize := "20pt",
-                color := "f1ffff",
-                backgroundColor := "265976",
                 borderTop := "3px solid #3ea7b9",
                 width := "max-content",
                 padding := "8px 16px",
@@ -128,8 +127,6 @@ class DinerProfilePage extends Component {
                 c.dataRow (
                     display := "grid",
                     gridTemplateColumns := "auto auto",
-                    color := "265976",
-                    backgroundColor := "f1ffff",
                     padding := "0 1em",
 
                     c.value (
@@ -139,9 +136,7 @@ class DinerProfilePage extends Component {
                 ),
                 
                 c.firstRow (
-                    backgroundColor := "#265976",
                     borderTop := "3px solid #3ea7b9",
-                    color := "f1ffff",
                     borderTopLeftRadius := "3px",
                     borderTopRightRadius := "3px",
                 ),
