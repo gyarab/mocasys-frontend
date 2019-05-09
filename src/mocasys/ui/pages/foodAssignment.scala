@@ -171,7 +171,7 @@ class FoodAssignmentPage extends Component {
                     "text",
                     placeholderVal = "Search Foods",
                     onKeyupE = onEnter),
-                button("Search", onClick := { e => fetchFood })
+                button("Search", cls := "btnPadding searchBtn shadowClick", onClick := { e => fetchFood })
             ),
             (if (foodData == None)
                 None
@@ -261,6 +261,10 @@ class FoodAssignmentPage extends Component {
                 ),
 
                 c.foodControls (marginBottom := "0.4em"),
+
+                c.searchBtn (
+                    margin := "0.5em",
+                ),
             ),
 
             c.assignment (
@@ -276,6 +280,7 @@ class FoodAssignmentPage extends Component {
                     margin := "0.7em 0.3em",
                     textAlign := "center",
                     fontWeight := "550",
+                    color := "#265976",
                 )
             )
         )

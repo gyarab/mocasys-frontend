@@ -69,7 +69,8 @@ abstract class TablePage extends Component {
             ),
 
             c.pageBox (
-                padding := "1em",
+                paddingTop := "1em",
+                paddingBottom := "1em",
             ),
 
             c.errorMessage (
