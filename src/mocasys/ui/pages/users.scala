@@ -18,6 +18,7 @@ import mocasys.ApiClient._
 
 class UsersPage extends TablePage(true) {
     var form: Option[Form] = None
+    var userId: Option[Integer] = None
     override val name: String = "Users"
 
     override def renderForm =
@@ -35,12 +36,15 @@ class UsersPage extends TablePage(true) {
             )
         }
 
-    override def renderTable =
+    override def renderTable = div(
         new InteractiveTable(
             s"SELECT * FROM users ORDER BY id LIMIT ${limit} OFFSET ${offset}",
-            onClickRendererForColumn({ row =>
+            onClickRendererForColumn({ row => {
                 form = Some(new Form(this, row))
-            }), Seq("sys_period"))
+                userId = Some(row("id").toString.toInt)
+            }}), Seq("sys_period")),
+        (if (userId != None) new UserPermissions(userId.get) else None)
+    )
 
     override def renderControls = 
         button("New user", cls := "newBtn bgColor4 shadowClick btnPadding", onClick := { _ =>
