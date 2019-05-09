@@ -29,6 +29,10 @@ class FoodLander(var kind: String,
     var originalFoodName = foodName
     var originalFoodId = foodId
     var delete = false
+    var noProxySelf: Option[FoodLander] = None
+
+    def setNoProxySelf(noProxySelf: FoodLander) =
+        this.noProxySelf = Some(noProxySelf)
 
     def changed: Boolean =
         originalKind != kind || originalOption != option ||
@@ -66,7 +70,7 @@ class FoodLander(var kind: String,
                 delete = !delete })
         else
             button("Delete", cls := "shadowClick", onClick := { e =>
-                remove(this) })
+                remove(noProxySelf.getOrElse(null)) })
         )
     ))
 

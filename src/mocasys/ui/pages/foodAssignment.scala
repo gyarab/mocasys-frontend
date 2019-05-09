@@ -125,19 +125,17 @@ class FoodAssignmentPage extends Component {
     def addAssignment(e: dom.DragEvent) = {
         e.preventDefault()
         addDropAreaDefaultStyle(e.target.asInstanceOf[dom.raw.HTMLElement])
-        newFoodLanders += new FoodLander("",
+        val lander = new FoodLander("",
             "",
             e.dataTransfer.getData("name"),
             e.dataTransfer.getData("id").toInt,
             false,
-            { fl => {
-                println(newFoodLanders.contains(fl))
-                newFoodLanders -= fl
-                println(newFoodLanders.contains(fl))
-                println(newFoodLanders.length)
-                changed = !changed
-            }}
+            { fl => newFoodLanders -= fl }
         )
+        // What a hack
+        newFoodLanders += lander
+        lander.setNoProxySelf(lander)
+
         changed = !changed
         println(newFoodLanders.length)
     }
