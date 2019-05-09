@@ -16,7 +16,7 @@ import mocasys.ui.tables._
 import mocasys.ui.forms._
 import mocasys.ApiClient._
 
-class UsersPage extends TablePage {
+class UsersPage extends TablePage(true) {
     var form: Option[Form] = None
     override val name: String = "Users"
 
@@ -37,7 +37,7 @@ class UsersPage extends TablePage {
 
     override def renderTable =
         new InteractiveTable(
-            "SELECT * FROM users ORDER BY id",
+            s"SELECT * FROM users ORDER BY id LIMIT ${limit} OFFSET ${offset}",
             onClickRendererForColumn({ row =>
                 form = Some(new Form(this, row))
             }), Seq("sys_period"))

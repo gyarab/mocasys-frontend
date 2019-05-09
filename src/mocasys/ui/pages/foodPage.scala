@@ -16,7 +16,7 @@ import mocasys.ui.tables._
 import mocasys.ui.forms._
 import mocasys.ApiClient._
 
-class FoodPage extends TablePage {
+class FoodPage extends TablePage(true) {
     var form: Option[Form] = None
     override val name: String = "Food"
 
@@ -35,7 +35,7 @@ class FoodPage extends TablePage {
 
     override def renderTable =
         new InteractiveTable(
-            "SELECT * FROM food ORDER BY name",
+            s"SELECT * FROM food ORDER BY name LIMIT ${limit} OFFSET ${offset}",
             onClickRendererForColumn({ row =>
                 form = Some(new Form(this, row))
             }), Seq("sys_period"))

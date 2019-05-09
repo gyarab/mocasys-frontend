@@ -16,9 +16,20 @@ import mocasys.ui.tables._
 import mocasys.ui.forms._
 import mocasys.ApiClient._
 
-abstract class TablePage extends Component {
+abstract class TablePage(val paging: Boolean = false) extends Component {
     var error: String = ""
     val name: String = "<name>"
+    var page: Integer = 1
+    val limit: Integer = 50
+
+    final def offset = (page - 1) * limit
+
+    def onChangePage(str: String) =
+        scala.util.Try(str.toInt) match {
+            case Success(p) => if (p > 0) page = p
+                else page = 1
+            case Failure(_) => page = 1
+        }
 
     def setError(error: String) = this.error = error
 
@@ -37,6 +48,7 @@ abstract class TablePage extends Component {
             div(cls := "pageBox bgColor1 boxShadowBalanced borderTopColor2 borderRadius",
                 div(cls := "controls",
                     renderControls,
+                    (if (paging) textInput(page.toString, onChangePage, "number") else None),
                 ),
                 div(cls := "form",
                     renderForm,

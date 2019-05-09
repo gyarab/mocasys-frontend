@@ -16,7 +16,7 @@ import mocasys.ui.tables._
 import mocasys.ui.forms._
 import mocasys.ApiClient._
 
-class DinersPage extends TablePage {
+class DinersPage extends TablePage(true) {
     var form: Option[Form] = None
     override val name: String = "Diners"
 
@@ -37,7 +37,9 @@ class DinersPage extends TablePage {
 
     override def renderTable: VNodeFrag =
         new InteractiveTable(
-            "SELECT * FROM diners AS d INNER JOIN people AS p ON p.id = d.id_person ORDER BY d.id_person",
+            s"""SELECT * FROM diners AS d
+            INNER JOIN people AS p ON p.id = d.id_person
+            ORDER BY d.id_person LIMIT ${limit} OFFSET ${offset}""",
             onClickRendererForColumn({ row => {
                 form = Some(new Form(this, Map(
                     "account_balance" -> row("account_balance")
