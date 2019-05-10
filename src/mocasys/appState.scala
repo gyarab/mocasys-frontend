@@ -39,7 +39,7 @@ package object mocasys {
                 localStorage.setItem("apiAuthToken", resp.sessionToken)
                 localStorage.setItem("username", username)
                 this._loggedInUser = Some(username)
-                this.router.goToUrl("foods")
+                this.router.goToUrl("food-selection")
                 this.fetchPermissions
             }
 
