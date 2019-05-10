@@ -129,14 +129,16 @@ class FoodAssignmentPage extends Component {
             e.dataTransfer.getData("name"),
             e.dataTransfer.getData("id").toInt,
             false,
-            { fl => newFoodLanders -= fl }
+            { fl => {
+                newFoodLanders -= fl
+                changed = !changed
+            }}
         )
         // What a hack
         newFoodLanders += lander
         lander.setNoProxySelf(lander)
 
         changed = !changed
-        println(newFoodLanders.length)
     }
 
     def renderControls =
