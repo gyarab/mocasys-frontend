@@ -34,7 +34,7 @@ class FoodChooser(
         date.getFullYear() == today.getFullYear()
     }
 
-    var error: String = ""
+    var error: Option[String] = None
 
     // TODO: Replace once the query builder is finished
     def choiceQuery(choice: DbRow) =
@@ -71,12 +71,12 @@ class FoodChooser(
         .onComplete {
             // TODO: Do more efficiently
             case Success(res) => {
-                error = ""
+                error = None
                 parent.fetchFoodList
             }
             case Failure(e) => {
                 val ApiError(_, msg) = e
-                error = msg
+                error = Some(msg)
             }
         }
 
@@ -84,7 +84,7 @@ class FoodChooser(
     def cancelFood = Unit
 
     def render = scoped(div(cls := "food borderRadius" + (if (isToday) " today" else ""),
-        errorBox(error),
+        error.map(errorBox(_)),
         div(cls := "info",
             span(date.toDateString()),
             button("Cancel", cls := "cancelButton shadowClick",

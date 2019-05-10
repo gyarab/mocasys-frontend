@@ -20,7 +20,7 @@ import mocasys.ApiClient._
 class FoodSelection extends Component {
     var foodList: Option[Seq[DbRow]] = None
     var balance: String = ""
-    var error: String = ""
+    var error: Option[String] = None
     // TODO: Change
     var startDate: js.Date = new js.Date()
     var endDate: js.Date = incrDate(startDate, 6)
@@ -39,11 +39,11 @@ class FoodSelection extends Component {
         .onComplete {
             case Success(res) => {
                 balance = res.rows.pop.pop.asInstanceOf[String]
-                error = ""
+                error = None
             }
             case Failure(e) => {
                 val ApiError(_, msg) = e
-                error = msg
+                error = Some(msg)
             }
         }
 
@@ -62,11 +62,11 @@ class FoodSelection extends Component {
         ).onComplete {
             case Success(res) => {
                 foodList = Some(res)
-                error = ""
+                error = None
             }
             case Failure(e) => {
                 val ApiError(_, msg) = e
-                error = msg
+                error = Some(msg)
             }
         }
     
@@ -111,7 +111,7 @@ class FoodSelection extends Component {
                         span(cls := "balanceValue", (if (balance == "") "N/A" else balance)),
                     )
                 ),
-                errorBox(error),
+                error.map(errorBox(_)),
                 foodByDate.map(fbd =>
                     div(cls := "foodList",
                         fbd.map { case (date, choices) =>
@@ -135,6 +135,7 @@ class FoodSelection extends Component {
                 gridColumn := "1 / 4",
                 backgroundColor := "white",
                 padding := "0 1.5em 0 1.5em",
+                marginTop := "1em",
             ),
 
             c.firstRow (
