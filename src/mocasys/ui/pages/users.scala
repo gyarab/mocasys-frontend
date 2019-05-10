@@ -47,14 +47,8 @@ class UsersPage extends TablePage(true) {
     )
 
     override def renderControls = 
-        button("New user", cls := "newBtn bgColor4 shadowClick btnPadding", onClick := { _ =>
+        button("New user", cls := "bgColor4 shadowClick btnPadding", onClick := { _ =>
             form = Some(new Form(this, Map(
                 "username" -> "", "id_person" -> 0)))
         })
-
-    cssScoped { import liwec.cssDsl._
-        c.newBtn (
-            marginRight := "1em",
-        ),
-    }
 }

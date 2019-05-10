@@ -114,6 +114,7 @@ package object tables {
         )
 
         cssScoped { import liwec.cssDsl._
+
             e.div (
                 c.execBtn (
                     margin := "0.5em",

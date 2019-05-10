@@ -96,13 +96,19 @@ abstract class TablePage(val paging: Boolean = false) extends Component {
                 gridRow := "2",
 
                 e.button (
-                    //margin := "1em",
+                    margin := "1em",
                 ),
             ),
 
             c.form (
                 gridColumn := "1 / 3",
                 gridRow := "3",
+                marginLeft := "1em",
+
+                e.input (
+                    marginLeft := "0.5em",
+                    marginRight := "0.5em",
+                ),
             ),
 
             c.table (
