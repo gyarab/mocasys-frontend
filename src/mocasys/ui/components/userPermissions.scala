@@ -2,6 +2,7 @@ package mocasys.ui.components
 
 import scala.util.{Success, Failure}
 import scalajs.js
+import scala.collection.SortedSet
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalajs.dom
 import org.scalajs.dom.ext._
@@ -19,18 +20,18 @@ import mocasys.ApiClient._
 
 //There is a bug where permissions can be visually put into other permissions.
 class UserPermissions(val userId: Integer) extends Component {
-    var usersPermissions: Option[Set[String]] = None
-    var permissions: Option[Set[String]] = None
+    var usersPermissions: Option[SortedSet[String]] = None
+    var permissions: Option[SortedSet[String]] = None
     var error: String = ""
 
-    def diffPerms: Set[String] = if (usersPermissions != None && permissions != None)
-            permissions.get diff usersPermissions.get
+    def diffPerms: SortedSet[String] = if (usersPermissions != None && permissions != None)
+            permissions.get -- usersPermissions.get
         else
-            Set()
+            SortedSet()
 
     override def onMount = {
-        fetchUsersPermissions
         fetchAllPermissions
+        fetchUsersPermissions
     }
 
     def fetchUsersPermissions =
@@ -40,8 +41,10 @@ class UserPermissions(val userId: Integer) extends Component {
         ).onComplete {
             case Success(res) => {
                 usersPermissions = Some(
-                    (for (perm <- res.rows) yield perm(0).toString).toSet
+                    (for (perm <- res.rows) yield perm(0).toString).to[SortedSet]
                 )
+                println(diffPerms)
+                println(diffPerms.size)
             }
             case Failure(e) => {
                 val ApiError(_, msg) = e
@@ -54,7 +57,7 @@ class UserPermissions(val userId: Integer) extends Component {
         .onComplete {
             case Success(res) => {
                 permissions = Some(
-                    (for (perm <- res.rows) yield perm(0).toString).toSet
+                    (for (perm <- res.rows) yield perm(0).toString).to[SortedSet]
                 )
             }
             case Failure(e) => {
@@ -63,22 +66,38 @@ class UserPermissions(val userId: Integer) extends Component {
             }
         }
     
-    def removePermission(name: String) =
+    def removePermission(name: String, onSuccess: Unit => Unit) =
         AppState.apiClient.queryDb(
             """DELETE FROM user_permissions WHERE id_user = $1 AND permission = $2""",
             Seq(userId, name)
         ).onComplete {
-            case Success(res) => println(s"$name deleted!")
-            case Failure(e) => println(s"failed to delete $name")
+            case Success(res) => {
+                onSuccess()
+                println(s"$name deleted!")
+            }
+            case Failure(e) => {
+                val ApiError(_, msg) = e
+                error = msg
+                println(s"failed to delete $name")
+                fetchUsersPermissions
+            }
         }
 
-    def addPermission(name: String) =
+    def addPermission(name: String, onSuccess: Unit => Unit) =
         AppState.apiClient.queryDb(
             """INSERT INTO user_permissions (id_user, permission) VALUES ($1, $2)""",
             Seq(userId, name)
         ).onComplete {
-            case Success(res) => println(s"$name inserted!")
-            case Failure(e) => println(s"failed to insert $name")
+            case Success(res) => {
+                onSuccess()
+                println(s"$name inserted!")
+            }
+            case Failure(e) => {
+                val ApiError(_, msg) = e
+                error = msg
+                println(s"failed to insert $name")
+                fetchUsersPermissions
+            }
         }
     
     def dropableLi(name: String) =
@@ -89,7 +108,7 @@ class UserPermissions(val userId: Integer) extends Component {
             }},
         )
 
-    def dropableUl(perms: Set[String], onDropVal: dom.DragEvent => Unit) =
+    def dropableUl(perms: SortedSet[String], onDropVal: dom.DragEvent => Unit) =
         ul(perms.map { name => dropableLi(name.toString) },
             onDrop := onDropVal,
             onDragover := { e: dom.DragEvent => e.preventDefault() },
@@ -99,18 +118,20 @@ class UserPermissions(val userId: Integer) extends Component {
     def onDropPerm(e: dom.DragEvent): String = {
         e.preventDefault()
         val name = e.dataTransfer.getData("name")
-        e.target.asInstanceOf[dom.raw.HTMLElement]
-            .appendChild(dom.document.getElementById(name))
         return name
     }
 
     def render = scoped(div(cls := "userPermissions",
+        errorBox(error),
         div(cls := "owned",
             h2("Owned Permissions"),
             (if (usersPermissions != None)
                 dropableUl(usersPermissions.get, { e => {
                     val name = onDropPerm(e)
-                    addPermission(name)
+                    addPermission(name, { _ =>
+                        e.target.asInstanceOf[dom.raw.HTMLElement]
+                            .appendChild(dom.document.getElementById(name))
+                    })
                 }})
             else None)
         ),
@@ -118,21 +139,35 @@ class UserPermissions(val userId: Integer) extends Component {
             h2("Available Permissions"),
             dropableUl(diffPerms, { e => {
                 val name = onDropPerm(e)
-                removePermission(name)
+                removePermission(name, { _ =>
+                    e.target.asInstanceOf[dom.raw.HTMLElement]
+                        .appendChild(dom.document.getElementById(name))
+                })
             }})
         ),
     ))
 
     cssScoped { import liwec.cssDsl._
         c.userPermissions (
-            backgroundColor := "red",
+            backgroundColor := "blue",
             display := "grid",
+            gridTemplateColumns := "1fr 1fr",
+            gridColumnGap := "1em",
 
             e.ul (
                 listStyle := "none",
+                paddingBottom := "3em",
+                backgroundColor := "lightblue",
+                height := "100%",
+                paddingTop := "1em",
+            ),
+
+            c.errorBox (
+                gridColumn := "1 / 3",
             ),
 
             c.owned (
+                marginRight := "0.5em",
                 gridColumn := "1",
             ),
 
