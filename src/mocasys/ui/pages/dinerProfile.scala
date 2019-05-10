@@ -32,10 +32,12 @@ class DinerProfilePage extends Component {
 
     def fetchUser =
         AppState.apiClient.queryDb(
-            """SELECT p.name, u.username, p.birth_date, d.account_balance FROM people AS p                                  
-                INNER JOIN users AS u ON u.id_person = p.id
-                JOIN diners AS d ON d.id_person = p.id
-            WHERE p.id = session_person_get()"""
+            """SELECT p.name, u.username, p.birth_date,
+                      diner_balance(d.id_person) AS balance
+               FROM people AS p
+               INNER JOIN users AS u ON u.id_person = p.id
+               JOIN diners AS d ON d.id_person = p.id
+               WHERE p.id = session_person_get()"""
         ).onComplete {
             case Success(res) => userData = Some(res(0))
             case Failure(e) => {

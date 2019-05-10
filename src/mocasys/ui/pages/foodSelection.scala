@@ -34,8 +34,8 @@ class FoodSelection extends Component {
     }
 
     def fetchBalance() =
-        AppState.apiClient.queryDb("""SELECT account_balance FROM diners
-            WHERE id_person = session_person_get()""")
+        AppState.apiClient.queryDb(
+          """SELECT diner_balance(session_person_get())""")
         .onComplete {
             case Success(res) => {
                 balance = res.rows.pop.pop.asInstanceOf[String]
