@@ -24,10 +24,10 @@ class FoodLander(var kind: String,
                 var foodId: Integer,
                 val fromDb: Boolean = true,
                 val remove: FoodLander => Unit = { _ => Unit }) extends Component {
-    var originalKind = kind
-    var originalOption = option
-    var originalFoodName = foodName
-    var originalFoodId = foodId
+    val originalKind = kind
+    val originalOption = option
+    val originalFoodName = foodName
+    val originalFoodId = foodId
     var delete = false
     var noProxySelf: Option[FoodLander] = None
 
@@ -41,7 +41,6 @@ class FoodLander(var kind: String,
     def render = scoped(div(cls := "foodLander"
                             + (if (changed) " changed" else "")
                             + (if (delete) " delete" else ""),
-        // TODO: add placeholder
         textInput(kind, { s => kind = s }, placeholderVal = "kind"),
         textInput(option, { s => option = s }, placeholderVal = "option"),
         div(cls := "lander",
@@ -53,8 +52,14 @@ class FoodLander(var kind: String,
                 foodId = e.dataTransfer.getData("id").toInt
                 println(foodName, foodId)
             }},
-            onDragover := { e: dom.DragEvent => e.preventDefault() },
-            onDragleave := { e: dom.DragEvent => e.preventDefault() },
+            onDragover := { e: dom.DragEvent => {
+                e.preventDefault()
+                e.target.asInstanceOf[dom.raw.HTMLElement].style.border = "3px solid red"
+            }},
+            onDragleave := { e: dom.DragEvent => {
+                e.preventDefault()
+                e.target.asInstanceOf[dom.raw.HTMLElement].style.border = ""
+            }},
             (if (!foodName.isEmpty) div(new Food(foodName)) else None)
         ),
         // Reset action
@@ -100,6 +105,7 @@ class FoodLander(var kind: String,
 
             c.lander (
                 gridColumn := "3",
+                border := "3px solid #00000000",
 
                 e.span (
                     display := "block",

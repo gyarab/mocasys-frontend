@@ -121,7 +121,6 @@ class FoodAssignmentPage extends Component {
         elem.style.backgroundColor = "#f1ffff"
     }
 
-    // TODO: Fix deletion
     def addAssignment(e: dom.DragEvent) = {
         e.preventDefault()
         addDropAreaDefaultStyle(e.target.asInstanceOf[dom.raw.HTMLElement])
