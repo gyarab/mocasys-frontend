@@ -27,6 +27,7 @@ class FoodAssignmentPage extends Component {
     var newFoodLanders: mutable.ArrayBuffer[FoodLander] = mutable.ArrayBuffer()
     var changed: Boolean = false
     var foodSearch: String = ""
+    var error: String = ""
 
     override def onMount() {
         fetchFood
@@ -66,51 +67,48 @@ class FoodAssignmentPage extends Component {
             case Failure(e) => val ApiError(_, msg) = e
         }
     
-    def faWhereFl(fl: FoodLander) = s"""
-        WHERE day = '${isoDate(date)}'
-            AND kind = '${fl.originalKind}'
-            AND option = '${fl.originalOption}'
-            AND id_food = ${fl.originalFoodId}
-    """
+    def faWhereFl = 
+        """WHERE day = $1
+        AND kind = $2
+        AND option = $3
+        AND id_food = $4"""
+    
+    def onSuccess = error = ""
 
-    def faUpdateQuery(fl: FoodLander) = s"""
-        UPDATE food_assignments
-        SET option = '${fl.option}',
-            kind = '${fl.kind}',
-            id_food = ${fl.foodId}
-        ${faWhereFl(fl)}
-    """
-
-    def faDeleteQuery(fl: FoodLander) = s"""
-        DELETE FROM food_assignments
-        ${faWhereFl(fl)}
-    """
-
-    def faCreateQuery(fl: FoodLander) = s"""
-        INSERT INTO food_assignments (day, kind, option, id_food)
-        VALUES ('${isoDate(date)}', '${fl.kind}', '${fl.option}', ${fl.foodId})
-    """
+    def onFailure(e: Throwable) = {
+        val ApiError(_, msg) = e
+        error = msg
+    }
 
     def save(e: dom.Event) = {
         for (fl <- foodLanders if (fl.changed && !fl.kind.isEmpty) || fl.delete) {
             if (fl.delete)
-                AppState.apiClient.queryDb(faDeleteQuery(fl))
-                .onComplete {
-                    case Success(res) => println(s"Deleted from ${fl.originalFoodName} to ${fl.foodName}")
-                    case Failure(e) => val ApiError(_, msg) = e
+                AppState.apiClient.queryDb("""DELETE FROM food_assignments """ + faWhereFl,
+                    Seq(isoDate(date), fl.originalKind, fl.originalOption, fl.originalFoodId)
+                ).onComplete {
+                    case Success(res) => onSuccess
+                    case Failure(e) => onFailure(e)
                 }
             else
-                AppState.apiClient.queryDb(faUpdateQuery(fl))
-                .onComplete {
-                    case Success(res) => println(s"Updated from ${fl.originalFoodName} to ${fl.foodName}")
-                    case Failure(e) => val ApiError(_, msg) = e
+                AppState.apiClient.queryDb(
+                    """UPDATE food_assignments
+                    SET option = $5,
+                        kind = $6,
+                        id_food = $7 """ + faWhereFl,
+                    Seq(isoDate(date), fl.originalKind, fl.originalOption, fl.originalFoodId,
+                        fl.option, fl.kind, fl.foodId)
+                ).onComplete {
+                    case Success(res) => onSuccess
+                    case Failure(e) => onFailure(e)
                 }
         }
         for (fl <- newFoodLanders if fl.changed && !fl.kind.isEmpty)
-            AppState.apiClient.queryDb(faCreateQuery(fl))
-            .onComplete {
-                case Success(res) => println(s"Created ${fl.foodName}")
-                case Failure(e) => val ApiError(_, msg) = e
+            AppState.apiClient.queryDb("""INSERT INTO food_assignments (day, kind, option, id_food)
+                VALUES ($1, $2, $3, $4)""",
+                Seq(isoDate(date), fl.kind, fl.option, fl.foodId)
+            ).onComplete {
+                case Success(res) => onSuccess
+                case Failure(e) => onFailure(e)
             }
         newFoodLanders.clear
         fetchCurrentAssignments
@@ -137,12 +135,12 @@ class FoodAssignmentPage extends Component {
         // What a hack
         newFoodLanders += lander
         lander.setNoProxySelf(lander)
-
         changed = !changed
     }
 
     def renderControls =
         div(cls := "controls borderRadius boxShadowBalanced bgColor1 borderTopColor2",
+            errorBox(error),
             label(cls := "dateStart",
                 span(cls := "borderShadowColor3 bgColor2 borderRadius",
                     "Date"),

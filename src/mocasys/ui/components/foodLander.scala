@@ -50,7 +50,6 @@ class FoodLander(var kind: String,
                 val self = e.target.asInstanceOf[dom.raw.HTMLElement]
                 foodName = e.dataTransfer.getData("name")
                 foodId = e.dataTransfer.getData("id").toInt
-                println(foodName, foodId)
             }},
             onDragover := { e: dom.DragEvent => {
                 e.preventDefault()
