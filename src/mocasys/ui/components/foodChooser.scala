@@ -70,7 +70,10 @@ class FoodChooser(
         choiceQuery(choice)
         .onComplete {
             // TODO: Do more efficiently
-            case Success(res) => parent.fetchFoodList
+            case Success(res) => {
+                error = ""
+                parent.fetchFoodList
+            }
             case Failure(e) => {
                 val ApiError(_, msg) = e
                 error = msg
@@ -81,6 +84,7 @@ class FoodChooser(
     def cancelFood = Unit
 
     def render = scoped(div(cls := "food borderRadius" + (if (isToday) " today" else ""),
+        errorBox(error),
         div(cls := "info",
             span(date.toDateString()),
             button("Cancel", cls := "cancelButton shadowClick",

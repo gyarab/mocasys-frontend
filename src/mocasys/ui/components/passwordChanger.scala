@@ -41,7 +41,7 @@ class PasswordChanger extends Component {
                         .asInstanceOf[dom.raw.HTMLElement].style.display = "none"
                     AppState.logout
                 }
-
+                error = ""
             }
             case Failure(e) => {
                 val ApiError(status, message) = e

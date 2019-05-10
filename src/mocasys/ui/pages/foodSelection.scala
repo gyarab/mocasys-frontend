@@ -111,7 +111,7 @@ class FoodSelection extends Component {
                         span(cls := "balanceValue", (if (balance == "") "N/A" else balance)),
                     )
                 ),
-                div(cls := "error", error),
+                errorBox(error),
                 foodByDate.map(fbd =>
                     div(cls := "foodList",
                         fbd.map { case (date, choices) =>

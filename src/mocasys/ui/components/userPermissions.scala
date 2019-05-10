@@ -43,8 +43,7 @@ class UserPermissions(val userId: Integer) extends Component {
                 usersPermissions = Some(
                     (for (perm <- res.rows) yield perm(0).toString).to[SortedSet]
                 )
-                println(diffPerms)
-                println(diffPerms.size)
+                error = ""
             }
             case Failure(e) => {
                 val ApiError(_, msg) = e

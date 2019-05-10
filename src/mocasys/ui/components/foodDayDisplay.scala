@@ -12,6 +12,7 @@ import liwec.cssDslTypes.RawSelector
 import mocasys._
 import mocasys.ui.main._
 import mocasys.ui.components._
+import mocasys.ui.functionComponents._
 import mocasys.ui.tables._
 import mocasys.ui.forms._
 import mocasys.ApiClient._
@@ -19,6 +20,7 @@ import mocasys.ApiClient._
 class FoodDayDisplay(val date: js.Date = new js.Date()) extends Component {
     var meals: Option[Seq[DbRow]] = None
     var noData: Boolean = false
+    var error: String = ""
 
     override def onMount = {
         fetchMeals
@@ -72,12 +74,17 @@ class FoodDayDisplay(val date: js.Date = new js.Date()) extends Component {
                     noData = true
                     meals = None
                 } else meals = Some(res)
+                error = ""
             }
-            case Failure(e) => val ApiError(_, msg) = e
+            case Failure(e) => {
+                val ApiError(_, msg) = e
+                error = msg
+            }
         }
 
     def render = scoped(
         div(cls := "box meals borderRadius boxShadowBalanced",
+            errorBox(error),
             div(cls := "boxHeader bgColor1",
                 h3(date.toDateString),
                 button("Select Future Meals",

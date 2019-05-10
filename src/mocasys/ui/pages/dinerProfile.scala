@@ -13,6 +13,7 @@ import liwec.cssDslTypes.RawSelector
 import mocasys._
 import mocasys.ui.main._
 import mocasys.ui.components._
+import mocasys.ui.functionComponents._
 import mocasys.ui.tables._
 import mocasys.ui.forms._
 import mocasys.ApiClient._
@@ -21,7 +22,7 @@ class DinerProfilePage extends Component {
     var userData: Option[DbRow] = None
     var nextMeals: Option[Seq[DbRow]] = None
     var form: Option[Form] = None
-    var date = new js.Date("2019-05-01")
+    var error: String = ""
 
     val passwordChanger = new PasswordChanger()
 
@@ -37,7 +38,10 @@ class DinerProfilePage extends Component {
             WHERE p.id = session_person_get()"""
         ).onComplete {
             case Success(res) => userData = Some(res(0))
-            case Failure(e) => val ApiError(_, msg) = e
+            case Failure(e) => {
+                val ApiError(_, msg) = e
+                error = msg
+            }
         }
     
     def renderProfile =
@@ -69,6 +73,7 @@ class DinerProfilePage extends Component {
 
     def render: liwec.VNode = {
         return scoped(div(cls := "dinerProfile",
+            errorBox(error),
             h1(AppState.loggedInUser.getOrElse("").toString,
                 cls := "borderRadius boxShadowBalanced bgColor1"),
             div(cls := "grid",
