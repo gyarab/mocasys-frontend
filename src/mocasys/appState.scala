@@ -17,7 +17,12 @@ package object mocasys {
         // TODO: Find a way to refactor this
         def loggedInUser: Option[String] = {
             if (this._loggedInUser == None) {
-                this._loggedInUser = Option(localStorage.getItem("username"))
+                // We need to be careful with assignments, because each will
+                // fire onChange events, even if the value is the same
+                Option(localStorage.getItem("username")) match {
+                    case username @ Some(_) => this._loggedInUser = username
+                    case _ => {}
+                }
             }
             return this._loggedInUser
         }
