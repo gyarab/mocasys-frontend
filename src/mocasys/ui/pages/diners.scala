@@ -20,7 +20,7 @@ class DinersPage extends TablePage(true) {
     var form: Option[Form] = None
     override val name: String = "Diners"
 
-    override def renderForm: VNodeFrag =
+    override def renderForm =
         form.map { form =>
             div(cls := "userForm",
                 form.errorText(),
@@ -29,24 +29,24 @@ class DinersPage extends TablePage(true) {
                 else None),
                 label(span("ID Person:"),
                         form.textInt("id_person")),
-                label(span("Account Balance:"),
-                        form.textMoney("account_balance")),
                 form.save("Save", "diners", Seq("id_person")),
             )
         }
 
-    override def renderTable: VNodeFrag =
+    def formForRow(row: DbRow) =
+        new Form(this, Map(
+            "id_person" -> row("id_person")
+        ), true)
+
+    override def renderTable =
         new InteractiveTable(
             s"""SELECT * FROM diners AS d
             INNER JOIN people AS p ON p.id = d.id_person
             ORDER BY d.id_person LIMIT ${limit} OFFSET ${offset}""",
-            onClickRendererForColumn({ row => {
-                form = Some(new Form(this, Map(
-                    "account_balance" -> row("account_balance")
-                        .toString.replaceFirst("\\$", ""),
-                    "id_person" -> row("id_person")
-                ), true))
-            }}), Seq("sys_period")
+            onClickRendererForColumn({ row =>
+                form = Some(formForRow(row))
+            }),
+            Seq("sys_period")
         )
 
     override def renderControls: VNodeFrag = 
