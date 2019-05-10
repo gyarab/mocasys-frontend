@@ -2,6 +2,8 @@ package mocasys.ui
 
 import scala.util.{Success, Failure}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.collection.mutable.Map
+import scala.util.Random
 import scalajs.js
 import scalajs.js.annotation._
 import org.scalajs.dom
@@ -16,6 +18,11 @@ import mocasys.ui.pages._
 
 package object main {
     class PageRoot extends Component {
+        val messenger = new Messenger()
+
+        override def onMount =
+            AppState.setMessenger(messenger)
+
         def render() =
             div(
                 // div(cls := "tempStatus",
@@ -26,6 +33,7 @@ package object main {
                 // ),
                 // Do not cite me the old magic, Witch.
                 // I was there when it was written.
+                messenger,
                 new MainMenu(),
                 AppState.router.currentComponent,
                 button(cls := "scrollToTop showOnScroll", "Up", onClick := { e => {

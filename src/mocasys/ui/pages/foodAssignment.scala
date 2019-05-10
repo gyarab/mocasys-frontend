@@ -73,7 +73,10 @@ class FoodAssignmentPage extends Component {
         AND option = $3
         AND id_food = $4"""
     
-    def onSuccess = error = ""
+    def onSuccess = {
+        error = ""
+        AppState.messenger.addMessage(new Message("Hello!", 1000))
+    }
 
     def onFailure(e: Throwable) = {
         val ApiError(_, msg) = e

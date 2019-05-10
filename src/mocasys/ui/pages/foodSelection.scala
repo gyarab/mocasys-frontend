@@ -21,7 +21,6 @@ class FoodSelection extends Component {
     var foodList: Option[Seq[DbRow]] = None
     var balance: String = ""
     var error: Option[String] = None
-    // TODO: Change
     var startDate: js.Date = new js.Date()
     var endDate: js.Date = incrDate(startDate, 6)
     // Prev dates will be set on food list fetch

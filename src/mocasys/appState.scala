@@ -1,5 +1,6 @@
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js
+import mocasys.ui.components.Messenger
 import org.scalajs.dom.window._
 import liwec.Watched
 import mocasys.routing.AppRouter
@@ -11,8 +12,11 @@ package object mocasys {
         val router = new AppRouter()
         var _loggedInUser: Option[String] = None
         var _permissions: Option[js.Array[String]] = None
+        var messenger: Messenger = null
 
         apiClient.authToken = Option(localStorage.getItem("apiAuthToken"))
+
+        def setMessenger(msngr: Messenger) = messenger = msngr
 
         // TODO: Find a way to refactor this
         def loggedInUser: Option[String] = {
