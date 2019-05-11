@@ -94,7 +94,7 @@ class UserPermissions(val userId: Integer) extends Component {
         }
     
     def dropableLi(name: String) =
-        li(cls := "dropable", name, id := name,
+        li(cls := "dropable borderShadowColor3", name, id := name,
             draggable := "true",
             onDragstart := { e: dom.DragEvent => {
                 e.dataTransfer.setData("name", name)
@@ -171,8 +171,9 @@ class UserPermissions(val userId: Integer) extends Component {
 
             (e.li & c.dropable) (
                 marginBottom := "0.5em",
+                marginRight := "2em",
                 padding := "0.3em 0.2em",
-                backgroundColor := "grey",
+                backgroundColor := "#3685a2",
             ),
 
             ((e.li & c.dropable) /+ (e.li & c.dropable)) (
