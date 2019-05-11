@@ -21,9 +21,7 @@ case class SubMenu(val item: MenuItem,
                    val children: Seq[MenuNode]
     ) extends MenuNode
 
-class MainMenu extends Component {
-    var visible: Boolean = false
-
+object MainMenu {
     lazy val rootNode: SubMenu =
         SubMenu(MenuItem("Menu", _ => AppState.router.goToUrl("")),
             Seq(
@@ -40,6 +38,10 @@ class MainMenu extends Component {
                 ),
             )
         )
+}
+
+class MainMenu extends Component {
+    var visible: Boolean = false
 
     def renderMenuRoot(node: SubMenu, showHeader: Boolean = true): liwec.htmlDsl.VNodeFrag =
         div(cls := "menuContainer",
@@ -81,7 +83,7 @@ class MainMenu extends Component {
                     div(cls := "container",
                         img(src := "/assets/mocasys_logo_trans.svg"),
                         renderUserMenu(username),
-                        renderMenuRoot(rootNode),
+                        renderMenuRoot(MainMenu.rootNode),
                     )
                 )
             )

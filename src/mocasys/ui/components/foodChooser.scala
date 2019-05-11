@@ -18,20 +18,22 @@ import mocasys.ui.main._
 import mocasys.ui.tables._
 import mocasys.ApiClient._
 
+object FoodChooser {
+    val today = new js.Date()
+    val deadlineDays: Integer = 1
+}
+
 class FoodChooser(
         val parent: FoodSelection,
         val date: js.Date,
         val choices: Seq[DbRow]) extends Component {
-    val today = new js.Date()
-    val deadlineDays: Integer = 1
-
     lazy val shouldBeDisabled: Boolean =
-        deadlineDays * 3600 * 24 * 1000 >
-            (date.getTime - today.getTime)
+        FoodChooser.deadlineDays * 3600 * 24 * 1000 >
+            (date.getTime - FoodChooser.today.getTime)
     lazy val isToday: Boolean = {
-        date.getDate() == today.getDate() &&
-        date.getMonth() == today.getMonth() &&
-        date.getFullYear() == today.getFullYear()
+        date.getDate() == FoodChooser.today.getDate() &&
+        date.getMonth() == FoodChooser.today.getMonth() &&
+        date.getFullYear() == FoodChooser.today.getFullYear()
     }
 
     var error: Option[String] = None
