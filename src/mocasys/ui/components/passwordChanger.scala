@@ -103,6 +103,9 @@ class PasswordChanger extends Component {
                 right := "0.5em",
                 fontSize := "1.7em",
                 fontWeight := "bold",
+                backgroundColor := "#d23a3f",
+                borderRadius := "10px",
+                padding := "0.15em 0.3em",
             ),
 
             c.form (
