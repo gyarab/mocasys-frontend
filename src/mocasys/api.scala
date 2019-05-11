@@ -142,7 +142,7 @@ class ApiClient(val apiUrl: String) {
             js.JSON.parse(xhr.responseText).asInstanceOf[QueryDbResp]
         }
 
-    def multiQueryDb(query: String, params: Seq[String] = Seq()) =
+    def multiQueryDb(query: String, params: Seq[Any] = Seq()) =
         queryDbRaw(query, params)
         .map { xhr =>
             js.JSON.parse(xhr.responseText).asInstanceOf[js.Array[QueryDbResp]]

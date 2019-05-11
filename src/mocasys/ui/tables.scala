@@ -89,7 +89,7 @@ package object tables {
         }
 
         def executeQuery() =
-            AppState.apiClient.queryDb(query)
+            AppState.queryDb(query)
             .onComplete {
                 case Success(res) => {
                     result = Some(Right(res))

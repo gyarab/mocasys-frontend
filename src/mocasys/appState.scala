@@ -1,11 +1,12 @@
 import scala.util.{Success, Failure}
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js
-import mocasys.ui.components.Messenger
 import org.scalajs.dom.window._
 import liwec.Watched
 import mocasys.routing.AppRouter
-import mocasys.ui.components.Messenger
+import mocasys.ApiClient._
+import mocasys.ui.components._
 
 package object mocasys {
     class AppStateCls extends Watched {
@@ -79,6 +80,22 @@ package object mocasys {
             this.router.goToUrl("")
         }
 
+        def reportQueryDbError[T](f: Future[T]) =
+            f.transform {
+                case f @ Failure(e) => {
+                    val ApiError(_, msg) = e
+                    this.messenger.addMessage(
+                        new ErrorMessage(s"Error querying database: $msg"))
+                    f
+                }
+                case s => s
+            }
+
+        def queryDb(query: String, params: Seq[Any] = Seq()) =
+            reportQueryDbError(this.apiClient.queryDb(query, params))
+
+        def multiQueryDb(query: String, params: Seq[Any] = Seq()) =
+            reportQueryDbError(this.apiClient.multiQueryDb(query, params))
     }
 
     /** An object holding all global state for the web app. All global mutable

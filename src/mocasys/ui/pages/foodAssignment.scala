@@ -27,7 +27,6 @@ class FoodAssignmentPage extends Component {
     var newFoodLanders: mutable.ArrayBuffer[FoodLander] = mutable.ArrayBuffer()
     var changed: Boolean = false
     var foodSearch: String = ""
-    var error: String = ""
 
     override def onMount() {
         fetchFood
@@ -36,9 +35,9 @@ class FoodAssignmentPage extends Component {
     }
 
     def foodQuery = if (foodSearch.isEmpty)
-            AppState.apiClient.queryDb("SELECT id, name FROM food")
+            AppState.queryDb("SELECT id, name FROM food")
         else
-            AppState.apiClient.queryDb("SELECT id, name FROM food WHERE name LIKE $1",
+            AppState.queryDb("SELECT id, name FROM food WHERE name LIKE $1",
                 Seq(s"%${foodSearch}%"))
 
     // TODO: Paging
@@ -49,7 +48,7 @@ class FoodAssignmentPage extends Component {
         }
 
     def fetchCurrentAssignments =
-        AppState.apiClient.queryDb(
+        AppState.queryDb(
             """SELECT fa.day, fa.kind, fa.option, f.name, f.id FROM food_assignments AS fa
             LEFT JOIN food AS f ON fa.id_food = f.id
             WHERE fa.day = $1
@@ -75,26 +74,24 @@ class FoodAssignmentPage extends Component {
         AND id_food = $4"""
     
     def onSuccess = {
-        error = ""
         AppState.messenger.addMessage(new InfoMessage("Hello!"))
     }
 
     def onFailure(e: Throwable) = {
         val ApiError(_, msg) = e
-        error = msg
     }
 
     def save(e: dom.Event) = {
         for (fl <- foodLanders if (fl.changed && !fl.kind.isEmpty) || fl.delete) {
             if (fl.delete)
-                AppState.apiClient.queryDb("""DELETE FROM food_assignments """ + faWhereFl,
+                AppState.queryDb("""DELETE FROM food_assignments """ + faWhereFl,
                     Seq(isoDate(date), fl.originalKind, fl.originalOption, fl.originalFoodId)
                 ).onComplete {
                     case Success(res) => onSuccess
                     case Failure(e) => onFailure(e)
                 }
             else
-                AppState.apiClient.queryDb(
+                AppState.queryDb(
                     """UPDATE food_assignments
                     SET option = $5,
                         kind = $6,
@@ -107,7 +104,7 @@ class FoodAssignmentPage extends Component {
                 }
         }
         for (fl <- newFoodLanders if fl.changed && !fl.kind.isEmpty)
-            AppState.apiClient.queryDb("""INSERT INTO food_assignments (day, kind, option, id_food)
+            AppState.queryDb("""INSERT INTO food_assignments (day, kind, option, id_food)
                 VALUES ($1, $2, $3, $4)""",
                 Seq(isoDate(date), fl.kind, fl.option, fl.foodId)
             ).onComplete {
@@ -144,7 +141,6 @@ class FoodAssignmentPage extends Component {
 
     def renderControls =
         div(cls := "controls borderRadius boxShadowBalanced bgColor1 borderTopColor2",
-            errorBox(error),
             label(cls := "dateStart",
                 span(cls := "borderShadowColor3 bgColor2 borderRadius",
                     "Date"),
