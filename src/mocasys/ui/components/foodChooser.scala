@@ -38,7 +38,7 @@ class FoodChooser(
 
     // TODO: Replace once the query builder is finished
     def choiceQuery(choice: DbRow) =
-        if (choice("option2") == null)
+        if (choice("ordered") == null)
             AppState.apiClient.queryDb(
                 """INSERT INTO food_choice (id_diner, day, kind, option) VALUES
                 (session_person_get(), $1, $2, $3)""",
@@ -47,11 +47,11 @@ class FoodChooser(
         else
             AppState.apiClient.queryDb(
                 """UPDATE food_choice
-                SET option = $1, ordered = true
+                SET option = $1, ordered = $2
                 WHERE id_diner = session_person_get()
-                    AND day = $2
-                    AND kind = $3""",
-                Seq(choice("option"), choice("day"), choice("kind"))
+                    AND day = $3
+                    AND kind = $4""",
+                Seq(choice("option"), true, choice("day"), choice("kind"))
             )
 
     def radioName(choice: DbRow) =
@@ -59,19 +59,19 @@ class FoodChooser(
 
     def forAttrValue(choice: DbRow) =
         s"radio_${choice("kind")}_${choice("id_food")}_${choice("day").toString().substring(0, 10)}"
-    
+
     def shouldBeChecked(choice: DbRow): Boolean =
         choice("option") == choice("option2") || shouldBeDisabled
-    
+
     def shouldBeHidden(choice: DbRow): Boolean =
         choice("option").toString.isEmpty
 
     def onChange(choice: DbRow) =
         choiceQuery(choice)
         .onComplete {
-            // TODO: Do more efficiently
             case Success(res) => {
                 error = None
+                // TODO: Do more efficiently
                 parent.fetchFoodList
             }
             case Failure(e) => {
@@ -86,7 +86,7 @@ class FoodChooser(
             SET option = NULL, ordered = $1
             WHERE day = $2
             AND id_diner = session_person_get()""",
-            Seq("false", isoDate(date))
+            Seq(false, isoDate(date))
         ).onComplete {
             case Success(res) => {
                 error = None
@@ -131,25 +131,21 @@ class FoodChooser(
             .toSet
             .size
         val kindsNotChosen = choices
-            .filter(r => r("option2") == null)
+            .filter(r => r("ordered") == null)
             .map(r => r("kind").toString)
             .toSet
         if (kindsNotChosen.size == 0) {
             // Only update
-            println("only update")
             cancelUsingUpdate
         } else if (kindsNotChosen.size == kindsCount) {
             // Only insert
-            println("only insert")
             cancelUsingInsert(kindsNotChosen)
         } else {
             // Both insert and update
-            println("both insert and update")
             cancelUsingUpdate
             cancelUsingInsert(kindsNotChosen)
         }
     }
-        
 
     def render = scoped(div(cls := "food borderRadius" + (if (isToday) " today" else ""),
         error.map(errorBox(_)),

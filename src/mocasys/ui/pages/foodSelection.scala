@@ -49,7 +49,7 @@ class FoodSelection extends Component {
     def fetchFoodList() =
         AppState.apiClient.queryDb(
             """SELECT fa.day, fa.id_food, f.name, fa.kind,
-                fa.option, fc.option as option2
+                fa.option, fc.option as option2, ordered
             FROM food_assignments AS fa
             LEFT JOIN food_choice AS fc ON fa.day = fc.day
                 AND fa.kind = fc.kind
