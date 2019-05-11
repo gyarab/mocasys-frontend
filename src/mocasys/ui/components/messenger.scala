@@ -2,7 +2,6 @@ package mocasys.ui.components
 
 import scala.util.{Success, Failure}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.collection.mutable.Map
 import scala.util.Random
 import scalajs.js
 import scalajs.js.annotation._
@@ -25,7 +24,8 @@ class InfoMessage(val msg: String, val dur: Option[Int] = Some(4000))
     def duration = dur
 }
 
-class ErrorMessage(val msg: String, val dur: Option[Int] = None) {
+class ErrorMessage(val msg: String, val dur: Option[Int] = None)
+        extends Message {
     def render() = Seq(cls := "errorMessage", msg: VNodeFrag)
     def duration = dur
 }
