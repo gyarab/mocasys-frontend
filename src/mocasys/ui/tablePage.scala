@@ -114,7 +114,7 @@ abstract class TablePage(val paging: Boolean = false) extends Component {
             c.table (
                 gridRow := "4",
                 gridColumn := "1 / 3",
-                paddingTop := "1em",
+                paddingTop := "0.5em",
             ),
         )
 

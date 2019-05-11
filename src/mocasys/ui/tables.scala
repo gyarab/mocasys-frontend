@@ -103,9 +103,11 @@ package object tables {
 
         def render() = scoped(
             div(cls := "bgColor4",
-                label(span("Query:"),
-                    textInput(query, { query = _ })),
-                button("Execute", cls := "execBtn shadowClick btnPadding", onClick := { _ => executeQuery() }),
+                div (cls := "inputBox bgColor1",
+                    label(span("Query:"),
+                        textInput(query, { query = _ })),
+                    button("Execute", cls := "execBtn shadowClick btnPadding", onClick := { _ => executeQuery() }),
+                ),
                 result.map {
                     case Right(res) => table(res)
                     case Left(err) => span(cls := "error", err)
@@ -116,6 +118,20 @@ package object tables {
         cssScoped { import liwec.cssDsl._
 
             e.div (
+                c.inputBox (
+                    paddingBottom := "0.5em",
+
+                    e.label (
+                        paddingLeft := "1em",
+                    ),
+                ),
+
+                c.dataTable (
+                    paddingLeft := "1em",
+                    paddingBottom := "0.2em",
+                    marginTop := "0.2em",
+                ),
+
                 c.execBtn (
                     margin := "0.5em",
                 ),
