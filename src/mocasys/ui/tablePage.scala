@@ -95,6 +95,10 @@ abstract class TablePage(val paging: Boolean = false) extends Component {
                 gridColumn := "1 / 3",
                 gridRow := "2",
 
+                e.div (
+                    display := "inline-block",
+                ),
+
                 e.button (
                     margin := "1em",
                 ),
@@ -110,6 +114,13 @@ abstract class TablePage(val paging: Boolean = false) extends Component {
                     marginLeft := "0.5em",
                     marginRight := "0.5em",
                 ),
+
+                e.button (
+                    height := "34px",
+                    verticalAlign := "middle",
+                    fontSize := "11",
+                    width := "11em",
+                ),
                 
                 e.div (
                     paddingBottom := "0.5em",
@@ -119,6 +130,8 @@ abstract class TablePage(val paging: Boolean = false) extends Component {
                     padding := "0.3em 0.6em",
                     border := "0",
                     borderRadius := "3px",
+                    height := "34px",
+                    verticalAlign := "middle",
                 ),
 
                 RawSelector("[type=submit]:hover") (

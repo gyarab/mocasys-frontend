@@ -35,6 +35,7 @@ class UsersPage extends TablePage(true) {
                 label(span("Person:"),
                         form.textInt("id_person")),
                 button("Toggle Permissions Tab",
+                    cls := "ShadowClick bgColor4",
                     onClick := { e => modifyPermissions = !modifyPermissions }),
                 form.save("Save", "users", Seq("id")),
             )

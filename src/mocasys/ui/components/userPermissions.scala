@@ -121,7 +121,6 @@ class UserPermissions(val userId: Integer) extends Component {
     }
 
     def render = scoped(div(cls := "userPermissions",
-        errorBox(error),
         div(cls := "owned",
             h2("Owned Permissions"),
             (if (usersPermissions != None)
