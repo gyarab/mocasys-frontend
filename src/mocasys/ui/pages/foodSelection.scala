@@ -20,7 +20,6 @@ import mocasys.ApiClient._
 class FoodSelection extends Component {
     var foodList: Option[Seq[DbRow]] = None
     var balance: String = ""
-    var error: Option[String] = None
     var startDate: js.Date = new js.Date()
     var endDate: js.Date = incrDate(startDate, 6)
     // Prev dates will be set on food list fetch
@@ -33,21 +32,19 @@ class FoodSelection extends Component {
     }
 
     def fetchBalance() =
-        AppState.apiClient.queryDb(
+        AppState.queryDb(
           """SELECT diner_balance(session_person_get())""")
         .onComplete {
             case Success(res) => {
                 balance = res.rows.pop.pop.asInstanceOf[String]
-                error = None
             }
             case Failure(e) => {
                 val ApiError(_, msg) = e
-                error = Some(msg)
             }
         }
 
     def fetchFoodList() =
-        AppState.apiClient.queryDb(
+        AppState.queryDb(
             """SELECT fa.day, fa.id_food, f.name, fa.kind,
                 fa.option, fc.option as option2, ordered
             FROM food_assignments AS fa
@@ -61,11 +58,9 @@ class FoodSelection extends Component {
         ).onComplete {
             case Success(res) => {
                 foodList = Some(res)
-                error = None
             }
             case Failure(e) => {
                 val ApiError(_, msg) = e
-                error = Some(msg)
             }
         }
     
@@ -110,7 +105,6 @@ class FoodSelection extends Component {
                         span(cls := "balanceValue", (if (balance == "") "N/A" else balance)),
                     )
                 ),
-                error.map(errorBox(_)),
                 foodByDate.map(fbd =>
                     div(cls := "foodList",
                         fbd.map { case (date, choices) =>

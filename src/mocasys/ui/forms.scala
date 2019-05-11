@@ -99,7 +99,7 @@ package object forms {
                     VALUES (${valParams.mkString(", ")})
                     """, params)
                 }
-            AppState.apiClient.queryDb(query, params)
+            AppState.queryDb(query, params)
             .onComplete { res =>
                 res match {
                     case Success(_) => {

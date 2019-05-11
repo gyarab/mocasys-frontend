@@ -22,7 +22,6 @@ class DinerProfilePage extends Component {
     var userData: Option[DbRow] = None
     var nextMeals: Option[Seq[DbRow]] = None
     var form: Option[Form] = None
-    var error: String = ""
 
     val passwordChanger = new PasswordChanger()
 
@@ -31,7 +30,7 @@ class DinerProfilePage extends Component {
     }
 
     def fetchUser =
-        AppState.apiClient.queryDb(
+        AppState.queryDb(
             """SELECT p.name, u.username, p.birth_date,
                       diner_balance(d.id_person) AS balance
                FROM people AS p
@@ -42,7 +41,6 @@ class DinerProfilePage extends Component {
             case Success(res) => userData = Some(res(0))
             case Failure(e) => {
                 val ApiError(_, msg) = e
-                error = msg
             }
         }
     
@@ -75,7 +73,6 @@ class DinerProfilePage extends Component {
 
     def render: liwec.VNode = {
         return scoped(div(cls := "dinerProfile",
-            errorBox(error),
             h1(AppState.loggedInUser.getOrElse("").toString,
                 cls := "borderRadius boxShadowBalanced bgColor1"),
             div(cls := "grid",

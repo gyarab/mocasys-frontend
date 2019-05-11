@@ -25,7 +25,8 @@ class InfoMessage(val msg: String, val dur: Option[Int] = Some(4000))
     def duration = dur
 }
 
-class ErrorMessage(val msg: String, val dur: Option[Int] = None) extends Message {
+class ErrorMessage(val msg: String, val dur: Option[Int] = None)
+        extends Message {
     def render() = Seq(cls := "errorMessage", msg: VNodeFrag)
     def duration = dur
 }
@@ -78,8 +79,12 @@ class Messenger extends Component {
             position := "absolute",
             right := "1em",
             top := "1em",
-            backgroundColor := "red",
-            width := "5em",
+            backgroundColor := "#d23a3f",
+            color := "#f1ffff",
+            fontWeight := "700",
+            borderRadius := "3px",
+            paddingRight := "2em",
+            paddingLeft := "2em",
         )
     }
 }

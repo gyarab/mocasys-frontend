@@ -22,7 +22,6 @@ import mocasys.ApiClient._
 class UserPermissions(val userId: Integer) extends Component {
     var usersPermissions: Option[SortedSet[String]] = None
     var permissions: Option[SortedSet[String]] = None
-    var error: String = ""
 
     def diffPerms: SortedSet[String] = if (usersPermissions != None && permissions != None)
             permissions.get -- usersPermissions.get
@@ -35,7 +34,7 @@ class UserPermissions(val userId: Integer) extends Component {
     }
 
     def fetchUsersPermissions =
-        AppState.apiClient.queryDb(
+        AppState.queryDb(
             """SELECT permission FROM user_permissions WHERE id_user = $1 ORDER BY permission""",
             Seq(userId)
         ).onComplete {
@@ -43,16 +42,14 @@ class UserPermissions(val userId: Integer) extends Component {
                 usersPermissions = Some(
                     (for (perm <- res.rows) yield perm(0).toString).to[SortedSet]
                 )
-                error = ""
             }
             case Failure(e) => {
                 val ApiError(_, msg) = e
-                error = msg
             }
         }
     
     def fetchAllPermissions =
-        AppState.apiClient.queryDb("""SELECT name FROM permissions ORDER BY name""")
+        AppState.queryDb("""SELECT name FROM permissions ORDER BY name""")
         .onComplete {
             case Success(res) => {
                 permissions = Some(
@@ -61,12 +58,11 @@ class UserPermissions(val userId: Integer) extends Component {
             }
             case Failure(e) => {
                 val ApiError(_, msg) = e
-                error = msg
             }
         }
     
-    def removePermission(name: String, onSuccess: Unit => Unit) =
-        AppState.apiClient.queryDb(
+    def removePermission(name: String, onSuccess: () => Unit) =
+        AppState.queryDb(
             """DELETE FROM user_permissions WHERE id_user = $1 AND permission = $2""",
             Seq(userId, name)
         ).onComplete {
@@ -76,14 +72,13 @@ class UserPermissions(val userId: Integer) extends Component {
             }
             case Failure(e) => {
                 val ApiError(_, msg) = e
-                error = msg
                 println(s"failed to delete $name")
                 fetchUsersPermissions
             }
         }
 
-    def addPermission(name: String, onSuccess: Unit => Unit) =
-        AppState.apiClient.queryDb(
+    def addPermission(name: String, onSuccess: () => Unit) =
+        AppState.queryDb(
             """INSERT INTO user_permissions (id_user, permission) VALUES ($1, $2)""",
             Seq(userId, name)
         ).onComplete {
@@ -93,14 +88,13 @@ class UserPermissions(val userId: Integer) extends Component {
             }
             case Failure(e) => {
                 val ApiError(_, msg) = e
-                error = msg
                 println(s"failed to insert $name")
                 fetchUsersPermissions
             }
         }
     
     def dropableLi(name: String) =
-        li(cls := "dropable", name, id := name,
+        li(cls := "dropable borderShadowColor3", name, id := name,
             draggable := "true",
             onDragstart := { e: dom.DragEvent => {
                 e.dataTransfer.setData("name", name)
@@ -126,7 +120,7 @@ class UserPermissions(val userId: Integer) extends Component {
             (if (usersPermissions != None)
                 dropableUl(usersPermissions.get, { e => {
                     val name = onDropPerm(e)
-                    addPermission(name, { _ =>
+                    addPermission(name, { () =>
                         e.target.asInstanceOf[dom.raw.HTMLElement]
                             .appendChild(dom.document.getElementById(name))
                     })
@@ -137,7 +131,7 @@ class UserPermissions(val userId: Integer) extends Component {
             h2("Available Permissions"),
             dropableUl(diffPerms, { e => {
                 val name = onDropPerm(e)
-                removePermission(name, { _ =>
+                removePermission(name, { () =>
                     e.target.asInstanceOf[dom.raw.HTMLElement]
                         .appendChild(dom.document.getElementById(name))
                 })
@@ -147,21 +141,23 @@ class UserPermissions(val userId: Integer) extends Component {
 
     cssScoped { import liwec.cssDsl._
         c.userPermissions (
-            backgroundColor := "blue",
+            backgroundColor := "#265976",
             display := "grid",
             gridTemplateColumns := "1fr 1fr",
             gridColumnGap := "1em",
+            paddingBottom := "4em",
+              
+            e.h2 (
+                textAlign := "center",
+                color := "#f1ffff",
+                paddingTop := "0.5em",
+            ),
 
             e.ul (
                 listStyle := "none",
-                paddingBottom := "3em",
-                backgroundColor := "lightblue",
+                backgroundColor := "#f1ffff",
                 height := "100%",
-                paddingTop := "1em",
-            ),
-
-            c.errorBox (
-                gridColumn := "1 / 3",
+                paddingTop := "0.5em",
             ),
 
             c.owned (
@@ -175,8 +171,9 @@ class UserPermissions(val userId: Integer) extends Component {
 
             (e.li & c.dropable) (
                 marginBottom := "0.5em",
+                marginRight := "2em",
                 padding := "0.3em 0.2em",
-                backgroundColor := "grey",
+                backgroundColor := "#3685a2",
             ),
 
             ((e.li & c.dropable) /+ (e.li & c.dropable)) (

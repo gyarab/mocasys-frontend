@@ -36,18 +36,16 @@ class FoodChooser(
         date.getFullYear() == FoodChooser.today.getFullYear()
     }
 
-    var error: Option[String] = None
-
     // TODO: Replace once the query builder is finished
     def choiceQuery(choice: DbRow) =
         if (choice("ordered") == null)
-            AppState.apiClient.queryDb(
+            AppState.queryDb(
                 """INSERT INTO food_choice (id_diner, day, kind, option) VALUES
                 (session_person_get(), $1, $2, $3)""",
                 Seq(choice("day"), choice("kind"), choice("option"))
             )
         else
-            AppState.apiClient.queryDb(
+            AppState.queryDb(
                 """UPDATE food_choice
                 SET option = $1, ordered = $2
                 WHERE id_diner = session_person_get()
@@ -70,36 +68,19 @@ class FoodChooser(
 
     def onChange(choice: DbRow) =
         choiceQuery(choice)
-        .onComplete {
-            case Success(res) => {
-                error = None
-                // TODO: Do more efficiently
-                parent.fetchFoodList
-            }
-            case Failure(e) => {
-                val ApiError(_, msg) = e
-                error = Some(msg)
-            }
+        .foreach { res =>
+            parent.fetchFoodList
         }
 
     def cancelUsingUpdate =
-        AppState.apiClient.queryDb(
+        AppState.queryDb(
             """UPDATE food_choice
             SET option = NULL, ordered = $1
             WHERE day = $2
             AND id_diner = session_person_get()""",
             Seq(false, isoDate(date))
-        ).onComplete {
-            case Success(res) => {
-                error = None
-                println(res)
-                // TODO: Do more efficiently
+        ).foreach { res =>
                 parent.fetchFoodList
-            }
-            case Failure(e) => {
-                val ApiError(_, msg) = e
-                error = Some(msg)
-            }
         }
 
     def cancelUsingInsert(kindsChosen: Set[String]) = {
@@ -111,19 +92,11 @@ class FoodChooser(
             }
             .mkString(",\n")
         val params = Seq(isoDate(date), false) ++ kindsChosen.toSeq
-        AppState.apiClient.queryDb(
+        AppState.queryDb(
                 """INSERT INTO food_choice (id_diner, day, ordered, option, kind) VALUES """
                 + valParams, params
-            ).onComplete {
-                case Success(res) => {
-                    error = None
-                    // TODO: Do more efficiently
-                    parent.fetchFoodList
-                }
-                case Failure(e) => {
-                    val ApiError(_, msg) = e
-                    error = Some(msg)
-                }
+            ).foreach { res =>
+                parent.fetchFoodList
             }
     }
 
@@ -150,7 +123,6 @@ class FoodChooser(
     }
 
     def render = scoped(div(cls := "food borderRadius" + (if (isToday) " today" else ""),
-        error.map(errorBox(_)),
         div(cls := "info",
             span(date.toDateString()),
             button("Cancel", cls := "cancelButton shadowClick",

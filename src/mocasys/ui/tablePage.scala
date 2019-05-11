@@ -17,7 +17,6 @@ import mocasys.ui.forms._
 import mocasys.ApiClient._
 
 abstract class TablePage(val paging: Boolean = false) extends Component {
-    var error: String = ""
     val name: String = "<name>"
     var page: Integer = 1
     val limit: Integer = 50
@@ -31,8 +30,6 @@ abstract class TablePage(val paging: Boolean = false) extends Component {
             case Failure(_) => page = 1
         }
 
-    def setError(error: String) = this.error = error
-
     // UI Stuff
 
     def renderForm: VNodeFrag =  None
@@ -44,7 +41,6 @@ abstract class TablePage(val paging: Boolean = false) extends Component {
     def render = scoped(
         div(cls := "tablePage",
             h1(name, cls := "boxShadowBalanced bgColor1"),
-            errorBox(error),
             div(cls := "pageBox bgColor1 boxShadowBalanced borderTopColor2 borderRadius",
                 div(cls := "controls",
                     renderControls,
@@ -83,12 +79,6 @@ abstract class TablePage(val paging: Boolean = false) extends Component {
             c.pageBox (
                 paddingTop := "1em",
                 paddingBottom := "1em",
-            ),
-
-            c.errorMessage (
-                gridRow := "1",
-                gridColumn := "1 / 3",
-                color := "white",
             ),
 
             c.controls (
