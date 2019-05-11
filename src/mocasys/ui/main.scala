@@ -54,7 +54,7 @@ package object main {
                 Component.queueRedraw(root.vm.get)
             })
             // Elements that should be hidden/shown on scroll
-            dom.window.addEventListener("scroll", { (e: dom.UIEvent) => 
+            dom.window.addEventListener("scroll", { (e: dom.UIEvent) =>
                 val elems = dom.document.querySelectorAll(".showOnScroll")
                 if (dom.document.body.scrollTop > 100) {
                     // Show
@@ -69,6 +69,10 @@ package object main {
                         e.style.opacity = "0"
                     }
                 }
+            })
+            
+            dom.window.addEventListener("offline", { (e: dom.UIEvent) =>
+                AppState.messenger.addMessage(new OfflineMessage())
             })
         }
     }
