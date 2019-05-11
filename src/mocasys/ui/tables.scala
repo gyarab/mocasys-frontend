@@ -123,6 +123,7 @@ package object tables {
 
                     e.label (
                         paddingLeft := "1em",
+                        paddingRight := "0.5em",
                     ),
                 ),
 
@@ -135,13 +136,25 @@ package object tables {
                 c.execBtn (
                     margin := "0.5em",
                 ),
-
+                
                 e.tr (
                     lineHeight := "1.5em",
+                    color := "#265976",
                 ),
 
-                RawSelector("tr:nth-child(odd)") (
-                    backgroundColor := "lightgrey",
+                e.td (
+                    padding := "2px 8px",
+                ),
+
+                e.th (
+                    backgroundColor := "#265976",
+                    color := "#f1ffff",
+                    padding := "7px 10px",
+                ),
+
+                RawSelector("tr:nth-child(even)") (
+                    backgroundColor := "#3685a2",
+                    color := "#f1ffff",
                 ),
             )
         }
