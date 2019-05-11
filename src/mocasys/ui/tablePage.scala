@@ -115,19 +115,19 @@ abstract class TablePage(val paging: Boolean = false) extends Component {
                     paddingBottom := "0.5em",
                 ),
                 
-                RawSelector("type=submit") (
+                RawSelector("[type=submit]") (
                     padding := "0.3em 0.6em",
                     border := "0",
                     borderRadius := "3px",
                 ),
 
-                RawSelector("type=submit:hover") (
+                RawSelector("[type=submit]:hover") (
                     boxShadow := "5px 5px 10px 0px rgba(0, 0, 0, 0.6)",
                     transform := "translateY(-2px)",
                     backgroundColor := "#ff9b20",
                 ),
 
-                RawSelector("type=submit:active") (
+                RawSelector("[type=submit]:active") (
                     transform := "translateY(0px)",
                     backgroundColor := "#d23a3f",
                 ),
