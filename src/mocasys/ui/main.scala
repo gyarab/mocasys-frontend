@@ -18,11 +18,6 @@ import mocasys.ui.pages._
 
 package object main {
     class PageRoot extends Component {
-        val messenger = new Messenger()
-
-        override def onMount =
-            AppState.setMessenger(messenger)
-
         def render() =
             div(
                 // div(cls := "tempStatus",
@@ -33,7 +28,7 @@ package object main {
                 // ),
                 // Do not cite me the old magic, Witch.
                 // I was there when it was written.
-                messenger,
+                AppState.messenger,
                 new MainMenu(),
                 AppState.router.currentComponent,
                 button(cls := "scrollToTop showOnScroll", "Up", onClick := { e => {

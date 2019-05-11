@@ -1,22 +1,25 @@
+import scala.util.{Success, Failure}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js
 import mocasys.ui.components.Messenger
 import org.scalajs.dom.window._
 import liwec.Watched
 import mocasys.routing.AppRouter
-import scala.util.{Success, Failure}
+import mocasys.ui.components.Messenger
 
 package object mocasys {
     class AppStateCls extends Watched {
         val apiClient = new ApiClient(Config.middleendApiUrl)
         val router = new AppRouter()
+        val messenger: Messenger = new Messenger()
         var _loggedInUser: Option[String] = None
         var _permissions: Option[js.Array[String]] = None
-        var messenger: Messenger = null
 
         apiClient.authToken = Option(localStorage.getItem("apiAuthToken"))
 
-        def setMessenger(msngr: Messenger) = messenger = msngr
+        def rerender() = {
+            for(f <- this.changeCallbacks) f(this)
+        }
 
         // TODO: Find a way to refactor this
         def loggedInUser: Option[String] = {

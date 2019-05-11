@@ -32,6 +32,7 @@ class FoodAssignmentPage extends Component {
     override def onMount() {
         fetchFood
         fetchCurrentAssignments
+        onSuccess
     }
 
     def foodQuery = if (foodSearch.isEmpty)
@@ -75,7 +76,7 @@ class FoodAssignmentPage extends Component {
     
     def onSuccess = {
         error = ""
-        AppState.messenger.addMessage(new Message("Hello!", 1000))
+        AppState.messenger.addMessage(new Message("Hello!", 5000))
     }
 
     def onFailure(e: Throwable) = {

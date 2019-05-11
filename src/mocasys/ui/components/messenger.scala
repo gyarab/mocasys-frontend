@@ -17,19 +17,18 @@ import mocasys._
 case class Message(val message: String, val duration: Int)
 
 class Messenger extends Component {
-    val messages: Map[Int, Message] = Map()
-    var change: Boolean = false
-
-    def rerender = change = !change
+    var messages: Map[Int, Message] = Map()
 
     def addMessage(msg: Message) = {
         val key = Random.nextInt
         messages += (key -> msg)
-        rerender
+        // TODO: Address the whole problem of "prior references"
+        // (i.e. references to the underlying object instead of the proxy
+        this.changeCallbacks.foreach(_(this))
         js.timers.setTimeout(msg.duration) {
             println(s"remove ${key}")
-            messages - key
-            rerender
+            messages -= key
+            this.changeCallbacks.foreach(_(this))
         }
         println(messages)
     }
