@@ -30,7 +30,7 @@ class FoodChooser(
         val choices: Seq[DbRow]) extends Component {
     lazy val shouldBeDisabled: Boolean =
         FoodChooser.deadlineDays * 3600 * 24 * 1000 >
-            (date.getTime - FoodChooser.today.getTime)
+            (date.getTime - FoodChooser.today.getTime) && parent.dinerId == None
     lazy val isToday: Boolean = {
         date.getDate() == FoodChooser.today.getDate() &&
         date.getMonth() == FoodChooser.today.getMonth() &&
@@ -42,17 +42,17 @@ class FoodChooser(
     def choiceQuery(choice: DbRow) =
         if (choice("ordered") == null)
             AppState.queryDb(
-                """INSERT INTO food_choice (id_diner, day, kind, option) VALUES
-                (session_person_get(), $1, $2, $3)""",
+                s"""INSERT INTO food_choice (id_diner, day, kind, option) VALUES
+                (${parent.id}, $$1, $$2, $$3)""",
                 Seq(choice("day"), choice("kind"), choice("option"))
             )
         else
             AppState.queryDb(
-                """UPDATE food_choice
-                SET option = $1, ordered = $2
-                WHERE id_diner = session_person_get()
-                    AND day = $3
-                    AND kind = $4""",
+                s"""UPDATE food_choice
+                SET option = $$1, ordered = $$2
+                WHERE id_diner = ${parent.id}
+                    AND day = $$3
+                    AND kind = $$4""",
                 Seq(choice("option"), true, choice("day"), choice("kind"))
             )
 
@@ -88,13 +88,13 @@ class FoodChooser(
 
     def cancelUsingUpdate =
         AppState.queryDb(
-            """UPDATE food_choice
-            SET option = NULL, ordered = $1
-            WHERE day = $2
-            AND id_diner = session_person_get()""",
+            s"""UPDATE food_choice
+            SET option = NULL, ordered = $$1
+            WHERE day = $$2
+            AND id_diner = ${parent.id}""",
             Seq(false, isoDate(date))
         ).foreach { res =>
-                parent.fetchFoodList
+            parent.fetchFoodList
         }
 
     def cancelUsingInsert(kindsChosen: Set[String]) = {
@@ -102,7 +102,7 @@ class FoodChooser(
             .zipWithIndex
             .map { case (kind, i) =>
                 // $1 is date, $2 is ordered = false
-                s"(session_person_get(), $$1, $$2, NULL, $$${i + 3})"
+                s"(${parent.id}, $$1, $$2, NULL, $$${i + 3})"
             }
             .mkString(",\n")
         val params = Seq(isoDate(date), false) ++ kindsChosen.toSeq

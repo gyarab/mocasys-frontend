@@ -17,7 +17,7 @@ import mocasys.ui.functionComponents._
 import mocasys.ui.tables._
 import mocasys.ApiClient._
 
-class FoodSelection extends Component {
+class FoodSelection(val dinerId: Option[Int] = None) extends Component {
     var foodList: Option[Seq[DbRow]] = None
     var balance: String = ""
     var startDate: js.Date = new js.Date()
@@ -31,9 +31,11 @@ class FoodSelection extends Component {
         fetchFoodListIfDateDiff
     }
 
+    def id: String = dinerId.getOrElse("session_person_get()").toString
+
     def fetchBalance() =
         AppState.queryDb(
-          """SELECT diner_balance(session_person_get())""")
+          s"""SELECT diner_balance(${id})""")
         .onComplete {
             case Success(res) => {
                 balance = res.rows.pop.pop.asInstanceOf[String]
@@ -44,15 +46,16 @@ class FoodSelection extends Component {
         }
 
     def fetchFoodList() =
+        // TODO: Cleaner - with / without session_person_get
         AppState.queryDb(
-            """SELECT fa.day, fa.id_food, f.name, fa.kind,
+            s"""SELECT fa.day, fa.id_food, f.name, fa.kind,
                 fa.option, fc.option as option2, ordered
             FROM food_assignments AS fa
             LEFT JOIN food_choice AS fc ON fa.day = fc.day
                 AND fa.kind = fc.kind
-                AND fc.id_diner = session_person_get()
+                AND fc.id_diner = ${id}
             JOIN food AS f ON f.id = fa.id_food
-            WHERE fa.day BETWEEN $1 AND $2
+            WHERE fa.day BETWEEN $$1 AND $$2
             ORDER BY day, fa.kind, option""",
             Seq(isoDate(startDate), isoDate(endDate))
         ).onComplete {
@@ -76,35 +79,44 @@ class FoodSelection extends Component {
             _.groupBy(r => r("day").asInstanceOf[String])
             .toList
             .sortBy(_._1))
+    
+    def renderInfoBar: liwec.VNode =
+        div(cls := "firstRow borderRadius boxShadowBig",
+            label(cls := "dateStart",
+                span(cls := "borderShadowColor3 bgColor2 borderRadius",
+                    "Date Start"),
+                textInput(isoDate(startDate),
+                    { str => startDate =
+                        (if (str.isEmpty()) startDate else new js.Date(str))},
+                    "date"
+                ),
+            ),
+            label(cls := "dateEnd",
+                span(cls := "borderShadowColor3 bgColor2 borderRadius",
+                    "Date End"),
+                textInput(isoDate(endDate),
+                    { str => endDate =
+                        (if (str.isEmpty()) endDate else new js.Date(str))},
+                    "date"
+                ),
+            ),
+            label(cls := "balance",
+                span(cls := "borderShadowColor3 bgColor2 borderRadius balanceLabel", "Balance"),
+                span(cls := "balanceValue", (if (balance == "") "N/A" else balance)),
+            ),
+            dinerId.map(id =>
+                label(cls := "balance",
+                    span(cls := "borderShadowColor3 bgColor2 borderRadius balanceLabel", "dinerId"),
+                    span(cls := "balanceValue", id.toString),
+                ),
+            )
+        )
 
     def render: liwec.VNode = {
         fetchFoodListIfDateDiff
         return scoped(
             div(cls := "foodSelection",
-                div(cls := "firstRow borderRadius boxShadowBig",
-                    label(cls := "dateStart",
-                        span(cls := "borderShadowColor3 bgColor2 borderRadius",
-                            "Date Start"),
-                        textInput(isoDate(startDate),
-                            { str => startDate =
-                                (if (str.isEmpty()) startDate else new js.Date(str))},
-                            "date"
-                        ),
-                    ),
-                    label(cls := "dateEnd",
-                        span(cls := "borderShadowColor3 bgColor2 borderRadius",
-                            "Date End"),
-                        textInput(isoDate(endDate),
-                            { str => endDate =
-                                (if (str.isEmpty()) endDate else new js.Date(str))},
-                            "date"
-                        ),
-                    ),
-                    label(cls := "balance",
-                        span(cls := "borderShadowColor3 bgColor2 borderRadius balanceLabel", "Balance"),
-                        span(cls := "balanceValue", (if (balance == "") "N/A" else balance)),
-                    )
-                ),
+                renderInfoBar,
                 foodByDate.map(fbd =>
                     div(cls := "foodList",
                         fbd.map { case (date, choices) =>
@@ -152,11 +164,6 @@ class FoodSelection extends Component {
                     flexDirection := "column",
                     marginRight := "0.5em",
                 ),
-            ),
-
-            c.balance (
-                gridColumn := "2 / 5",
-                justifySelf := "end",
             ),
         )
     }

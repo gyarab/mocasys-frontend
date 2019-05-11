@@ -19,6 +19,8 @@ import mocasys.ApiClient._
 class DinersPage extends TablePage(true) {
     var form: Option[Form] = None
     override val name: String = "Diners"
+    var dinerId: Option[Int] = None
+    var modifyFoodSelection: Boolean = false
 
     override def renderForm =
         form.map { form =>
@@ -29,6 +31,9 @@ class DinersPage extends TablePage(true) {
                 else None),
                 label(span("ID Person:"),
                         form.textInt("id_person")),
+                button("Toggle Food Selection Tab",
+                    cls := "ShadowClick bgColor4",
+                    onClick := { e => modifyFoodSelection = !modifyFoodSelection }),
                 form.save("Save", "diners", Seq("id_person")),
             )
         }
@@ -38,21 +43,22 @@ class DinersPage extends TablePage(true) {
             "id_person" -> row("id_person")
         ), true)
 
-    override def renderTable =
+    override def renderTable = div(
         new InteractiveTable(
             s"""SELECT * FROM diners AS d
             INNER JOIN people AS p ON p.id = d.id_person
             ORDER BY d.id_person LIMIT ${limit} OFFSET ${offset}""",
-            onClickRendererForColumn({ row =>
+            onClickRendererForColumn({ row => {
                 form = Some(formForRow(row))
-            }),
-            Seq("sys_period")
-        )
+                dinerId = Some(row("id").toString.toInt)
+            }}),
+            Seq("sys_period")),
+        (if (dinerId != None && modifyFoodSelection) new FoodSelection(dinerId) else None)
+    )
 
     override def renderControls: VNodeFrag = 
         button("New diner", cls := "bgColor4 ShadowClick btnPadding", onClick := { _ =>
             form = Some(new Form(this, Map(
                 "id_person" -> 0, "account_balance" -> 0)))
         })
-
 }
