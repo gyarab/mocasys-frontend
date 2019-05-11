@@ -255,6 +255,7 @@ class FoodAssignmentPage extends Component {
             c.foods (
                 gridRow := "2",
                 gridColumn := "2",
+                width := "max-content",
 
                 (c.foodDraggable /+ c.foodDraggable) (
                     marginTop := "0.3em",
