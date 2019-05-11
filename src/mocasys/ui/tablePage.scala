@@ -104,17 +104,38 @@ abstract class TablePage(val paging: Boolean = false) extends Component {
                 gridColumn := "1 / 3",
                 gridRow := "3",
                 marginLeft := "1em",
+                paddingBottom := "0.5em",
 
                 e.input (
                     marginLeft := "0.5em",
                     marginRight := "0.5em",
+                ),
+                
+                e.div (
+                    paddingBottom := "0.5em",
+                ),
+                
+                RawSelector("[type=submit]") (
+                    padding := "0.3em 0.6em",
+                    border := "0",
+                    borderRadius := "3px",
+                ),
+
+                RawSelector("[type=submit]:hover") (
+                    boxShadow := "5px 5px 10px 0px rgba(0, 0, 0, 0.6)",
+                    transform := "translateY(-2px)",
+                    backgroundColor := "#ff9b20",
+                ),
+
+                RawSelector("[type=submit]:active") (
+                    transform := "translateY(0px)",
+                    backgroundColor := "#d23a3f",
                 ),
             ),
 
             c.table (
                 gridRow := "4",
                 gridColumn := "1 / 3",
-                paddingTop := "1em",
             ),
         )
 
