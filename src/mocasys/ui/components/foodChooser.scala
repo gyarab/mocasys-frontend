@@ -47,7 +47,7 @@ class FoodChooser(
         else
             AppState.apiClient.queryDb(
                 """UPDATE food_choice
-                SET option = $1
+                SET option = $1, ordered = true
                 WHERE id_diner = session_person_get()
                     AND day = $2
                     AND kind = $3""",
@@ -80,8 +80,76 @@ class FoodChooser(
             }
         }
 
-    //TODO: Actaully cancel the food
-    def cancelFood = Unit
+    def cancelUsingUpdate =
+        AppState.apiClient.queryDb(
+            """UPDATE food_choice
+            SET option = NULL, ordered = $1
+            WHERE day = $2
+            AND id_diner = session_person_get()""",
+            Seq("false", isoDate(date))
+        ).onComplete {
+            case Success(res) => {
+                error = None
+                println(res)
+                // TODO: Do more efficiently
+                parent.fetchFoodList
+            }
+            case Failure(e) => {
+                val ApiError(_, msg) = e
+                error = Some(msg)
+            }
+        }
+
+    def cancelUsingInsert(kindsChosen: Set[String]) = {
+        val valParams = kindsChosen
+            .zipWithIndex
+            .map { case (kind, i) =>
+                // $1 is date, $2 is ordered = false
+                s"(session_person_get(), $$1, $$2, NULL, $$${i + 3})"
+            }
+            .mkString(",\n")
+        val params = Seq(isoDate(date), false) ++ kindsChosen.toSeq
+        AppState.apiClient.queryDb(
+                """INSERT INTO food_choice (id_diner, day, ordered, option, kind) VALUES """
+                + valParams, params
+            ).onComplete {
+                case Success(res) => {
+                    error = None
+                    // TODO: Do more efficiently
+                    parent.fetchFoodList
+                }
+                case Failure(e) => {
+                    val ApiError(_, msg) = e
+                    error = Some(msg)
+                }
+            }
+    }
+
+    def cancelFood = {
+        val kindsCount = choices
+            .map(r => r("kind").toString)
+            .toSet
+            .size
+        val kindsNotChosen = choices
+            .filter(r => r("option2") == null)
+            .map(r => r("kind").toString)
+            .toSet
+        if (kindsNotChosen.size == 0) {
+            // Only update
+            println("only update")
+            cancelUsingUpdate
+        } else if (kindsNotChosen.size == kindsCount) {
+            // Only insert
+            println("only insert")
+            cancelUsingInsert(kindsNotChosen)
+        } else {
+            // Both insert and update
+            println("both insert and update")
+            cancelUsingUpdate
+            cancelUsingInsert(kindsNotChosen)
+        }
+    }
+        
 
     def render = scoped(div(cls := "food borderRadius" + (if (isToday) " today" else ""),
         error.map(errorBox(_)),

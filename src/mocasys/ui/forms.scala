@@ -69,13 +69,13 @@ package object forms {
                         colVals
                         .map(_._1)
                         .zipWithIndex
-                        .map { case (col, i) => s"$col = ${"$"}${i + 1}" }
+                        .map { case (col, i) => s"$col = $$${i + 1}" }
                         .mkString(",\n")
                     val conds =
                         pkeys
                         .zipWithIndex
                         .map { case (col, i) =>
-                            s"$col = ${"$"}${i + 1 + colVals.length}" }
+                            s"$col = $$${i + 1 + colVals.length}" }
                         .mkString("\nAND ")
                     val params =
                         (colVals.map(_._2) ++ pkeys.map(data(_)))
@@ -92,7 +92,7 @@ package object forms {
                     val valParams =
                         cols
                         .zipWithIndex
-                        .map { case (_, i) => "$" + s"${i + 1}" }
+                        .map { case (_, i) => s"$$${i + 1}" }
                     val params = colVals.map(_._2.toString())
                     (s"""
                     INSERT INTO $tableName (${cols.mkString(", ")})
