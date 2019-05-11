@@ -2,6 +2,7 @@ package mocasys.ui.components
 
 import scala.util.{Success, Failure}
 import scalajs.js
+import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.scalajs.dom
 import org.scalajs.dom.ext._
@@ -35,6 +36,7 @@ class FoodChooser(
         date.getMonth() == FoodChooser.today.getMonth() &&
         date.getFullYear() == FoodChooser.today.getFullYear()
     }
+    lazy val kindSet: mutable.Set[String] = mutable.Set()
 
     // TODO: Replace once the query builder is finished
     def choiceQuery(choice: DbRow) =
@@ -60,11 +62,23 @@ class FoodChooser(
     def forAttrValue(choice: DbRow) =
         s"radio_${choice("kind")}_${choice("id_food")}_${choice("day").toString().substring(0, 10)}"
 
-    def shouldBeChecked(choice: DbRow): Boolean =
-        choice("option") == choice("option2") || shouldBeDisabled
+    def shouldBeChecked(choice: DbRow): Boolean = {
+        val ord = choice("ordered")
+        return (ord == null && isFirstOfItsKind(choice)) ||
+               (ord.asInstanceOf[Boolean] && choice("option") == choice("option2"))
+    }
 
     def shouldBeHidden(choice: DbRow): Boolean =
         choice("option").toString.isEmpty
+
+    def isFirstOfItsKind(choice: DbRow): Boolean = {
+        val kind = choice("kind").toString
+        if (kindSet.contains(kind)) false
+        else {
+            kindSet += kind
+            true
+        }
+    }
 
     def onChange(choice: DbRow) =
         choiceQuery(choice)
@@ -122,40 +136,47 @@ class FoodChooser(
         }
     }
 
-    def render = scoped(div(cls := "food borderRadius" + (if (isToday) " today" else ""),
-        div(cls := "info",
-            span(date.toDateString()),
-            button("Cancel", cls := "cancelButton shadowClick",
-                (if (shouldBeDisabled) disabled := "true" else None),
-                onClick := { e => cancelFood }
+    def renderRow(choice: DbRow): liwec.VNode = {
+        // Calling it the second time would produce a diff value
+        val check = shouldBeChecked(choice)
+        return tr((if (check) cls := "chosenRow" else None),
+            td(label(forAttr := forAttrValue(choice),
+                p(choice("kind").asInstanceOf[String])
+            )),
+            td(label(forAttr := forAttrValue(choice),
+                p(choice("option").asInstanceOf[String])
+            )),
+            td(cls := "foodName",label(forAttr := forAttrValue(choice),
+                p(choice("name").asInstanceOf[String])
+            )),
+            (if (shouldBeHidden(choice))
+                td()
+            else
+                td(radioInput(
+                    forAttrValue(choice),
+                    radioName(choice),
+                    { _ => onChange(choice) },
+                    check,
+                    shouldBeDisabled,
+                )
+            )),
+        )   
+    }
+
+    def render: liwec.VNode = {
+        kindSet.clear()
+        println(kindSet)
+        return scoped(div(cls := "food borderRadius" + (if (isToday) " today" else ""),
+            div(cls := "info",
+                span(date.toDateString()),
+                button("Cancel", cls := "cancelButton shadowClick",
+                    (if (shouldBeDisabled) disabled := "true" else None),
+                    onClick := { e => cancelFood }
+                ),
             ),
-        ),
-        table(tbody(
-            choices.map(choice => tr(
-                (if (shouldBeChecked(choice)) cls := "chosenRow" else None),
-                td(label(forAttr := forAttrValue(choice),
-                    p(choice("kind").asInstanceOf[String])
-                )),
-                td(label(forAttr := forAttrValue(choice),
-                    p(choice("option").asInstanceOf[String])
-                )),
-                td(cls := "foodName",label(forAttr := forAttrValue(choice),
-                    p(choice("name").asInstanceOf[String])
-                )),
-                (if (shouldBeHidden(choice))
-                    td()
-                else
-                    td(radioInput(
-                        forAttrValue(choice),
-                        radioName(choice),
-                        { _ => onChange(choice) },
-                        shouldBeChecked(choice),
-                        shouldBeDisabled,
-                    )
-                )),
-            ))
-        )),
-    ))
+            table(tbody(choices.map(renderRow))),
+        ))
+    }
 
     cssScoped { import liwec.cssDsl._
         c.food (
