@@ -93,7 +93,7 @@ class PasswordChanger extends Component {
             margin := "4em auto 0 auto",
             width := "90%",
             color := "#f1ffff",
-            maxWidth := "760px",
+            maxWidth := "500px",
             minWidth := "200px",
             zIndex := "5",
 
@@ -114,7 +114,7 @@ class PasswordChanger extends Component {
                 boxShadow := "0px 0px 10px 0px rgba(0, 0, 0, 0.60)",
 
                 gridTemplateColumns := "repeat(2, 50fr)",
-                gridGap := "5px 10px",
+                gridGap := "5px 0",
                 gridTemplateAreas := """
                     'usernameLabel errorMessage'
                     'usernameInput errorMessage'
@@ -171,7 +171,7 @@ class PasswordChanger extends Component {
                 c.submitButton (
                     gridArea := "loginButton",
                     width := "100%",
-                    maxWidth := "10em",
+                    maxWidth := "12em",
                     justifySelf := "right",
                     alignSelf := "end",
                     border := "0",
