@@ -50,7 +50,7 @@ class DinersPage extends TablePage(true) {
         )
 
     override def renderControls: VNodeFrag = 
-        button("New diner", cls := "bgColor3", onClick := { _ =>
+        button("New diner", cls := "bgColor4 ShadowClick btnPadding", onClick := { _ =>
             form = Some(new Form(this, Map(
                 "id_person" -> 0, "account_balance" -> 0)))
         })
