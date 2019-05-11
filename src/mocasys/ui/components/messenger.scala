@@ -14,7 +14,21 @@ import liwec.htmlMacros._
 import liwec.cssMacros._
 import mocasys._
 
-case class Message(val message: String, val duration: Int)
+trait Message {
+    def render(): VNodeFrag
+    def duration: Option[Int] // In milliseconds, None -- infinite
+}
+
+class InfoMessage(val msg: String, val dur: Option[Int] = Some(4000))
+        extends Message {
+    def render() = Seq(cls := "infoMessage", msg: VNodeFrag)
+    def duration = dur
+}
+
+class ErrorMessage(val msg: String, val dur: Option[Int] = None) {
+    def render() = Seq(cls := "errorMessage", msg: VNodeFrag)
+    def duration = dur
+}
 
 class Messenger extends Component {
     var messages: Map[Int, Message] = Map()
@@ -25,17 +39,17 @@ class Messenger extends Component {
         // TODO: Address the whole problem of "prior references"
         // (i.e. references to the underlying object instead of the proxy
         this.changeCallbacks.foreach(_(this))
-        js.timers.setTimeout(msg.duration) {
-            println(s"remove ${key}")
-            messages -= key
-            this.changeCallbacks.foreach(_(this))
-        }
-        println(messages)
+        msg.duration.foreach(dur =>
+            js.timers.setTimeout(dur) {
+                messages -= key
+                this.changeCallbacks.foreach(_(this))
+            }
+        )
     }
 
     def render = scoped(div(cls := "messages",
         messages.map { case (key, msg) =>
-            p(msg.message)
+            p(msg.render())
         }
     ))
 
