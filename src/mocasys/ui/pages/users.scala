@@ -12,6 +12,7 @@ import liwec.cssDslTypes.RawSelector
 import mocasys._
 import mocasys.ui._
 import mocasys.ui.components._
+import mocasys.ui.functionComponents._
 import mocasys.ui.tables._
 import mocasys.ui.forms._
 import mocasys.ApiClient._
@@ -20,6 +21,7 @@ class UsersPage extends TablePage(true) {
     var form: Option[Form] = None
     var userId: Option[Integer] = None
     override val name: String = "Users"
+    var modifyPermissions: Boolean = false
 
     override def renderForm =
         form.map { form =>
@@ -32,6 +34,8 @@ class UsersPage extends TablePage(true) {
                         form.text("username")),
                 label(span("Person:"),
                         form.textInt("id_person")),
+                button("Toggle Permissions Tab",
+                    onClick := { e => modifyPermissions = !modifyPermissions }),
                 form.save("Save", "users", Seq("id")),
             )
         }
@@ -43,12 +47,13 @@ class UsersPage extends TablePage(true) {
                 form = Some(new Form(this, row))
                 userId = Some(row("id").toString.toInt)
             }}), Seq("sys_period")),
-        (if (userId != None) new UserPermissions(userId.get) else None)
+        (if (userId != None && modifyPermissions) new UserPermissions(userId.get) else None)
     )
 
-    override def renderControls = 
+    override def renderControls = div(
         button("New user", cls := "bgColor4 shadowClick btnPadding", onClick := { _ =>
             form = Some(new Form(this, Map(
                 "username" -> "", "id_person" -> 0)))
         })
+    )
 }
