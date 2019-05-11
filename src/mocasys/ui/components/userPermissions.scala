@@ -147,17 +147,23 @@ class UserPermissions(val userId: Integer) extends Component {
 
     cssScoped { import liwec.cssDsl._
         c.userPermissions (
-            backgroundColor := "blue",
+            backgroundColor := "#265976",
             display := "grid",
             gridTemplateColumns := "1fr 1fr",
             gridColumnGap := "1em",
+            paddingBottom := "4em",
+              
+            e.h2 (
+                textAlign := "center",
+                color := "#f1ffff",
+                paddingTop := "0.5em",
+            ),
 
             e.ul (
                 listStyle := "none",
-                paddingBottom := "3em",
-                backgroundColor := "lightblue",
+                backgroundColor := "#f1ffff",
                 height := "100%",
-                paddingTop := "1em",
+                paddingTop := "0.5em",
             ),
 
             c.errorBox (
