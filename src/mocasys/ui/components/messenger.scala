@@ -79,7 +79,6 @@ class Messenger extends Component {
             position := "absolute",
             right := "1em",
             top := "1em",
-            backgroundColor := "#d23a3f",
             color := "#f1ffff",
             fontWeight := "700",
             borderRadius := "3px",
@@ -88,10 +87,9 @@ class Messenger extends Component {
 
             e.p (
                 marginTop := "0.2em",
-                paddingTop := "0.5em",
-                paddingRight := "2em",
-                paddingLeft := "2em",
+                padding := "0.5em 2em 0.5em 2em",
                 borderTop := "3px solid #ff9b20",
+                backgroundColor := "#d23a3f",
             ),
         )
     }
