@@ -85,7 +85,7 @@ package object mocasys {
                 case f @ Failure(e) => {
                     val ApiError(_, msg) = e
                     this.messenger.addMessage(
-                        new ErrorMessage(s"Error querying database: $msg"))
+                        new ErrorMessage(s"Error querying database: $msg", Some(5000)))
                     f
                 }
                 case s => s
