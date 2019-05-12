@@ -85,6 +85,11 @@ class Messenger extends Component {
             borderRadius := "3px",
             paddingRight := "2em",
             paddingLeft := "2em",
+
+            e.p (
+                marginBottom := "0.2em",
+                paddingBottom := "1em",
+            ),
         )
     }
 }

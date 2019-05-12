@@ -119,7 +119,7 @@ class MainMenu extends Component {
             boxShadow := "2px 2px 4px 0px rgba(0, 0, 0, 0.60)",
             borderBottomRightRadius := "10px",
             borderTopRightRadius := "10px",
-            backgroundColor := "b0dde4",
+            backgroundColor := "#265976",
 
             e.div (
                 border := "2px solid #ffb820",
@@ -192,11 +192,13 @@ class MainMenu extends Component {
                     c.logout (
                         gridRow := "3/4",
                         gridColumn := "3/4",
+                        paddingTop := "0.2em",
                     ),
 
                     c.profile (
                         gridRow := "3/4",
                         gridColumn := "1/2",
+                        paddingTop := "0.2em",
                     ),
                 ),
 
@@ -223,15 +225,17 @@ class MainMenu extends Component {
                     ),
 
                     RawSelector(".menuHeader:hover") (
-                        textDecoration := "underline",
+                        transform := "translateX(2px)",
                     ),
 
                     c.menuItem (
-                        margin := "0.1em 0 0.2em 0em",
+                        margin := "0.1em 0 0.2em 1em",
                         padding := "5px",
                         paddingLeft := "0",
 
-                        c.menuHeader(marginLeft := "0.6em"),
+                        c.menuHeader(
+                            color := "#f1ffff",
+                        ),
 
                         RawSelector("span:hover") (
                             textDecoration := "underline",

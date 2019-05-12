@@ -102,6 +102,10 @@ class FoodLander(var kind: String,
                 height := "2.5em",
             ),
 
+            RawSelector("[placeholder='option']") (
+                width := "5em",
+            ),
+
             c.lander (
                 gridColumn := "3",
                 border := "3px solid #00000000",
