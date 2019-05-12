@@ -75,6 +75,7 @@ class FoodAssignmentPage extends Component {
     
     def onSuccess = {
         AppState.messenger.addMessage(new InfoMessage("Hello!"))
+        AppState.messenger.addMessage(new InfoMessage("Nope!"))
     }
 
     def onFailure(e: Throwable) = {

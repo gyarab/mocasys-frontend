@@ -122,7 +122,7 @@ input {
 }
 
 .errorMessage {
-	margin-top: 2em;
+	margin-top: 1em;
 	margin-bottom: 1em;
 }
 
@@ -132,6 +132,8 @@ input {
 	margin-right: 4em;
 	padding: 10px 0px 8px;
 	text-align: center;
+	color: $color4;
+	font-weight: 700;
 }
 
 // https://www.w3schools.com/howto/howto_css_custom_checkbox.asp
