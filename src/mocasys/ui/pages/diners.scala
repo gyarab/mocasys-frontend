@@ -56,15 +56,11 @@ class DinersPage extends TablePage(true) {
             FROM diners AS d
             INNER JOIN people AS p ON p.id = d.id_person
             ORDER BY d.id_person LIMIT ${limit} OFFSET ${offset}""",
-<<<<<<< HEAD
-            onClickRendererForColumn({ row => {
-=======
             onClickRendererForColumn({ row =>
                 selectedDiner = Some(row)
->>>>>>> Allow creating transactions
                 form = Some(formForRow(row))
                 dinerId = Some(row("id").toString.toInt)
-            }}),
+            }),
             Seq("sys_period")),
         (if (dinerId != None && modifyFoodSelection) new FoodSelection(dinerId) else None)
     )
