@@ -50,7 +50,7 @@ class Messenger extends Component {
         this.changeCallbacks.foreach(_(this))
     }
 
-    def removeMessage(key: Int, handle: Option[js.timers.SetTimeoutHandle])() = {
+    def removeMessage(key: Int, handle: Option[js.timers.SetTimeoutHandle]) = {
         handle.map(js.timers.clearTimeout(_))
         _removeMessage(key)
     }
@@ -65,7 +65,7 @@ class Messenger extends Component {
         msg.duration.foreach(dur => {
             cancel = Some(js.timers.setTimeout(dur) { _removeMessage(key) })
         })
-        msg.setCancel(removeMessage(key, cancel))
+        msg.setCancel(() => removeMessage(key, cancel))
     }
 
     def render = scoped(div(cls := "messages",

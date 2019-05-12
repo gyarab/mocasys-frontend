@@ -18,25 +18,32 @@ import mocasys.ApiClient._
 
 class DinersPage extends TablePage(true) {
     var form: Option[Form] = None
+    var selectedDiner: Option[DbRow] = None
     override val name: String = "Diners"
     var dinerId: Option[Int] = None
     var modifyFoodSelection: Boolean = false
 
     override def renderForm =
-        form.map { form =>
-            div(cls := "userForm",
-                form.errorText(),
-                (if (form.data.keySet.exists(_ == "id")) 
-                    div(s"User selected: ${form.data("id")}")
-                else None),
-                label(span("ID Person:"),
-                        form.textInt("id_person")),
-                button("Toggle Food Selection Tab",
-                    cls := "ShadowClick bgColor4",
-                    onClick := { e => modifyFoodSelection = !modifyFoodSelection }),
-                form.save("Save", "diners", Seq("id_person")),
-            )
-        }
+        div(
+            form.map { form =>
+                div(cls := "userForm",
+                    form.errorText(),
+                    (if (form.data.keySet.exists(_ == "id")) 
+                        div(s"User selected: ${form.data("id")}")
+                    else None),
+                    label(span("ID Person:"),
+                            form.textInt("id_person")),
+                    button("Toggle Food Selection Tab",
+                        cls := "ShadowClick bgColor4",
+                        onClick := { e => modifyFoodSelection = !modifyFoodSelection }),
+                    form.save("Save", "diners", Seq("id_person")),
+                )
+            },
+
+            selectedDiner.map { diner =>
+                div(new TransactionList(diner))
+            },
+        )
 
     def formForRow(row: DbRow) =
         new Form(this, Map(
@@ -45,10 +52,16 @@ class DinersPage extends TablePage(true) {
 
     override def renderTable = div(
         new InteractiveTable(
-            s"""SELECT * FROM diners AS d
+            s"""SELECT *, diner_balance(d.id_person) AS balance
+            FROM diners AS d
             INNER JOIN people AS p ON p.id = d.id_person
             ORDER BY d.id_person LIMIT ${limit} OFFSET ${offset}""",
+<<<<<<< HEAD
             onClickRendererForColumn({ row => {
+=======
+            onClickRendererForColumn({ row =>
+                selectedDiner = Some(row)
+>>>>>>> Allow creating transactions
                 form = Some(formForRow(row))
                 dinerId = Some(row("id").toString.toInt)
             }}),
