@@ -19,7 +19,7 @@ import mocasys.ApiClient._
 
 class UsersPage extends TablePage(true) {
     var form: Option[Form] = None
-    var userId: Option[Integer] = None
+    var userId: Option[Int] = None
     override val name: String = "Users"
     var modifyPermissions: Boolean = false
 

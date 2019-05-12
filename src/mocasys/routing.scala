@@ -19,6 +19,7 @@ class AppRouter extends Router {
             case path"/profile" => new DinerProfilePage()
             case path"/diners" => new DinersPage()
             case path"/food" => new FoodPage()
+            case path"/people" => new PeoplePage()
             case _ => new NotFoundPage()
         }
     }

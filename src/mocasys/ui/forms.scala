@@ -42,11 +42,12 @@ package object forms {
             textInput(new BigDecimal(data(key).toString).toString,
                       { v => data(key) = new BigDecimal(v) })
 
-        def textDate(key: String) =
-            textInput(isoDate(data(key).asInstanceOf[js.Date]),
-                    { v => data(key) =
-                        (if (v.isEmpty()) data(key) else new js.Date(v)) },
+        def textDate(key: String) = {
+            textInput(data(key).toString,
+                    { v => data(key) = 
+                        (if (v.isEmpty()) data(key) else isoDate(new js.Date(v))) },
                     "date")
+        }
 
         def errorText() =
             error.map(e => div(cls := "formError", e))

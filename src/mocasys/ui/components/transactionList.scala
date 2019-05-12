@@ -7,6 +7,7 @@ import mocasys._
 import mocasys.ApiClient._
 import mocasys.ui.tables._
 import mocasys.ui.forms._
+import java.math.BigDecimal
 
 class TransactionList(val diner: DbRow) extends Component {
     var form: Option[Form] = None
@@ -26,7 +27,7 @@ class TransactionList(val diner: DbRow) extends Component {
                 onClick := { _ =>
                     form = Some(new Form(this, Map(
                         "id_diner" -> diner("id"),
-                        "amount" -> 0,
+                        "amount" -> new BigDecimal("0"),
                     ), false))
                 }),
             new InteractiveTable(

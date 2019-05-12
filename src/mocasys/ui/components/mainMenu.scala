@@ -29,6 +29,7 @@ object MainMenu {
                 MenuItem("Food Assignment", _ => AppState.router.goToUrl("food-assignment")),
                 MenuItem("Users", _ => AppState.router.goToUrl("users")),
                 MenuItem("Diners", _ => AppState.router.goToUrl("diners")),
+                MenuItem("People", _ => AppState.router.goToUrl("people")),
                 MenuItem("Food", _ => AppState.router.goToUrl("food")),
                 SubMenu(MenuItem("Submenu"),
                     Seq(
