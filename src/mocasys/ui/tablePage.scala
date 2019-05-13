@@ -44,7 +44,10 @@ abstract class TablePage(val paging: Boolean = false) extends Component {
             div(cls := "pageBox bgColor1 boxShadowBalanced borderTopColor2 borderRadius",
                 div(cls := "controls",
                     renderControls,
-                    (if (paging) textInput(page.toString, onChangePage, "number") else None),
+                    (if (paging)
+                        label("Page number:",
+                            textInput(page.toString, onChangePage, "number"))
+                     else None),
                 ),
                 div(cls := "form",
                     renderForm,
