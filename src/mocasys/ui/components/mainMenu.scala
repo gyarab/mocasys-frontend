@@ -31,12 +31,6 @@ object MainMenu {
                 MenuItem("Diners", _ => AppState.router.goToUrl("diners")),
                 MenuItem("People", _ => AppState.router.goToUrl("people")),
                 MenuItem("Food", _ => AppState.router.goToUrl("food")),
-                SubMenu(MenuItem("Submenu"),
-                    Seq(
-                        MenuItem("1", _ => dom.window.alert("Nada!")),
-                        MenuItem("2", _ => dom.window.alert("Nada!"))
-                    )
-                ),
             )
         )
 }
