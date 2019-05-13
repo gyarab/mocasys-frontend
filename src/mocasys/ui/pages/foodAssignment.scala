@@ -31,7 +31,6 @@ class FoodAssignmentPage extends Component {
     override def onMount() {
         fetchFood
         fetchCurrentAssignments
-        onSuccess
     }
 
     def foodQuery = if (foodSearch.isEmpty)
@@ -73,24 +72,12 @@ class FoodAssignmentPage extends Component {
         AND option = $3
         AND id_food = $4"""
     
-    def onSuccess = {
-        AppState.messenger.addMessage(new InfoMessage("Hello!"))
-        AppState.messenger.addMessage(new InfoMessage("Nope!"))
-    }
-
-    def onFailure(e: Throwable) = {
-        val ApiError(_, msg) = e
-    }
-
     def save(e: dom.Event) = {
         for (fl <- foodLanders if (fl.changed && !fl.kind.isEmpty) || fl.delete) {
             if (fl.delete)
                 AppState.queryDb("""DELETE FROM food_assignments """ + faWhereFl,
                     Seq(isoDate(date), fl.originalKind, fl.originalOption, fl.originalFoodId)
-                ).onComplete {
-                    case Success(res) => onSuccess
-                    case Failure(e) => onFailure(e)
-                }
+                )
             else
                 AppState.queryDb(
                     """UPDATE food_assignments
@@ -99,19 +86,13 @@ class FoodAssignmentPage extends Component {
                         id_food = $7 """ + faWhereFl,
                     Seq(isoDate(date), fl.originalKind, fl.originalOption, fl.originalFoodId,
                         fl.option, fl.kind, fl.foodId)
-                ).onComplete {
-                    case Success(res) => onSuccess
-                    case Failure(e) => onFailure(e)
-                }
+                )
         }
         for (fl <- newFoodLanders if fl.changed && !fl.kind.isEmpty)
             AppState.queryDb("""INSERT INTO food_assignments (day, kind, option, id_food)
                 VALUES ($1, $2, $3, $4)""",
                 Seq(isoDate(date), fl.kind, fl.option, fl.foodId)
-            ).onComplete {
-                case Success(res) => onSuccess
-                case Failure(e) => onFailure(e)
-            }
+            )
         newFoodLanders.clear
         fetchCurrentAssignments
     }
